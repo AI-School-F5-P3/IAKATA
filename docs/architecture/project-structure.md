@@ -24,76 +24,91 @@ iakata/
 │   │   │   ├── chat.py           # Endpoints de chat
 │   │   │   ├── board.py          # Endpoints de tableros
 │   │   │   ├── doc.py            # Endpoints de documentación
-│   │   │   └── monitor.py        # Endpoints de monitorización
-│   │   └── middleware/            # Middleware de la API
-│   │       └── error_handler.py   # Manejo de errores
+│   │   │   ├── monitor.py        # Endpoints de monitorización
+│   │   │   └── analysis.py       # Endpoints de análisis
+│   │   └── middleware/
+│   │       └── error_handler.py
 │   │
-│   ├── core/                      # Sistema RAG principal
+│   ├── orchestrator/              # Módulo RAG Orchestrator
 │   │   ├── __init__.py
-│   │   ├── orchestrator.py        # Orquestador RAG
-│   │   ├── llm.py                # Integración con GPT-4
-│   │   ├── retriever.py          # Sistema de recuperación
-│   │   └── chat.py               # Lógica de chat
+│   │   ├── orchestrator.py        # Lógica de orquestación
+│   │   └── chat.py               # Gestión de chat
 │   │
-│   ├── knowledge/                 # Gestión de fuentes de conocimiento
+│   ├── retriever/                 # Módulo Retriever
 │   │   ├── __init__.py
-│   │   ├── pdf_processor.py      # Procesamiento de PDFs
-│   │   ├── db_reader.py          # Lectura de base de datos
-│   │   └── source_manager.py     # Gestión de fuentes
+│   │   ├── search.py             # Motor de búsqueda
+│   │   ├── rank.py               # Motor de ranking
+│   │   └── filter.py             # Sistema de filtrado
 │   │
-│   ├── vectorstore/              # Sistema de vectorización e indexación
+│   ├── llm/                       # Módulo LLM
 │   │   ├── __init__.py
-│   │   ├── tokenizer.py          # Tokenización de texto
-│   │   ├── normalizer.py         # Normalización de texto
-│   │   ├── embeddings.py         # Generación de embeddings
-│   │   └── index_manager.py      # Gestión de índices vectoriales
+│   │   ├── gpt.py                # Integración GPT-4
+│   │   ├── temperature.py        # Control de temperatura
+│   │   └── validator.py          # Validaciones
 │   │
-│   ├── documentation/            # Sistema de documentación
+│   ├── knowledge/                 # Knowledge Sources Manager
 │   │   ├── __init__.py
-│   │   ├── generator.py          # Generación de documentos
-│   │   ├── templates.py          # Plantillas de documentación
-│   │   └── learning_store.py     # Almacenamiento de aprendizajes
+│   │   ├── pdf_processor.py      # Procesamiento PDFs
+│   │   ├── db_reader.py          # Lectura BD
+│   │   └── source_manager.py     # Gestión fuentes
 │   │
-│   ├── monitoring/               # Sistema de monitorización
+│   ├── vectorstore/              # Index & Vector Store
 │   │   ├── __init__.py
-│   │   ├── status.py            # Estado del sistema
-│   │   ├── metrics.py           # Métricas del sistema
-│   │   └── alerts.py            # Sistema de alertas
+│   │   ├── tokenizer.py          # Tokenización
+│   │   ├── normalizer.py         # Normalización
+│   │   ├── embeddings.py         # Generación embeddings
+│   │   └── index_manager.py      # Gestión índices
 │   │
-│   ├── logs/                     # Sistema de logging
+│   ├── documentation/            # Sistema Documentación
 │   │   ├── __init__.py
-│   │   ├── .gitkeep
-│   │   └── logger.py            # Configuración de logging
+│   │   ├── generator.py          # Generación docs
+│   │   ├── templates.py          # Gestión plantillas
+│   │   └── learning_store.py     # Almacén aprendizaje
+│   │
+│   ├── monitoring/               # Sistema Monitorización
+│   │   ├── __init__.py
+│   │   ├── status.py            # Estado sistema
+│   │   ├── metrics.py           # Métricas
+│   │   └── alerts.py            # Alertas
+│   │
+│   ├── analysis/                 # Sistema Análisis
+│   │   ├── __init__.py
+│   │   ├── kpi.py               # Análisis KPIs
+│   │   ├── advisor.py           # Recomendaciones
+│   │   └── feedback.py          # Sistema feedback
 │   │
 │   ├── config/                   # Configuraciones
 │   │   ├── __init__.py
-│   │   ├── settings.py          # Configuraciones generales
-│   │   ├── log_config.py        # Configuración de logs
-│   │   └── logging.py           # Configuración adicional de logs
+│   │   ├── settings.py          # Config general
+│   │   └── logging.py           # Config logs
 │   │
 │   └── utils/                    # Utilidades
 │       ├── __init__.py
-│       ├── db.py                # Utilidades de base de datos
-│       └── helpers.py           # Funciones auxiliares
+│       ├── db.py                # Utils BD
+│       └── helpers.py           # Utils generales
 │
-├── tests/                        # Tests unitarios y de integración
+├── tests/                        # Tests
 │   ├── __init__.py
-│   ├── test_api/                # Tests de API
-│   ├── test_core/               # Tests del sistema core
-│   ├── test_knowledge/          # Tests de gestión de conocimiento
-│   └── test_vectorstore/        # Tests de vectorización
+│   ├── test_api/
+│   ├── test_orchestrator/
+│   ├── test_retriever/
+│   ├── test_llm/
+│   ├── test_knowledge/
+│   ├── test_vectorstore/
+│   ├── test_documentation/
+│   ├── test_monitoring/
+│   └── test_analysis/
 │
 ├── docs/                         # Documentación
-│   ├── api/                     # Documentación de API
-│   ├── architecture/            # Documentación de arquitectura
-│   └── deployment/              # Documentación de despliegue
+│   ├── api/
+│   ├── architecture/
+│   └── deployment/
 │
 └── logs/                        # Archivos de log
-    ├── .gitkeep
-    ├── api/                     # Logs de API
-    ├── app/                     # Logs de aplicación
-    ├── error/                   # Logs de errores
-    └── audit/                   # Logs de auditoría
+    ├── api/
+    ├── app/
+    ├── error/
+    └── audit/
 ```
 
 ## Notas Importantes
