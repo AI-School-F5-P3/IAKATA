@@ -12,6 +12,7 @@ iakata/
 ├── requirements.txt               # Dependencias del proyecto
 ├── README.md                      # Documentación principal
 ├── .gitignore                     # Archivos ignorados por git
+|
 │
 ├── app/                           # Código principal de la aplicación
 │   ├── __init__.py

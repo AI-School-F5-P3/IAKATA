@@ -1,0 +1,35 @@
+```mermaid
+    flowchart TB
+    LKWEB[LK-WEB]
+    ORQ[Orquestador RAG]
+    LLM[LLM]
+    RET[Retriever]
+    CHAT[Chat]
+    DB_NEW[(Nueva Info)]
+    DB_EXP[(Info Expertos)]
+
+    LKWEB -->|Peticion| ORQ
+    ORQ -->|Consulta| LLM
+    ORQ -->|Busqueda| RET
+    RET -->|Contexto| LLM
+    LLM -->|Respuesta| ORQ
+    ORQ -->|Procesa| CHAT
+    CHAT -->|Envia| LKWEB
+    ORQ -->|Guarda| DB_NEW
+    DB_EXP -->|Base| RET
+
+    classDef web fill:#85B3DD,stroke:#232F3E,stroke-width:2px
+    classDef core fill:#9D65D0,stroke:#232F3E,stroke-width:2px
+    classDef db fill:#527FFF,stroke:#232F3E,stroke-width:2px
+    
+    class LKWEB web
+    class ORQ,LLM,RET,CHAT core
+    class DB_NEW,DB_EXP db
+
+    linkStyle 0 stroke:#ff9900,stroke-width:2
+    linkStyle 1,2 stroke:#3366ff,stroke-width:2
+    linkStyle 3 stroke:#00cc66,stroke-width:2
+    linkStyle 4,5,6 stroke:#ff3366,stroke-width:2
+    linkStyle 7 stroke:#9933cc,stroke-width:2
+    linkStyle 8 stroke:#00cc66,stroke-width:2
+    ```

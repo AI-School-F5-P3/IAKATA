@@ -1,0 +1,173 @@
+```mermaid
+    flowchart TB
+    LKWEB[LK-WEB]
+
+    subgraph API[API REST]
+        CHAT_EP[chat]
+        BOARD_EP[board]
+        DOC_EP[doc]
+        MON_EP[monitor]
+        AN_EP[analysis]
+    end
+
+    subgraph KSM[Knowledge Sources Manager]
+        PDF_PROC[PDF]
+        DB_READER[DB Reader]
+        SRC_MGR[Sources]
+    end
+
+    subgraph IVS[Index & Vector Store]
+        TOK[Tokenizer]
+        NORM[Normalizer]
+        EMB[Embeddings]
+        VEC_IDX[Vector Index]
+    end
+
+    subgraph ORCH[RAG Orchestrator]
+        ORQ[Orchestrator]
+        CHAT[Chat]
+    end
+
+    subgraph RET[Retriever System]
+        SEARCH[Search Engine]
+        RANK[Rank Engine]
+        FILTER[Filter System]
+    end
+
+    subgraph LLM[GPT-4 Module]
+        GPT[GPT-4]
+        TEMP[Temperature]
+        VAL[Validator]
+    end
+
+    subgraph ANALYSIS[Analysis System]
+        KPI[KPI Analyzer]
+        ADV[Advisor]
+        FEED[Feedback]
+    end
+
+    subgraph DOC[Documentation]
+        DOC_GEN[Generator]
+        TEMPLATE[Templates]
+        LEARN_DB[Learning]
+    end
+
+    subgraph MON[Monitoring]
+        STATUS[Status]
+        METRICS[Metrics]
+        ALERT[Alerts]
+    end
+
+    DB_NEW[(New DB)]
+    DB_EXP[(Expert DB)]
+    VEC_DB[(Vector DB)]
+
+    %% Peticiones iniciales
+    LKWEB-->CHAT_EP
+    LKWEB-->BOARD_EP
+    LKWEB-->DOC_EP
+    LKWEB-->MON_EP
+    LKWEB-->AN_EP
+
+    %% API a Orchestrator
+    CHAT_EP-->ORQ
+    BOARD_EP-->ORQ
+    DOC_EP-->ORQ
+    MON_EP-->ORQ
+    AN_EP-->ORQ
+
+    %% Knowledge flow
+    PDF_PROC-->SRC_MGR
+    DB_READER-->SRC_MGR
+    SRC_MGR-->TOK
+    TOK-->NORM
+    NORM-->EMB
+    EMB-->VEC_IDX
+    VEC_IDX-->VEC_DB
+
+    %% Retriever flow
+    ORQ-->SEARCH
+    SEARCH-->RANK
+    RANK-->FILTER
+    FILTER-->VEC_DB
+    FILTER-->GPT
+
+    %% LLM flow
+    GPT-->TEMP
+    TEMP-->VAL
+    VAL-->ORQ
+
+    %% Analysis flow
+    ORQ-->KPI
+    KPI-->ADV
+    ADV-->FEED
+    FEED-->KPI
+    ADV-->ORQ
+
+    %% Doc flow
+    ORQ-->DOC_GEN
+    DOC_GEN-->TEMPLATE
+    TEMPLATE-->LEARN_DB
+    LEARN_DB-->DB_NEW
+
+    %% Monitor flow
+    ORQ-->STATUS
+    STATUS-->METRICS
+    METRICS-->ALERT
+    ALERT-->MON_EP
+
+    %% Response flow
+    CHAT-->CHAT_EP
+    DOC_GEN-->DOC_EP
+    ALERT-->MON_EP
+    KPI-->AN_EP
+    ORQ-->BOARD_EP
+
+    %% Return to LKWEB
+    CHAT_EP-->LKWEB
+    BOARD_EP-->LKWEB
+    DOC_EP-->LKWEB
+    MON_EP-->LKWEB
+    AN_EP-->LKWEB
+
+    %% DB Access
+    DB_READER-.->DB_EXP
+    DB_READER-.->LKWEB
+
+    classDef web fill:#85B3DD,stroke:#232F3E,stroke-width:2px
+    classDef api fill:#ffacac,stroke:#232F3E,stroke-width:2px
+    classDef orch fill:#9D65D0,stroke:#232F3E,stroke-width:2px
+    classDef ret fill:#FF9966,stroke:#232F3E,stroke-width:2px
+    classDef llm fill:#FFA07A,stroke:#232F3E,stroke-width:2px
+    classDef analysis fill:#98FB98,stroke:#232F3E,stroke-width:2px
+    classDef know fill:#90EE90,stroke:#232F3E,stroke-width:2px
+    classDef vec fill:#FFB6C1,stroke:#232F3E,stroke-width:2px
+    classDef doc fill:#DDA0DD,stroke:#232F3E,stroke-width:2px
+    classDef mon fill:#F0E68C,stroke:#232F3E,stroke-width:2px
+    classDef db fill:#527FFF,stroke:#232F3E,stroke-width:2px
+
+    class LKWEB web
+    class CHAT_EP,BOARD_EP,DOC_EP,MON_EP,AN_EP api
+    class ORQ,CHAT orch
+    class SEARCH,RANK,FILTER ret
+    class GPT,TEMP,VAL llm
+    class KPI,ADV,FEED analysis
+    class PDF_PROC,DB_READER,SRC_MGR know
+    class TOK,NORM,EMB,VEC_IDX vec
+    class DOC_GEN,TEMPLATE,LEARN_DB doc
+    class STATUS,METRICS,ALERT mon
+    class DB_NEW,DB_EXP,VEC_DB db
+
+    %% Link styles
+    linkStyle 0,1,2,3,4 stroke:#ff9900,stroke-width:2
+    linkStyle 5,6,7,8,9 stroke:#ff9900,stroke-width:2
+    linkStyle 10,11,12,13,14,15,16 stroke:#90EE90,stroke-width:2
+    linkStyle 17,18,19,20,21 stroke:#3366ff,stroke-width:2
+    linkStyle 22,23,24 stroke:#9933cc,stroke-width:2
+    linkStyle 25,26,27,28,29 stroke:#006400,stroke-width:2
+    linkStyle 30,31,32,33 stroke:#ff69b4,stroke-width:2
+    linkStyle 34,35,36,37 stroke:#ffd700,stroke-width:2
+    linkStyle 38,39,40,41,42 stroke:#ff0000,stroke-width:2
+    linkStyle 43,44,45,46,47 stroke:#ff0000,stroke-width:2
+    linkStyle 48,49 stroke:#999999,stroke-width:2,stroke-dasharray: 5 5
+    ```
