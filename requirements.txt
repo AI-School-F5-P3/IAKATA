@@ -1,0 +1,41 @@
+# Framework API
+fastapi==0.109.0
+uvicorn==0.27.0
+
+# LLM y procesamiento
+openai==1.9.0
+langchain==0.1.0
+pydantic==2.5.3
+
+# Vector Store y embeddings
+faiss-cpu==1.7.4
+sentence-transformers==2.2.2
+
+# Base de datos
+pymysql==1.1.0
+sqlalchemy==2.0.25
+
+# Procesamiento de datos
+numpy==1.26.3
+pandas==2.1.4
+
+# Procesamiento de documentos
+python-multipart==0.0.6
+pypdf2==3.0.1
+
+# Testing
+pytest==7.4.4
+pytest-asyncio==0.23.3
+pytest-cov==4.1.0
+httpx==0.26.0
+
+# Utilidades
+python-dotenv==1.0.0
+python-jose==3.3.0
+passlib==1.7.4
+bcrypt==4.1.2
+loguru==0.7.2
+
+# Tipos
+types-python-jose==3.3.4.20240106
+types-passlib==1.7.7.20240106
