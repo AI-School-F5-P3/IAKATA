@@ -1,9 +1,15 @@
+import sys
+import os
 import pytest
 import json
 from unittest.mock import Mock, patch
 from typing import Dict
 import asyncio
 from unittest.mock import AsyncMock
+
+
+# Agregar la carpeta raíz del proyecto al sys.path manualmente
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 # Importaciones absolutas desde el módulo llm
 from app.llm import (
