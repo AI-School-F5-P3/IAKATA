@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 import json
 import openai
 import logging
@@ -6,16 +8,21 @@ from .types import LLMRequest, LLMResponse, ResponseType
 from .temperature import TemperatureManager
 from .validator import ResponseValidator
 
+load_dotenv()  # Carga las variables del archivo .env
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class LLMModule:
-    def __init__(self, api_key: str, model: str = "gpt-4"):
-        """Initialize the LLM module"""
-        self.api_key = api_key
+    def __init__(self, model: str = "gpt-4o-mini"):
+        """Inicializa el módulo LLM usando la API key desde las variables de entorno"""
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        if not self.api_key:
+            raise ValueError("API Key de OpenAI no encontrada. Asegúrate de configurar el archivo .env.")
+        
         self.model = model
-        openai.api_key = api_key
+        openai.api_key = self.api_key
         self.temp_manager = TemperatureManager()
         self.validator = ResponseValidator()
         
@@ -50,7 +57,14 @@ class LLMModule:
             
             messages = self._prepare_messages(request)
             
-            response = await openai.ChatCompletion.acreate(
+            client = openai.OpenAI()
+
+            # Depuración: imprime los valores antes de hacer la solicitud a OpenAI
+            print(f"Modelo: {self.model}")
+            print(f"Mensajes: {messages}")
+            print(f"Temperatura: {temperature}")
+
+            response = client.chat.completions.create(  # Elimina "await"
                 model=self.model,
                 messages=messages,
                 temperature=temperature,
