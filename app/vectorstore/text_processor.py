@@ -63,10 +63,49 @@ class TextProcessor:
         }
 
     def clean_text(self, text: str) -> str:
-        """Limpia el texto eliminando patrones no deseados."""
-        for pattern in self._patterns_to_remove:
-            text = pattern.sub('', text)
-        return text.strip()
+        """
+        Limpieza mejorada del texto manteniendo la integridad de las oraciones.
+        """
+        try:
+            if not text:
+                return ""
+
+            # 1. Aplicar patrones de limpieza básicos
+            for pattern in self._patterns_to_remove:
+                text = pattern.sub('', text)
+
+            # 2. Normalizar espacios y saltos de línea
+            text = re.sub(r'\s+', ' ', text)
+            
+            # 3. Arreglar puntuación cortada
+            text = re.sub(r'\s+([.,;:!?])', r'\1', text)
+            
+            # 4. Normalizar guiones y símbolos
+            text = text.replace('—', '-').replace('--', '-')
+            text = text.replace('»', '').replace('«', '')
+            
+            # 5. Eliminar caracteres sueltos al inicio
+            text = re.sub(r'^[^a-zA-Z0-9\s]{1,2}\s*', '', text)
+            
+            # 6. Arreglar espacios alrededor de paréntesis
+            text = re.sub(r'\(\s+', '(', text)
+            text = re.sub(r'\s+\)', ')', text)
+            
+            # 7. Asegurar que el texto comienza con letra o número
+            text = re.sub(r'^[^a-zA-Z0-9]+', '', text)
+            
+            # 8. Eliminar espacios al inicio y final
+            text = text.strip()
+            
+            # 9. Asegurar que tenemos una oración completa
+            if text and not text[-1] in '.!?':
+                text += '.'
+                
+            return text
+
+        except Exception as e:
+            logger.error(f"Error en clean_text: {e}")
+            return text.strip()
 
     def process_section(self, section: Dict[str, Any]) -> List[ProcessedText]:
         """

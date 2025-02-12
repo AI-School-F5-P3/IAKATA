@@ -43,6 +43,40 @@ class ChunkManager:
             max_chunk_size: Tamaño máximo permitido para un chunk
             model_name: Nombre del modelo para el tokenizer
         """
+        # Diccionarios de conceptos y pesos semánticos
+        self.KATA_CONCEPTS = {
+            'conceptos_base': [
+                'kata de mejora',
+                'kata de coaching',
+                'lean kata',
+                'toyota kata',
+                'coaching kata',
+                'mejora continua'
+            ],
+            'elementos_proceso': [
+                'estado actual',
+                'estado objetivo',
+                'condición objetivo',
+                'obstáculo',
+                'experimento',
+                'ciclo pdca'
+            ],
+            'conectores_logicos': [
+                'por lo tanto',
+                'en consecuencia',
+                'sin embargo',
+                'por ejemplo',
+                'es decir',
+                'además'
+            ]
+        }
+
+        self.SEMANTIC_WEIGHTS = {
+            'conceptos_base': 1.5,
+            'elementos_proceso': 1.3,
+            'conectores_logicos': 1.0
+        }
+
         try:
             nltk.download('punkt', quiet=True)
             self.tokenizer = tiktoken.encoding_for_model(model_name)
@@ -85,19 +119,10 @@ class ChunkManager:
 
     def find_semantic_boundary(self, text: str, target_idx: int, direction: str = 'forward') -> int:
         """
-        Encuentra el límite semántico más cercano al índice objetivo.
-        
-        Args:
-            text: Texto a analizar
-            target_idx: Índice objetivo
-            direction: Dirección de búsqueda ('forward' o 'backward')
-            
-        Returns:
-            Índice del límite semántico más apropiado
+        Encuentra el límite semántico más cercano usando regex en lugar de NLTK
         """
         try:
-            # Definir rango de búsqueda
-            search_range = 100  # Ajustar según necesidad
+            search_range = 150
             
             if direction == 'forward':
                 search_text = text[target_idx:target_idx + search_range]
@@ -106,29 +131,99 @@ class ChunkManager:
                 search_text = text[max(0, target_idx - search_range):target_idx]
                 offset = max(0, target_idx - search_range)
 
-            # Buscar patrones de límites
+            # 1. Buscar fin de oraciones
+            sentence_endings = [
+                r'\.(?=\s+[A-Z])',  # Punto seguido de espacio y mayúscula
+                r'\.\s*$',          # Punto al final
+                r'\n\n',            # Doble salto de línea
+                r'[\.\?!]\s+'       # Puntuación seguida de espacio
+            ]
+            
             best_boundary = None
             min_distance = float('inf')
             
-            for pattern in self.boundary_patterns:
+            for pattern in sentence_endings:
                 matches = list(re.finditer(pattern, search_text))
-                
                 for match in matches:
-                    boundary_idx = match.start() + offset if direction == 'forward' else match.end() + offset
+                    boundary_idx = match.end() + offset if direction == 'forward' else match.start() + offset
                     distance = abs(boundary_idx - target_idx)
                     
                     if distance < min_distance:
-                        # Verificar coherencia semántica
-                        if self._check_semantic_coherence(text, boundary_idx):
+                        # Verificar que no estamos en medio de un concepto
+                        if not self._breaks_kata_concept(text, boundary_idx):
                             min_distance = distance
                             best_boundary = boundary_idx
 
             return best_boundary if best_boundary is not None else target_idx
-            
+
         except Exception as e:
-            logger.error(f"Error encontrando límite semántico: {str(e)}")
+            logger.error(f"Error en find_semantic_boundary: {str(e)}")
             return target_idx
 
+    def _breaks_kata_concept(self, text: str, boundary_idx: int) -> bool:
+        """Verifica si un punto de corte rompe un concepto Kata."""
+        try:
+            context = text[max(0, boundary_idx - 50):min(len(text), boundary_idx + 50)]
+            for concepts in self.KATA_CONCEPTS.values():
+                for concept in concepts:
+                    if concept in context.lower():
+                        concept_start = context.lower().find(concept)
+                        concept_end = concept_start + len(concept)
+                        if concept_start < 50 and concept_end > 50:
+                            return True
+            return False
+            
+        except Exception as e:
+            logger.error(f"Error en _breaks_kata_concept: {str(e)}")
+            return False
+    
+    def _is_valid_boundary(self, text: str, boundary_idx: int) -> bool:
+        """
+        Valida si una posición es un límite válido para cortar.
+        """
+        try:
+            # Obtener contexto alrededor del límite
+            context_size = 50
+            start = max(0, boundary_idx - context_size)
+            end = min(len(text), boundary_idx + context_size)
+            
+            before_text = text[start:boundary_idx]
+            after_text = text[boundary_idx:end]
+
+            # 1. No cortar en medio de una palabra
+            if boundary_idx > 0 and boundary_idx < len(text):
+                if text[boundary_idx-1].isalnum() and text[boundary_idx].isalnum():
+                    return False
+
+            # 2. Verificar balance de estructuras
+            opening_before = sum(1 for c in before_text if c in '([{')
+            closing_before = sum(1 for c in before_text if c in ')]}')
+            if opening_before != closing_before:
+                return False
+
+            # 3. No cortar si hay un conector lógico cercano al límite
+            for keyword in self.semantic_keywords:
+                if keyword in before_text[-30:] or keyword in after_text[:30]:
+                    return False
+
+            # 4. Verificar que no estamos en medio de una enumeración
+            number_pattern = r'\d+\.'
+            if (re.search(number_pattern, before_text[-10:]) or 
+                re.search(number_pattern, after_text[:10])):
+                return False
+
+            # 5. Preferir cortar después de puntuación
+            if boundary_idx > 0:
+                if text[boundary_idx-1] in '.!?':
+                    return True
+
+            return True
+
+        except Exception as e:
+            logger.error(f"Error en _is_valid_boundary: {e}")
+            return True
+    
+    
     def _check_semantic_coherence(self, text: str, boundary_idx: int) -> bool:
         """
         Verifica la coherencia semántica alrededor de un punto de corte.
@@ -170,12 +265,6 @@ class ChunkManager:
     def create_chunks(self, processed_text: ProcessedText) -> List[Chunk]:
         """
         Crea chunks a partir de un texto procesado manteniendo coherencia semántica.
-        
-        Args:
-            processed_text: Texto procesado con metadata
-            
-        Returns:
-            Lista de chunks procesados
         """
         try:
             chunks = []

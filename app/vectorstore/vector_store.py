@@ -288,9 +288,19 @@ class VectorStore:
             # Obtener IDs reales de los vectores encontrados
             found_ids = []
             for idx in ids[0]:
-                # Extract numeric part from the ID string
-                numeric_part = re.search(r'\d+', idx).group()
-                found_ids.append(self.vectorizer.text_ids[int(numeric_part)])
+                # Extraer todas las secuencias numéricas de la cadena del ID
+                numeric_parts = re.findall(r'\d+', idx)
+                if not numeric_parts:
+                    logger.error(f"No se encontró parte numérica en el ID: {idx}")
+                    continue
+
+                # Suponiendo que el número relevante es el último
+                index = int(numeric_parts[-1])
+                if index < len(self.vectorizer.text_ids):
+                    found_ids.append(self.vectorizer.text_ids[index])
+                else:
+                    logger.error(f"Índice {index} fuera de rango para text_ids (tamaño: {len(self.vectorizer.text_ids)}).")
+                    continue
             
             # Iterar sobre los resultados
             for score, text_id in zip(scores[0], found_ids):
@@ -337,6 +347,8 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Error en búsqueda híbrida: {e}")
             return []
+
+
     
     def _get_chunk_context(self, chunk_id: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -388,7 +400,11 @@ class VectorStore:
             query_lower = query.lower()
 
             # Early returns y penalizaciones fuertes
-            if any(term in text for term in ['copyright', 'isbn', 'reproducción', 'distribución', 'reservados']):
+            irrelevant_terms = [
+                'copyright', 'isbn', 'reproducción', 'distribución', 'reservados',
+                'todos los derechos', 'editorial', 'impreso en'
+            ]
+            if any(term in text for term in irrelevant_terms):
                 return base_score * 0.2
 
             if 'introducción' in text and not any(term in text for term in ['implementar', 'método', 'paso']):
@@ -396,12 +412,25 @@ class VectorStore:
 
             # 1. Evaluar relevancia directa a la query
             multiplier = 1.0
+
+            # Detección de conceptos Lean Kata
+            lean_kata_concepts = [
+                'kata de mejora', 'kata de coaching', 'lean kata',
+                'estado actual', 'estado objetivo', 'condición objetivo'
+            ]
+            if any(concept in text for concept in lean_kata_concepts):
+                multiplier *= 1.1
+
             if 'cómo' in query_lower:
                 # Penalizar referencias indirectas
                 if 'coaching kata' in text and not any(term in text for term in ['implementar', 'paso', 'método']):
                     multiplier *= 0.7
                 # Boost para contenido práctico
-                if any(term in text for term in ['implementar', 'aplicar', 'paso', 'método']):
+                practical_terms = [
+                    'implementar', 'aplicar', 'paso', 'método',
+                    'procedimiento', 'realizar', 'ejecutar', 'llevar a cabo'
+                ]
+                if any(term in text for term in practical_terms):
                     multiplier *= 1.4
             elif 'qué' in query_lower:
                 if any(term in text for term in ['es', 'significa', 'definición', 'concepto']):
@@ -420,10 +449,11 @@ class VectorStore:
             # 2. Evaluar estructura del contenido
             content_type = metadata.get('type', '')
             if content_type == 'procedure':
-                if any(str(i) + '.' in text for i in range(1, 6)):
+                sequence_markers = [
+                    str(i) + '.' for i in range(1, 6)
+                ] + ['primero', 'segundo', 'tercero', 'siguiente', 'después', 'luego']
+                if any(marker in text for marker in sequence_markers):
                     multiplier *= 1.3
-                elif any(term in text for term in ['primero', 'siguiente', 'después']):
-                    multiplier *= 1.2
             elif content_type == 'example':
                 if 'cómo' in query_lower and any(term in text for term in ['implementar', 'aplicar']):
                     multiplier *= 1.1
@@ -449,7 +479,7 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Error calculando score final: {e}")
             return semantic_score * 0.3
-    
+        
     def save(self, directory: Path) -> None:
         """
         Guarda el estado completo incluyendo información de chunks
