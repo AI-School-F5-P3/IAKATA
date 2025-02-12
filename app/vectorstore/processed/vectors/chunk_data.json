@@ -1,0 +1,311 @@
+{
+  "relations": {
+    "6_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": null,
+      "section_id": "6"
+    },
+    "6_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "s rutinas de gestión de personal de Toyota, este l",
+      "overlap_next": "utizaron la herramienta de Toyota como «mapa de fl",
+      "section_id": "6"
+    },
+    "6_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "utizaron la herramienta de Toyota como «mapa de fl",
+      "overlap_next": "s miembros, incluido usted. En muchas organizacion",
+      "section_id": "6"
+    },
+    "6_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "s miembros, incluido usted. En muchas organizacion",
+      "overlap_next": null,
+      "section_id": "6"
+    },
+    "5_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": null,
+      "section_id": "5"
+    },
+    "5_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": " gestión de personal de Toyota, este libro analiza",
+      "overlap_next": "utizaron la herramienta de Toyota como «mapa de fl",
+      "section_id": "5"
+    },
+    "5_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "utizaron la herramienta de Toyota como «mapa de fl",
+      "overlap_next": " de todos sus miembros, incluido usted. En muchas ",
+      "section_id": "5"
+    },
+    "5_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": " de todos sus miembros, incluido usted. En muchas ",
+      "overlap_next": null,
+      "section_id": "5"
+    },
+    "23_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": null,
+      "section_id": "23"
+    },
+    "23_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "ales de la compañía —denominadas kata. Además, Toy",
+      "overlap_next": " de flujo de valor» y lo explicaron por primera ve",
+      "section_id": "23"
+    },
+    "23_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": " de flujo de valor» y lo explicaron por primera ve",
+      "overlap_next": "modo de pensar, actuar y reaccionar de todos sus m",
+      "section_id": "23"
+    },
+    "23_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "modo de pensar, actuar y reaccionar de todos sus m",
+      "overlap_next": null,
+      "section_id": "23"
+    },
+    "1_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": null,
+      "section_id": "1"
+    },
+    "1_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "esultados y una ventaja competitiva ininterrumpida",
+      "overlap_next": "roductiva. Sin embargo, aquel libro no profundizab",
+      "section_id": "1"
+    },
+    "1_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "roductiva. Sin embargo, aquel libro no profundizab",
+      "overlap_next": "o, al compartimiento de fotos, a las descargas de ",
+      "section_id": "1"
+    },
+    "1_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "o, al compartimiento de fotos, a las descargas de ",
+      "overlap_next": null,
+      "section_id": "1"
+    },
+    "4_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": null,
+      "section_id": "4"
+    },
+    "4_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "importante elemento para la comprensión del Lean y",
+      "overlap_next": null,
+      "section_id": "4"
+    },
+    "4_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "izaba el camino que más facilitaba su objetivo: lo",
+      "overlap_next": "o se ha adoptado en su totalidad y con éxito en la",
+      "section_id": "4"
+    },
+    "4_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "o se ha adoptado en su totalidad y con éxito en la",
+      "overlap_next": null,
+      "section_id": "4"
+    },
+    "16_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": null,
+      "section_id": "16"
+    },
+    "16_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "importante elemento para la comprensión del Lean y",
+      "overlap_next": null,
+      "section_id": "16"
+    },
+    "16_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "r qué ellos no eran capaces de alcanzar los extrao",
+      "overlap_next": "sando el método científico y con todo ello convert",
+      "section_id": "16"
+    },
+    "16_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "sando el método científico y con todo ello convert",
+      "overlap_next": null,
+      "section_id": "16"
+    },
+    "9_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": null,
+      "section_id": "9"
+    },
+    "9_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "importante elemento para la comprensión del Lean y",
+      "overlap_next": null,
+      "section_id": "9"
+    },
+    "9_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": " Toyota. El propio autor del libro nos lo cuenta c",
+      "overlap_next": "ica y la experiencia adquirida en estos años, he i",
+      "section_id": "9"
+    },
+    "9_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "ica y la experiencia adquirida en estos años, he i",
+      "overlap_next": null,
+      "section_id": "9"
+    }
+  },
+  "section_mappings": {
+    "6": [
+      "6_chunk_0",
+      "6_chunk_1",
+      "6_chunk_2",
+      "6_chunk_3",
+      "6_chunk_0",
+      "6_chunk_0",
+      "6_chunk_0",
+      "6_chunk_0",
+      "6_chunk_0",
+      "6_chunk_0",
+      "6_chunk_0"
+    ],
+    "5": [
+      "5_chunk_0",
+      "5_chunk_1",
+      "5_chunk_2",
+      "5_chunk_3",
+      "5_chunk_0",
+      "5_chunk_0",
+      "5_chunk_0",
+      "5_chunk_0",
+      "5_chunk_0",
+      "5_chunk_0",
+      "5_chunk_0",
+      "5_chunk_0"
+    ],
+    "23": [
+      "23_chunk_0",
+      "23_chunk_1",
+      "23_chunk_2",
+      "23_chunk_3",
+      "23_chunk_0",
+      "23_chunk_0",
+      "23_chunk_0",
+      "23_chunk_0",
+      "23_chunk_0",
+      "23_chunk_0",
+      "23_chunk_0"
+    ],
+    "1": [
+      "1_chunk_0",
+      "1_chunk_1",
+      "1_chunk_2",
+      "1_chunk_3",
+      "1_chunk_0",
+      "1_chunk_0",
+      "1_chunk_0",
+      "1_chunk_0",
+      "1_chunk_0",
+      "1_chunk_0",
+      "1_chunk_0",
+      "1_chunk_0"
+    ],
+    "4": [
+      "4_chunk_0",
+      "4_chunk_1",
+      "4_chunk_2",
+      "4_chunk_3",
+      "4_chunk_0",
+      "4_chunk_0",
+      "4_chunk_0",
+      "4_chunk_0",
+      "4_chunk_1",
+      "4_chunk_0",
+      "4_chunk_1",
+      "4_chunk_0",
+      "4_chunk_1",
+      "4_chunk_0",
+      "4_chunk_0"
+    ],
+    "16": [
+      "16_chunk_0",
+      "16_chunk_1",
+      "16_chunk_2",
+      "16_chunk_3",
+      "16_chunk_0",
+      "16_chunk_1",
+      "16_chunk_0",
+      "16_chunk_0",
+      "16_chunk_0",
+      "16_chunk_0",
+      "16_chunk_1",
+      "16_chunk_0",
+      "16_chunk_1",
+      "16_chunk_0",
+      "16_chunk_1",
+      "16_chunk_0",
+      "16_chunk_0"
+    ],
+    "9": [
+      "9_chunk_0",
+      "9_chunk_1",
+      "9_chunk_2",
+      "9_chunk_3",
+      "9_chunk_0",
+      "9_chunk_1",
+      "9_chunk_0",
+      "9_chunk_0",
+      "9_chunk_0",
+      "9_chunk_0",
+      "9_chunk_1",
+      "9_chunk_0",
+      "9_chunk_1",
+      "9_chunk_0",
+      "9_chunk_1",
+      "9_chunk_0",
+      "9_chunk_0"
+    ]
+  }
+}
