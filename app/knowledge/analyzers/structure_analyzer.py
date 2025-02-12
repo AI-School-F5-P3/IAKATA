@@ -360,7 +360,8 @@ IMPORTANTE: Devolver SOLO JSON válido, sin texto adicional."""
     
     def extract_section_content(self, book_content: Dict, start_page: int, end_page: int) -> Dict[str, Any]:
         """
-        Extrae y estructura el contenido de una sección
+        Extrae y estructura el contenido de una sección manteniendo la coherencia 
+        de procedimientos y ejemplos
         """
         content = {
             'full_text': '',
@@ -370,32 +371,85 @@ IMPORTANTE: Devolver SOLO JSON válido, sin texto adicional."""
             'procedures': []
         }
         
-        current_paragraph = ''
+        current_segment = {
+            'text': '',
+            'type': None
+        }
         
         for page_num in range(start_page, end_page + 1):
             page_text = book_content['pages'][page_num]['text']
             
-            # Acumular texto completo
-            content['full_text'] += page_text + '\n'
+            # 1. Detectar secciones de procedimientos completos
+            procedure_markers = [
+                'paso[s]?[:]?',
+                'procedimiento[:]?',
+                '\d+\.\s+[A-Z]'  # Números seguidos de punto y mayúscula
+            ]
             
-            # Procesar párrafos
+            # 2. Detectar ejemplos completos
+            example_markers = [
+                'por ejemplo[,:]',
+                'ejemplo[,:]',
+                'caso práctico'
+            ]
+            
             paragraphs = page_text.split('\n\n')
             for paragraph in paragraphs:
                 paragraph = paragraph.strip()
                 if not paragraph:
                     continue
                     
-                # Identificar tipo de contenido
-                if self.is_example(paragraph):
-                    content['examples'].append(paragraph)
-                elif self.is_definition(paragraph):
-                    content['definitions'].append(paragraph)
-                elif self.is_procedure(paragraph):
-                    content['procedures'].append(paragraph)
-                elif self.is_key_excerpt(paragraph):
-                    content['key_excerpts'].append(paragraph)
-        
+                # Si estamos en medio de un segmento, continuarlo
+                if current_segment['type']:
+                    if self._is_segment_end(paragraph, current_segment['type']):
+                        # Guardar segmento completo
+                        if current_segment['type'] == 'procedure':
+                            content['procedures'].append(current_segment['text'])
+                        elif current_segment['type'] == 'example':
+                            content['examples'].append(current_segment['text'])
+                        current_segment = {'text': '', 'type': None}
+                    else:
+                        current_segment['text'] += '\n' + paragraph
+                        continue
+                
+                # Detectar nuevo segmento
+                if any(re.search(pattern, paragraph, re.I) for pattern in procedure_markers):
+                    current_segment = {
+                        'text': paragraph,
+                        'type': 'procedure'
+                    }
+                elif any(re.search(pattern, paragraph, re.I) for pattern in example_markers):
+                    current_segment = {
+                        'text': paragraph,
+                        'type': 'example'
+                    }
+                else:
+                    content['full_text'] += paragraph + '\n\n'
+                    
         return content
+
+    def _is_segment_end(self, text: str, segment_type: str) -> bool:
+        """Detecta si un párrafo marca el fin de un segmento"""
+        if segment_type == 'procedure':
+            # Detectar fin de procedimiento
+            end_markers = [
+                r'\n\s*\d+\.',  # Nuevo número
+                r'conclusión',
+                r'resumen',
+                r'siguiente'
+            ]
+            return any(re.search(pattern, text, re.I) for pattern in end_markers)
+        
+        elif segment_type == 'example':
+            # Detectar fin de ejemplo
+            end_markers = [
+                r'\.',  # Punto final
+                r'por tanto',
+                r'en conclusión'
+            ]
+            return any(re.search(pattern, text, re.I) for pattern in end_markers)
+            
+        return False
     
     def create_analysis_prompt(self, sections: List[Dict]) -> str:
         """
@@ -457,15 +511,37 @@ IMPORTANTE: Devolver SOLO JSON válido, sin texto adicional."""
 
     def is_procedure(self, text: str) -> bool:
         """Identifica si un texto describe un procedimiento"""
-        procedure_patterns = [
-            r'paso[s]?[:]?',
-            r'procedimiento[:]?',
-            r'método[:]?',
-            r'primero[,.]',
-            r'siguiente[:]?',
-            r'\d+\.\s'  # Números seguidos de punto
+        # Patrones específicos de Lean Kata
+        kata_procedure_patterns = [
+            r'kata de mejora[:]?\s+(?:\d+\.|paso|primero)',
+            r'kata de coaching[:]?\s+(?:\d+\.|paso|primero)',
+            r'rutina[s]? de (?:mejora|coaching)[:]?\s+(?:\d+\.|paso|primero)',
+            r'ciclo pdca[:]?\s+(?:\d+\.|paso|primero)',
+            r'implementación de kata[:]?\s+(?:\d+\.|paso|primero)',
+            r'método[s]? de (?:mejora|coaching)[:]?\s+(?:\d+\.|paso|primero)'
         ]
-        return any(re.search(pattern, text.lower()) for pattern in procedure_patterns)
+        
+        # Si encontramos un patrón específico de Kata, es alta prioridad
+        if any(re.search(pattern, text.lower()) for pattern in kata_procedure_patterns):
+            return True
+        
+        # Patrones generales de procedimientos
+        general_patterns = [
+            r'paso[s]?[:]?\s+(?:\d+\.|primero)',
+            r'procedimiento[:]?\s+(?:\d+\.|primero)',
+            r'método[:]?\s+(?:\d+\.|primero)',
+            r'(?:1|primero)[.,]\s+[A-Z]'  # Inicio de enumeración
+        ]
+        
+        # Verificar que el texto tiene estructura de procedimiento
+        has_general_pattern = any(re.search(pattern, text.lower()) for pattern in general_patterns)
+        
+        if has_general_pattern:
+            # Verificar que tiene múltiples pasos
+            steps = re.findall(r'\d+\.|\b(?:primero|segundo|tercero)\b', text.lower())
+            return len(steps) > 1
+            
+        return False
 
     def is_key_excerpt(self, text: str) -> bool:
         """Identifica si un texto es un extracto clave"""
@@ -944,22 +1020,17 @@ IMPORTANTE: Devolver SOLO JSON válido, sin texto adicional."""
                                 
 
     def analyze_book_structure(self, book_content: Dict) -> Dict:
-        """
-        Analiza la estructura de un libro individual con extracción mejorada
-        """
         try:
-            initial_pages = ""
             analyzed_sections = []
             
-            # Primera pasada: identificar secciones potenciales
-            for i, page in enumerate(book_content['pages'][:30]):
+            # Buscar secciones de procedimientos primero
+            for i, page in enumerate(book_content['pages']):
                 page_text = page['text']
-                current_text = f"Página {page['page_number']}:\n{page_text}\n\n"
-                initial_pages += current_text
                 
-                # Si es inicio de sección potencial
-                if self.is_potential_section_start(page_text):
-                    # Encontrar rango para la sección
+                # Priorizar secciones que contengan procedimientos Kata
+                if any(keyword in page_text.lower() for keyword in 
+                    ['kata de mejora', 'kata de coaching', 'rutina de mejora', 'ciclo pdca']):
+                    
                     ranges = self.find_page_ranges(
                         text=page_text,
                         book_content=book_content,
@@ -967,19 +1038,20 @@ IMPORTANTE: Devolver SOLO JSON válido, sin texto adicional."""
                     )
                     
                     if ranges:
-                        range_dict = ranges[0]
-                        # Extraer contenido completo
                         section_content = self.extract_section_content(
                             book_content,
-                            range_dict['start'],
-                            range_dict['end']
+                            ranges[0]['start'],
+                            ranges[0]['end']
                         )
                         
-                        analyzed_sections.append({
-                            'page_range': range_dict,
-                            'content': section_content,
-                            'title': self.extract_section_title(page_text)
-                        })
+                        if section_content['procedures']:  # Si encontramos procedimientos
+                            analyzed_sections.append({
+                                'page_range': ranges[0],
+                                'content': section_content,
+                                'title': self.extract_section_title(page_text),
+                                'priority': 'high'
+                            })
+            
 
             # Preparar contenido para análisis GPT
             analysis_content = self.create_analysis_prompt(analyzed_sections)
