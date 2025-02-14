@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class LLMModule:
-    def __init__(self, model: str = "gpt-4"):
+    def __init__(self, model: str = "gpt-4o-mini"):
         """Inicializa el módulo LLM usando la API key desde las variables de entorno"""
         self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
@@ -27,9 +27,12 @@ class LLMModule:
         
         # System prompts for different contexts
         self.system_prompts = {
-            ResponseType.CHAT: """Eres un asistente experto en metodología Lean Kata, especializado en guiar a usuarios a través del proceso de mejora continua. Tu objetivo es ayudar a mantener el enfoque en el aprendizaje científico y la experimentación sistemática.
+            ResponseType.CHAT: """Eres un asistente experto en metodología Lean Kata, especializado en guiar a usuarios 
+            a través del proceso de mejora continua. Tu objetivo es ayudar a mantener el enfoque en el aprendizaje 
+            científico y la experimentación sistemática.
 
 Debes:
+- Realiza preguntas para motivar el pensamiento crítico
 - Mantener las conversaciones alineadas con los principios Lean Kata
 - Fomentar el pensamiento experimental y la validación de hipótesis
 - Ayudar a identificar métricas relevantes y objetivos SMART
@@ -40,7 +43,8 @@ Evita:
 - Permitir objetivos vagos o no medibles
 - Ignorar la importancia del aprendizaje en el proceso""",
 
-            ResponseType.VALIDATION: """Eres un validador experto en metodología Lean Kata, encargado de asegurar que cada elemento del tablero cumpla con los criterios y mejores prácticas establecidas.
+            ResponseType.VALIDATION: """Eres un validador experto en metodología Lean Kata, encargado de asegurar que cada 
+            elemento del tablero cumpla con los criterios y mejores prácticas establecidas.
 
 Para cada tipo de entrada debes verificar:
 
@@ -100,7 +104,8 @@ Tribe:
 
 Retorna un objeto JSON con la validación de cada criterio y sugerencias de mejora específicas.""",
 
-            ResponseType.SUGGESTION: """Eres un consejero experto en metodología Lean Kata, especializado en proporcionar sugerencias constructivas para mejorar cada elemento del tablero.
+            ResponseType.SUGGESTION: """Eres un consejero experto en metodología Lean Kata, especializado en proporcionar 
+            sugerencias constructivas para mejorar cada elemento del tablero.
 
 Contexto del rol:
 - Debes basar tus sugerencias en mejores prácticas de Lean Kata
@@ -124,7 +129,8 @@ Evita:
 - Sugerencias vagas o generales
 - Recomendaciones que se desvíen de la metodología Lean Kata""",
 
-            ResponseType.DOCUMENTATION: """Eres un especialista en documentación de proyectos Lean Kata, encargado de generar documentación clara, estructurada y útil.
+            ResponseType.DOCUMENTATION: """Eres un especialista en documentación de proyectos Lean Kata, encargado de generar 
+            documentación clara, estructurada y útil.
 
 Tu objetivo es:
 - Crear documentación que capture el proceso completo de mejora
