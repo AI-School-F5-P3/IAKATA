@@ -1,10 +1,10 @@
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
 import logging
-from text_processor import TextProcessor
-from common_types import TextType, ProcessedText, Chunk
-from vectorizer import Vectorizer
-from metadata_manager import MetadataManager
+from .text_processor import TextProcessor
+from .common_types import TextType, ProcessedText, Chunk
+from .vectorizer import Vectorizer
+from .metadata_manager import MetadataManager
 import numpy as np
 import json
 from tqdm import tqdm

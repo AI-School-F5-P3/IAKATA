@@ -1,4 +1,4 @@
-# Mejora de la clase Vectorizer
+# app/vectorstore/vectorizer.py
 from typing import List, Tuple, Optional, Dict, Any
 import numpy as np
 import faiss
@@ -6,9 +6,10 @@ from sentence_transformers import SentenceTransformer
 import logging
 from pathlib import Path
 import torch
-from cache_manager import CacheManager
-from quality_validator import QualityValidator
-from retry_manager import RetryManager
+from .cache_manager import CacheManager
+from .quality_validator import QualityValidator
+from .retry_manager import RetryManager
+from .chunk_manager import Chunk 
 
 logger = logging.getLogger(__name__)
 
@@ -259,48 +260,26 @@ class Vectorizer:
             logger.error(f"Error cargando Vectorizer: {str(e)}")
             raise
         
-    def search(self, query_embedding: np.ndarray, k: int = 5) -> Tuple[np.ndarray, List[str]]:
-        """
-        Busca los vectores más similares para un embedding de consulta
-        """
-        try:
-            logger.info(f"Iniciando búsqueda en índice FAISS")
-            
-            # Asegurar que el query es 2D
-            if len(query_embedding.shape) == 1:
-                query_embedding = query_embedding.reshape(1, -1)
-            
-            logger.info(f"Query shape después de reshape: {query_embedding.shape}")
-            
-            # Normalizar vector de consulta
-            faiss.normalize_L2(query_embedding)
-            
-            # Verificar índice
-            if self.index.ntotal == 0:
-                logger.error("El índice FAISS está vacío")
-                return np.array([]), []
-                
-            logger.info(f"Índice FAISS contiene {self.index.ntotal} vectores")
-            
-            # Realizar búsqueda
-            distances, indices = self.index.search(
-                query_embedding.astype(np.float32),
-                min(k, self.index.ntotal)
-            )
-            
-            logger.info(f"Búsqueda FAISS completada - Distancias: {distances}")
-            logger.info(f"Índices encontrados: {indices}")
-            
-            # Convertir distancias a scores
-            scores = distances[0]
-            
-            # Obtener IDs
-            result_ids = [self.text_ids[idx] for idx in indices[0] if idx < len(self.text_ids)]
-            
-            logger.info(f"IDs recuperados: {result_ids}")
-            
-            return scores, result_ids
-                
-        except Exception as e:
-            logger.error(f"Error en búsqueda FAISS: {e}", exc_info=True)
-            return np.array([]), []
+    def search(self, query: str, k: int) -> List[Chunk]:
+        """Realiza una búsqueda en el índice FAISS."""
+        query_vector = self.model.encode([query])
+        faiss.normalize_L2(query_vector)
+        distances, indices = self.index.search(query_vector, k=k)
+        
+        logger.info(f"Búsqueda FAISS completada - Distancias: {distances}")
+        logger.info(f"Índices encontrados: {indices}")
+        
+        chunks = []
+        for idx in indices[0]:
+            if idx >= len(self.chunk_ids):
+                logger.error(f"Índice {idx} fuera de los límites de chunk_ids")
+                continue
+            chunk_id = self.chunk_ids[idx]
+            if not isinstance(chunk_id, str):
+                logger.error(f"chunk_id no es str: {chunk_id}")
+                continue
+            chunk = self.chunk_store.get(chunk_id)
+            if chunk:
+                chunks.append(chunk)
+        
+        return chunks

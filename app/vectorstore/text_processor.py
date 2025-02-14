@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from enum import Enum
 import re
 import logging
-from chunk_manager import ChunkManager
-from common_types import TextType, ProcessedText, Chunk
+from .chunk_manager import ChunkManager
+from .common_types import TextType, ProcessedText, Chunk
 
 logger = logging.getLogger(__name__)
 

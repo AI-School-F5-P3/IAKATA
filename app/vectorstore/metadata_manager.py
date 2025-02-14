@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import logging
 from dataclasses import asdict
-from text_processor import ProcessedText, TextType
+from .text_processor import ProcessedText, TextType
 
 logger = logging.getLogger(__name__)
 

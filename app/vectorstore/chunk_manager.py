@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import nltk
 from nltk.tokenize import sent_tokenize
 import logging
-from common_types import TextType, ProcessedText, Chunk
+from .common_types import TextType, ProcessedText, Chunk
 import tiktoken
 
 logger = logging.getLogger(__name__)
