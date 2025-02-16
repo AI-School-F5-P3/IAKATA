@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import logging
 from dataclasses import asdict
-from .text_processor import ProcessedText, TextType
+from .common_types import ProcessedText, TextType
 
 logger = logging.getLogger(__name__)
 
@@ -153,7 +153,6 @@ class MetadataManager:
     def load(self, directory: Path):
         """
         Carga metadatos desde archivos JSON
-        
         Args:
             directory: Directorio donde están los archivos
         """
@@ -162,22 +161,25 @@ class MetadataManager:
             metadata_file = directory / "metadata.json"
             with open(metadata_file, 'r', encoding='utf-8') as f:
                 self.metadata = json.load(f)
-                
+
+            logger.info(f"Metadatos cargados: {len(self.metadata)}")
+
             # Cargar mapeo de secciones
             mapping_file = directory / "section_mapping.json"
             with open(mapping_file, 'r', encoding='utf-8') as f:
                 self.section_mapping = json.load(f)
-                
+
             # Actualizar contador de IDs
             if self.metadata:
                 max_id = max(int(text_id.split('_')[-1]) for text_id in self.metadata.keys())
                 self.id_counter = max_id + 1
-                
-            logger.info(f"Metadatos cargados desde {directory}")
-            
+
+            logger.info(f"Metadatos y mapeo de secciones cargados desde {directory}")
+
         except Exception as e:
             logger.error(f"Error al cargar metadatos: {str(e)}")
             raise
+
             
     def get_stats(self) -> Dict[str, Any]:
         """

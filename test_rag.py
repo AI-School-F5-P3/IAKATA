@@ -3,7 +3,11 @@ import logging
 from app.config.logging import setup_logging
 from app.orchestrator.orchestrator import RAGOrchestrator
 from app.vectorstore.vector_store import VectorStore
+from app.llm.types import LLMResponse
+from app.llm.gpt import LLMModule
 from pathlib import Path
+from unittest.mock import AsyncMock
+
 
 # Configurar logging
 setup_logging()
@@ -11,73 +15,75 @@ logger = logging.getLogger(__name__)
 
 async def test_board_validation():
     try:
-        # Inicializar el orquestador
-        rag = RAGOrchestrator()
-        
-        # Cargar vector store desde los archivos procesados
+        # Inicializar vector store y cargar datos
         vector_store_dir = Path("app/vectorstore/processed/vectors")
-        rag.vector_store.load(vector_store_dir)
-        
-        # Simular una petición de tablero - Challenge
+        vector_store = VectorStore()
+        vector_store.load(vector_store_dir)
+
+        # Inicializar el LLM real (o, si se requiere, un mock para pruebas unitarias)
+        llm = LLMModule()  # O usa un mock si lo prefieres en pruebas unitarias
+        # También inicializa o proporciona el validador si es necesario
+        validator = llm.validator  # o ResponseValidator()
+
+        # Inicializar el orquestador con instancias reales
+        rag = RAGOrchestrator(
+            vector_store=vector_store,
+            llm=llm,
+            validator=validator
+        )
+
+        # Simular board content como lo recibiría la API
         board_content = {
             "title": "Mejorar eficiencia en línea de producción",
             "description": """
             Necesitamos mejorar la eficiencia de nuestra línea de producción principal
-            reduciendo los tiempos de ciclo y minimizando los desperdicios. Actualmente
-            tenemos retrasos significativos y alta variabilidad en los procesos.
-            """,
-            "target_date": "2025-06-30",
-            "metrics": {
-                "current_cycle_time": 45,
-                "target_cycle_time": 30,
-                "current_waste_percentage": 15,
-                "target_waste_percentage": 5
-            }
+            reduciendo los tiempos de ciclo y minimizando los desperdicios.
+            """
+        }
+        context = {
+            "project_type": "manufacturing",
+            "team_size": 5,
+            "previous_challenges": []
         }
 
-        # Procesar la petición
-        logger.info("Procesando petición de validación de Challenge...")
+        # Llamar al nuevo método que simula la llamada de API
         response = await rag.process_board_request(
             board_id="TEST-001",
             section_type="challenge",
             content=board_content,
-            context={
-                "project_type": "manufacturing",
-                "team_size": 5,
-                "previous_challenges": []
-            }
+            context=context
         )
 
-       # Imprimir resultados
+        # Imprimir resultados de la respuesta
         print("\n=== Resultados de la Validación ===")
-        print(f"\nContenido de la respuesta:")
-        print(response.get("content"))
+        print(f"Contenido de la respuesta:\n{response.content}")
 
-        if "validation_results" in response:
-            print("\nResultados de validación:")
-            for key, value in response["validation_results"].items():
-                print(f"- {key}: {'✓' if value else '✗'}")
+        if response.validation_results:
+            print("\nEstado de la validación:")
+            for key, value in response.validation_results.items():
+                if key != 'validation_error':  # No mostrar errores de validación como resultados
+                    print(f"- {key}: {'✓' if value else '✗'}")
 
-        if "suggestions" in response:
+        if response.suggestions:
             print("\nSugerencias:")
-            for suggestion in response["suggestions"]:
+            for suggestion in response.suggestions:
                 print(f"- {suggestion}")
 
-        # Paso 2: Verificar la estructura de response antes de acceder a "metadata" y "vector_results"
-        if isinstance(response, dict):  # Verifica si response es un diccionario
-            if "metadata" in response and "vector_results" in response["metadata"]:  # Verifica si las claves existen
-                print("\nContexto recuperado:")
-                for result in response["metadata"]["vector_results"]:
-                    print(f"\nTexto relevante (score: {result['score']:.2f}):")
-                    print(result["text"][:200] + "...")
-            else:
-                print("\nLa respuesta no contiene 'metadata' o 'vector_results'.")
-        else:
-            print("\nLa respuesta no es un diccionario:", response)
-    except Exception as e:
-        logger.error(f"Error durante la ejecución: {str(e)}")
-        raise
+        if response.metadata and "sources" in response.metadata:
+            print("\nFuentes utilizadas:")
+            for source in response.metadata["sources"]:
+                print(f"- ID: {source['id']} (Score: {source['score']:.2f})")
 
-# Ejecutar el test
+        # Si hubo algún error de validación, mostrarlo al final
+        if response.validation_results and 'validation_error' in response.validation_results:
+            print(f"\nError de validación: {response.validation_results['validation_error']}")
+
+    except Exception as e:
+        print(f"Error durante la ejecución: {e}")
+
 if __name__ == "__main__":
+    import asyncio
     asyncio.run(test_board_validation())
+
+
+

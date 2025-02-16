@@ -1,307 +1,263 @@
-from typing import Dict, List, Optional, Tuple
-from app.llm.types import ResponseType, LLMRequest, LLMResponse
-from app.llm.gpt import LLMModule
+from typing import Dict, List, Optional, Any, Awaitable
+from pydantic import BaseModel
+
 from app.vectorstore.vector_store import VectorStore
 from app.vectorstore.common_types import TextType, ProcessedText
-from app.vectorstore.metadata_manager import MetadataManager
-import json
+from app.llm.types import LLMRequest, LLMResponse, ResponseType
+from app.llm.gpt import LLMModule
+from app.llm.validator import ResponseValidator
+from app.retriever.types import SearchQuery, SearchResult
 import logging
-from typing import Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
 class RAGOrchestrator:
-    def __init__(self):
-        """Inicializa el orquestador RAG"""
-        self.vector_store = VectorStore()
-        self.llm = LLMModule()
-        self.metadata_manager = MetadataManager()
-        
-    async def process_board_request(
-        self, 
-        board_id: str,
-        section_type: str,
-        content: Dict,
-        context: Optional[Dict] = None
-    ) -> Dict:
-        """
-        Procesa una petición relacionada con un tablero
-        
-        Args:
-            board_id: Identificador del tablero
-            section_type: Tipo de sección (challenge, target, etc.)
-            content: Contenido del tablero
-            context: Contexto adicional opcional
-            
-        Returns:
-            Dict con la respuesta procesada
-        """
-        try:
-            # 1. Preparar contexto de búsqueda
-            search_context = self._prepare_search_context(section_type, content)
-            logger.info(f"Contexto de búsqueda preparado para {board_id}")
-
-            # 2. Realizar búsqueda semántica
-            relevant_chunks = await self._retrieve_relevant_context(
-                search_context=search_context,
-                board_id=board_id,
-                section_type=section_type
-            )
-            logger.info(f"Recuperados {len(relevant_chunks)} chunks relevantes")
-
-            # 3. Generar prompt enriquecido
-            prompt = self._build_prompt(
-                section_type=section_type,
-                content=content,
-                context=context,
-                relevant_chunks=relevant_chunks
-            )
-            
-            logger.info(f"Building prompt with context:")
-            logger.info(f"Section type: {section_type}")
-            logger.info(f"Content: {content}")
-            logger.info(f"Relevant chunks: {json.dumps(relevant_chunks, indent=2)}")
-
-            prompt = self._build_prompt(
-                section_type=section_type,
-                content=content,
-                context=context,
-                relevant_chunks=relevant_chunks
-            )
-
-            logger.info(f"Final prompt:\n{prompt}")
-
-            # Procesar con LLM
-            response_type = self._determine_response_type(section_type)
-            llm_context = self._build_llm_context(board_id, section_type, context)
-
-            logger.info(f"LLM context: {json.dumps(llm_context, indent=2)}")
-
-            llm_response = await self.llm.process_request(
-                LLMRequest(
-                    query=prompt,
-                    response_type=response_type,
-                    context=llm_context
-                )
-            )
-
-            # 4. Procesar con LLM
-            response_type = self._determine_response_type(section_type)
-            llm_response = await self.llm.process_request(
-                LLMRequest(
-                    query=prompt,
-                    response_type=response_type,
-                    context=self._build_llm_context(board_id, section_type, context)
-                )
-            )
-
-            return self._format_response(llm_response, relevant_chunks)
-
-        except Exception as e:
-            logger.error(f"Error procesando petición de tablero: {str(e)}")
-            return {
-                "error": str(e),
-                "status": "error",
-                "board_id": board_id
-            }
-
-    def _determine_response_type(self, section_type: str) -> ResponseType:
-        """Determina el tipo de respuesta basado en la sección"""
-        validation_sections = ['challenge', 'target', 'hypothesis']
-        if section_type in validation_sections:
-            return ResponseType.VALIDATION
-        return ResponseType.SUGGESTION
-
-    async def _retrieve_relevant_context(
+    def __init__(
         self,
-        search_context: Dict,
-        board_id: str,
-        section_type: str,
-        top_k: int = 3
-    ) -> List[Dict]:
+        vector_store: VectorStore,
+        llm: LLMModule,
+        validator: ResponseValidator
+    ):
+        self.vector_store = vector_store
+        self.llm = llm
+        self.validator = validator
+        self.context_window = 4000  # Tamaño máximo del contexto para el LLM
+
+    async def process_query(
+        self,
+        query: str,
+        response_type: ResponseType,
+        top_k: int = 5,
+        temperature: Optional[float] = None,
+        language: str = "es",
+        metadata: Optional[Dict[str, str]] = None
+    ) -> LLMResponse:
         """
-        Recupera chunks relevantes usando búsqueda híbrida
+        Procesa una consulta a través del pipeline RAG completo
         """
         try:
-            # Construir query
-            query = self._build_search_query(
-                context=search_context,
-                section_type=section_type
-            )
-
-            # Realizar búsqueda híbrida
-            results = self.vector_store.hybrid_search(
+            # 1. Búsqueda de documentos relevantes
+            search_results = await self._search_relevant_docs(
                 query=query,
+                metadata=metadata,
                 top_k=top_k
             )
 
-            # Enriquecer resultados con metadata
-            enriched_results = []
-            for result in results:
-                metadata = self.metadata_manager.get_entry(result['id'])
-                if metadata:
-                    result['metadata'] = metadata
-                    enriched_results.append(result)
+            # 2. Construcción del contexto
+            context = {
+                "relevant_texts": [],
+                "metadata": {}
+            }
 
-            return enriched_results
+            total_tokens = 0
+            for result in search_results:
+                # Verificar que estamos dentro del límite de contexto
+                if total_tokens + len(result['text'].split()) <= self.context_window:
+                    context["relevant_texts"].append({
+                        "text": result['text'],
+                        "score": result['score'],
+                        "id": result['id']
+                    })
+                    total_tokens += len(result['text'].split())
+                    
+                    # Agregar metadatos si existen
+                    if result.get('metadata'):
+                        section_id = result['metadata'].get('section_id')
+                        if section_id:
+                            context["metadata"][section_id] = result['metadata']
+
+            # 3. Preparación de la solicitud al LLM
+            llm_request = LLMRequest(
+                query=query,
+                context=context,
+                response_type=response_type,
+                temperature=temperature,
+                language=language
+            )
+            
+            # 4. Obtención de respuesta del LLM
+            llm_response = await self.llm.process_request(llm_request)
+            
+            # 5. Validación de la respuesta
+            validation_results = await self._validate_response(
+                llm_response.content,
+                response_type
+            )
+            
+            # 6. Enriquecimiento de metadatos
+            enriched_response = self._enrich_response_metadata(
+                llm_response,
+                search_results,
+                validation_results
+            )
+            
+            return enriched_response
 
         except Exception as e:
-            logger.error(f"Error recuperando contexto: {str(e)}")
+            logger.error(f"Error en el orquestador RAG: {str(e)}")
+            raise Exception(f"Error en el orquestador RAG: {str(e)}")
+
+    async def _search_relevant_docs(
+        self,
+        query: str,
+        metadata: Optional[Dict[str, str]],
+        top_k: int
+    ) -> List[Dict[str, Any]]:
+        """
+        Busca documentos relevantes en el vector store usando la metadata para filtrar
+        """
+        try:
+            search_query = SearchQuery(
+                text=query,
+                metadata=metadata or {},
+                max_results=top_k
+            )
+            
+            results = self.vector_store.hybrid_search(
+                query=search_query.text,
+                top_k=search_query.max_results
+            )
+            
+            # Asegurarse de que los resultados tienen el formato correcto
+            formatted_results = []
+            for result in results:
+                formatted_results.append({
+                    'id': result['id'],
+                    'text': result['text'],
+                    'score': result['score'],
+                    'metadata': result.get('metadata', {}),
+                    'type': result.get('type', 'unknown')
+                })
+                
+            return formatted_results
+            
+        except Exception as e:
+            logger.error(f"Error en búsqueda de documentos relevantes: {str(e)}")
             return []
 
-    def _prepare_search_context(
-        self,
-        section_type: str,
-        content: Dict
-    ) -> Dict:
-        """Prepara el contexto para la búsqueda"""
-        return {
-            "type": section_type,
-            "content": content,
-            "text": self._extract_searchable_text(content)
-        }
 
-    def _extract_searchable_text(self, content: Dict) -> str:
-        """Extrae texto para búsqueda del contenido"""
-        searchable_fields = ['title', 'description', 'objective', 'notes']
-        text_parts = []
+    async def _build_context(
+        self,
+        search_results: List[SearchResult]
+    ) -> Dict[str, Any]:
+        """
+        Construye el contexto para el LLM a partir de los resultados de búsqueda
+        """
+        context = {
+            "relevant_texts": [],
+            "metadata": {}
+        }
         
-        for field in searchable_fields:
-            if field in content and content[field]:
-                text_parts.append(str(content[field]))
+        total_tokens = 0
+        
+        for result in search_results:
+            # Añadir texto si cabe en la ventana de contexto
+            if total_tokens + len(result.text.split()) <= self.context_window:
+                context["relevant_texts"].append({
+                    "text": result.text,
+                    "score": result.score,
+                    "id": result.id
+                })
+                total_tokens += len(result.text.split())
                 
-        return " ".join(text_parts)
-
-    def _build_search_query(self, context: Dict, section_type: str) -> str:
-        """Construye la query de búsqueda"""
-        section_prefixes = {
-            'challenge': 'reto lean kata',
-            'target': 'objetivo lean kata',
-            'hypothesis': 'hipótesis lean kata',
-            'experiment': 'experimento lean kata'
-        }
+                # Agregar metadatos relevantes
+                if result.metadata:
+                    section_id = result.metadata.get('section_id')
+                    if section_id:
+                        context["metadata"][section_id] = result.metadata
         
-        prefix = section_prefixes.get(section_type, 'lean kata')
-        return f"{prefix}: {context['text']}"
+        return context
 
-    def _build_prompt(
+    async def _validate_response(
         self,
-        section_type: str,
-        content: Dict,
-        context: Optional[Dict],
-        relevant_chunks: List[Dict]
-    ) -> str:
-        """Construye el prompt enriquecido para el LLM"""
-        # Base prompt
-        prompt = f"Analiza el siguiente contenido de la sección '{section_type}' del tablero Lean Kata:\n\n"
-        prompt += f"{content}\n\n"
+        content: str,
+        response_type: ResponseType
+    ) -> Dict[str, bool]:
+        """
+        Valida la respuesta del LLM
+        """
+        try:
+            # Procesar la validación inicial
+            validation_results = self.validator.process_validation(content)
+            
+            # Si el tipo de respuesta es validación, añadir validaciones específicas
+            if response_type == ResponseType.VALIDATION:
+                criteria = self.llm.validation_criteria.get(response_type.value, {})
+                for key, criterion in criteria.items():
+                    validation_results[key] = criterion in content.lower()
+            
+            return validation_results
+            
+        except Exception as e:
+            logger.error(f"Error en validación de respuesta: {e}")
+            return {"validation_error": str(e)}  
 
-        # Añadir contexto relevante
-        if relevant_chunks:
-            prompt += "Contexto relevante de la metodología:\n"
-            for chunk in relevant_chunks:
-                prompt += f"- {chunk['text']}\n"
+    def _enrich_response_metadata(
+        self,
+        response: LLMResponse,
+        search_results: List[Dict[str, Any]],
+        validation_results: Dict[str, bool]
+    ) -> LLMResponse:
+        """
+        Enriquece los metadatos de la respuesta
+        """
+        if not response.metadata:
+            response.metadata = {}
+                
+        # Añadir información de fuentes
+        response.metadata["sources"] = [
+            {
+                "id": result['id'],  # Usar notación de diccionario
+                "score": result['score'],  # Usar notación de diccionario
+                "metadata": result.get('metadata', {})  # Usar .get() con valor por defecto
+            } for result in search_results
+        ]
+        
+        # Añadir resultados de validación
+        response.metadata["validation"] = validation_results
+        
+        # Añadir confianza promedio basada en scores de búsqueda
+        if search_results:
+            response.confidence = sum(result['score'] for result in search_results) / len(search_results)
+        
+        return response
+    
+    async def validate_board_section(self, category: str, content: str) -> LLMResponse:
+        """
+        Valida el contenido de una categoría específica del tablero Lean Kata.
+        Actúa como envoltorio para la función correspondiente del LLM.
+        """
+        return await self.llm.validate_board_section(category, content)
 
-        # Añadir instrucciones específicas por tipo
-        prompt += self._get_section_instructions(section_type)
-
-        return prompt
-
-    def _get_section_instructions(self, section_type: str) -> str:
-        """Obtiene instrucciones específicas por tipo de sección"""
-        instructions = {
-            'challenge': """
-Evalúa si el reto cumple con:
-1. Es específico y medible
-2. Representa una brecha significativa
-3. Está alineado con objetivos organizacionales
-            """,
-            'target': """
-Verifica que el objetivo sea SMART:
-- Específico: claramente definido
-- Medible: con métricas concretas
-- Alcanzable: realista
-- Relevante: alineado con el reto
-- Temporal: con plazo definido
-            """,
-            'hypothesis': """
-Valida que la hipótesis:
-1. Sea específica y verificable
-2. Incluya predicción medible
-3. Se base en evidencia
-4. Se relacione con el experimento
-            """
-        }
-        return instructions.get(section_type, "Analiza el contenido y sugiere mejoras.")
-
-    def _build_llm_context(
+    async def get_section_suggestions(self, category: str, content: str, context: Optional[Dict[str, Any]] = None) -> LLMResponse:
+        """
+        Obtiene sugerencias de mejora para una categoría específica del tablero Lean Kata.
+        Actúa como envoltorio para la función correspondiente del LLM.
+        """
+        return await self.llm.get_section_suggestions(category, content, context)
+    
+    def process_board_request(
         self,
         board_id: str,
         section_type: str,
-        context: Optional[Dict]
-    ) -> Dict:
-        """Construye el contexto para el LLM"""
-        llm_context = {
-            "board_id": board_id,
-            "section_type": section_type
-        }
+        content: dict,
+        context: dict
+    ) -> Awaitable[LLMResponse]:
+        """
+        Procesa la petición del tablero simulando la llamada de la API.
+        Convierte el board_content en un query y metadata adecuados.
+        """
+        query = f"{content.get('title', '')}\n{content.get('description', '')}"
+
+        # Inicializar metadata correctamente, manejando casos donde section_type o category no estén definidos
+        metadata = {"category": section_type.lower() if section_type else "default", "board_id": board_id}
         
-        if context:
-            llm_context.update(context)
-            
-        return llm_context
+        # Convertir cada valor de context a string y agregarlo a metadata
+        metadata.update({k: str(v) for k, v in context.items()})
 
-    def _format_response(
-        self,
-        llm_response: Optional[LLMResponse],
-        relevant_chunks: List[Dict]
-    ) -> Dict:
-        """Formatea la respuesta final"""
-        try:
-            # Asegurar una estructura base
-            response = {
-                "content": None,
-                "metadata": {
-                    "llm_metadata": {},
-                    "vector_results": []
-                }
-            }
-
-            # Si hay respuesta válida, actualizar el contenido
-            if llm_response and llm_response.validation_results:
-                response["validation_results"] = {
-                "validations": llm_response.validation_results.validations,
-                "suggestions": llm_response.validation_results.suggestions
-    }
-
-            # Añadir resultados vectoriales si existen
-            if relevant_chunks:
-                response["metadata"]["vector_results"] = [
-                    {
-                        "text": chunk.get("text", ""),
-                        "score": chunk.get("score", 0.0),
-                        "type": chunk.get("metadata", {}).get("type", "unknown")
-                    }
-                    for chunk in relevant_chunks[:1]  # Solo el más relevante
-                ]
-
-            # Añadir validaciones y sugerencias si existen
-            if llm_response and llm_response.validation_results:
-                response["validation_results"] = {
-                    "validation": llm_response.validation_results.validations,
-                    "suggestions": llm_response.validation_results.suggestions
-                }
-
-            return response
-
-        except Exception as e:
-            logger.error(f"Error formateando respuesta: {str(e)}")
-            # Retornar una estructura base válida incluso en caso de error
-            return {
-                "content": str(e) if not llm_response else llm_response.content,
-                "metadata": {
-                    "llm_metadata": {"error": str(e)},
-                    "vector_results": []
-                },
-                "error": str(e)
-            }
+        return self.process_query(
+            query=query,
+            response_type="validation",  # Asegúrate de usar minúsculas para el enum
+            metadata=metadata,
+            language="es"
+        )

@@ -240,7 +240,7 @@ class Vectorizer:
             # Cargar índice FAISS
             index_path = directory / "faiss.index"
             self.index = faiss.read_index(str(index_path))
-            
+
             # Mover a GPU si está disponible
             if self.device == 'cuda' and faiss.get_num_gpus() > 0:
                 self.index = faiss.index_cpu_to_gpu(
@@ -248,38 +248,46 @@ class Vectorizer:
                     0,
                     self.index
                 )
-                
+
             # Cargar datos auxiliares
             self.text_ids = np.load(str(directory / "text_ids.npy")).tolist()
+            logger.info(f"Tamaño de text_ids cargado: {len(self.text_ids)}")
+
             self.metadata = np.load(str(directory / "metadata.npy"), allow_pickle=True).item()
             self.stats = np.load(str(directory / "stats.npy"), allow_pickle=True).item()
-            
+
             logger.info(f"Vectorizer cargado desde {directory}")
-            
+
         except Exception as e:
             logger.error(f"Error cargando Vectorizer: {str(e)}")
             raise
+
         
-    def search(self, query: str, k: int) -> List[Chunk]:
-        """Realiza una búsqueda en el índice FAISS."""
-        query_vector = self.model.encode([query])
-        faiss.normalize_L2(query_vector)
-        distances, indices = self.index.search(query_vector, k=k)
-        
-        logger.info(f"Búsqueda FAISS completada - Distancias: {distances}")
-        logger.info(f"Índices encontrados: {indices}")
-        
-        chunks = []
-        for idx in indices[0]:
-            if idx >= len(self.chunk_ids):
-                logger.error(f"Índice {idx} fuera de los límites de chunk_ids")
-                continue
-            chunk_id = self.chunk_ids[idx]
-            if not isinstance(chunk_id, str):
-                logger.error(f"chunk_id no es str: {chunk_id}")
-                continue
-            chunk = self.chunk_store.get(chunk_id)
-            if chunk:
-                chunks.append(chunk)
-        
-        return chunks
+    def search(self, query_vector: np.ndarray, k: int) -> Tuple[np.ndarray, np.ndarray]:
+        """
+        Realiza una búsqueda en el índice FAISS
+        Args:
+            query_vector: Vector de consulta
+            k: Número de resultados a retornar
+        Returns:
+            Tuple con (scores, indices)
+        """
+        try:
+            # Normalizar vector de consulta
+            faiss.normalize_L2(query_vector)
+            
+            # Ajustar k si es mayor que el número de vectores en el índice
+            actual_k = min(k, self.index.ntotal)
+            
+            # Realizar búsqueda
+            distances, indices = self.index.search(query_vector, actual_k)
+            
+            # Convertir distancias a scores de similitud
+            scores = 1 - (distances / 2)  # Convertir distancia coseno a similitud
+            
+            return scores, indices
+            
+        except Exception as e:
+            logger.error(f"Error en búsqueda FAISS: {e}")
+            # Retornar arrays vacíos en caso de error
+            return np.array([]), np.array([])

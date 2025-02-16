@@ -8,22 +8,6 @@ from .common_types import TextType, ProcessedText, Chunk
 
 logger = logging.getLogger(__name__)
 
-class TextType(Enum):
-    """Tipos de texto que se pueden procesar."""
-    MAIN_CONTENT = "main_content"
-    EXAMPLE = "example"
-    PROCEDURE = "procedure"
-    CONCEPT = "concept"
-    DEFINITION = "definition"
-
-@dataclass
-class ProcessedText:
-    """Representa un texto procesado con sus metadatos."""
-    text: str
-    text_type: TextType
-    metadata: Dict[str, Any]
-    section_id: str
-
 class TextProcessor:
     """Procesa y prepara textos para vectorización, incluyendo chunking."""
     
@@ -125,12 +109,24 @@ class TextProcessor:
             if 'content' in section and 'full_text' in section['content']:
                 main_text = self.clean_text(section['content']['full_text'])
                 
+                # Determinar la categoría:
+                # Importamos las funciones de mapeo y detección de categorías
+                from app.knowledge.processors.categories import map_front_category, get_text_categories
+                primary_category = section.get('primary_category', '').strip()
+                if primary_category:
+                    # Si se provee una categoría, se normaliza mediante map_front_category.
+                    category_value = map_front_category(primary_category).value
+                else:
+                    # Si no se provee, se detecta a partir del texto (se toma la primera detectada).
+                    detected = get_text_categories(main_text)
+                    category_value = detected[0].value if detected else "general"
+                
                 processed_text = ProcessedText(
                     text=main_text,
                     text_type=TextType.MAIN_CONTENT,
                     metadata={
                         'title': section.get('title', ''),
-                        'category': section.get('primary_category', ''),
+                        'category': category_value,
                         'relevance': section.get('relevance', {}).get('level', '')
                     },
                     section_id=section_id
@@ -147,7 +143,7 @@ class TextProcessor:
                     example_text = ProcessedText(
                         text=cleaned_text,
                         text_type=TextType.EXAMPLE,
-                        metadata={'type': 'example'},
+                        metadata={'type': 'example', 'category': "general"},
                         section_id=section_id
                     )
                     
@@ -162,7 +158,7 @@ class TextProcessor:
                     procedure_text = ProcessedText(
                         text=cleaned_text,
                         text_type=TextType.PROCEDURE,
-                        metadata={'type': 'procedure'},
+                        metadata={'type': 'procedure', 'category': "general"},
                         section_id=section_id
                     )
                     

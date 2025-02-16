@@ -257,64 +257,55 @@ class VectorStore:
         """
         try:
             logger.info(f"Iniciando búsqueda híbrida para query: {query}")
+            logger.info(f"Número de vectores en el índice FAISS: {self.vectorizer.index.ntotal}")
+            logger.info(f"Número de text_ids: {len(self.vectorizer.text_ids)}")
+            logger.info(f"Número de entradas en metadata: {len(self.metadata_manager.metadata)}")
             
             # Vectorizar query
+            
             query_embedding = self.vectorizer.vectorize([query])
             if query_embedding is None:
                 raise ValueError("No se pudo vectorizar la consulta")
                 
-            # Búsqueda semántica ampliada
-            scores, ids = self.vectorizer.search(
+            # Búsqueda semántica
+            scores, indices = self.vectorizer.search(
                 query_embedding,
                 k=top_k * 3  # Buscar más resultados para post-procesamiento
             )
             
-            # Convertir scores e ids a arrays de NumPy si son listas
-            if isinstance(scores, list):
-                scores = np.array(scores)
-            if isinstance(ids, list):
-                ids = np.array(ids)
-            
-            # Asegurar que scores e ids sean arrays bidimensionales
-            if scores.ndim == 1:
+            # Asegurar que scores e indices son arrays 2D
+            if len(scores.shape) == 1:
                 scores = scores.reshape(1, -1)
-            if ids.ndim == 1:
-                ids = ids.reshape(1, -1)
+            if len(indices.shape) == 1:
+                indices = indices.reshape(1, -1)
             
-            # Preparar resultados con reranking y contexto
+            # Preparar resultados
             results = []
             seen_texts = set()
             
-            # Obtener IDs reales de los vectores encontrados
-            found_ids = []
-            for idx in ids[0]:
-                # Extraer todas las secuencias numéricas de la cadena del ID
-                numeric_parts = re.findall(r'\d+', idx)
-                if not numeric_parts:
-                    logger.error(f"No se encontró parte numérica en el ID: {idx}")
-                    continue
-
-                # Suponiendo que el número relevante es el último
-                index = int(numeric_parts[-1])
-                if index < len(self.vectorizer.text_ids):
-                    found_ids.append(self.vectorizer.text_ids[index])
-                else:
-                    logger.error(f"Índice {index} fuera de rango para text_ids (tamaño: {len(self.vectorizer.text_ids)}).")
-                    continue
-            
-            # Iterar sobre los resultados
-            for score, text_id in zip(scores[0], found_ids):
-                # Convertir score a float Python
+            # Iterar sobre los resultados de la primera fila
+            for idx, score in zip(indices[0], scores[0]):
+                # Convertir a índice Python int
+                idx = int(idx)
                 score = float(score)
                 
+                # Verificar que el índice es válido
+                if idx >= len(self.vectorizer.text_ids):
+                    logger.warning(f"Índice {idx} fuera de rango")
+                    continue
+                    
+                # Obtener el ID del texto
+                text_id = self.vectorizer.text_ids[idx]
+                
+                # Obtener metadata
                 metadata = self.metadata_manager.get_entry(text_id)
                 if metadata is None:
                     continue
                     
-                # Obtener chunks relacionados
+                # Obtener contexto del chunk
                 context = self._get_chunk_context(text_id, metadata)
                 
-                # Calcular score final considerando contexto
+                # Calcular score final
                 final_score = self._calculate_final_score(
                     semantic_score=score,
                     metadata=metadata,
@@ -328,20 +319,22 @@ class VectorStore:
                     text_hash = hash(text)
                     
                     if text_hash not in seen_texts:
-                        results.append({
+                        # Asegurar que el resultado tenga todos los campos necesarios
+                        result = {
                             'id': text_id,
                             'text': text,
                             'score': final_score,
                             'type': metadata.get('type', ''),
                             'metadata': metadata,
                             'context': context
-                        })
+                        }
+                        results.append(result)
                         seen_texts.add(text_hash)
             
             # Ordenar por score final y tomar los top_k
             results = sorted(results, key=lambda x: x['score'], reverse=True)[:top_k]
             
-            logger.info(f"Búsqueda completada con {len(results)} chunks relevantes")
+            logger.info(f"Búsqueda completada con {len(results)} resultados relevantes")
             return results
                 
         except Exception as e:
@@ -557,7 +550,10 @@ class VectorStore:
                     chunk_data = json.load(f)
                     self.chunk_relations = chunk_data['relations']
                     self.section_chunks = chunk_data['section_mappings']
-                    
+            # Añadir logs de debug aquí
+            logger.info(f"Número de vectores en el índice FAISS: {self.vectorizer.index.ntotal}")
+            logger.info(f"Número de text_ids: {len(self.vectorizer.text_ids)}")
+            logger.info(f"Número de entradas en metadata: {len(self.metadata_manager.metadata)}")        
             logger.info(f"VectorStore cargado con información de chunks desde {directory}")
             
         except Exception as e:

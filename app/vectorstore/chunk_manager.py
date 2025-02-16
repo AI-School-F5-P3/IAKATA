@@ -364,7 +364,7 @@ class ChunkManager:
                 'text_type': processed_text.text_type.value
             },
             section_id=processed_text.section_id,
-            chunk_id=f"{processed_text.section_id}_chunk_{chunk_number}"
+            chunk_id=f"{processed_text.section_id}_chunk_{chunk_number}_{processed_text.metadata.get('category', 'default')}"
         )
 
     def _process_overlaps(self, chunks: List[Chunk]) -> None:

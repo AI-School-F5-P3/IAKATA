@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from pydantic import BaseModel
 
 class ResponseType(Enum):
@@ -20,4 +20,4 @@ class LLMResponse(BaseModel):
     metadata: Optional[Dict] = None
     confidence: Optional[float] = None
     suggestions: Optional[List[str]] = None
-    validation_results: Optional[Dict[str, bool]] = None
+    validation_results: Optional[Dict[str, Any]] = None

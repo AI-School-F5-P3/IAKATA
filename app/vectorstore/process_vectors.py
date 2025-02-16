@@ -1,11 +1,11 @@
 from pathlib import Path
 import logging
-from vector_store import VectorStore
+from .vector_store import VectorStore
 from typing import Dict, Any, Optional
 import json
 from tqdm import tqdm
-from text_processor import TextProcessor
-from common_types import ProcessedText, TextType
+from .text_processor import TextProcessor
+from .common_types import ProcessedText, TextType
 
 # Configurar logging
 logging.basicConfig(

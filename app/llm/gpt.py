@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class LLMModule:
-    def __init__(self, model: str = "gpt-4"):
+    def __init__(self, model: str = "gpt-4o-mini"):
         """Inicializa el módulo LLM usando la API key desde las variables de entorno"""
         self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
@@ -303,29 +303,29 @@ La documentación debe incluir:
         )
         return await self.process_request(request)
 
-    async def validate_board_section(self, section_type: str, content: str) -> Dict:
-        """Validate a specific section of the Lean Kata board"""
-        criteria = self.validation_criteria.get(section_type, {})
-        validation_prompt = f"Evalúa el siguiente contenido para la sección {section_type} del tablero Lean Kata:\n\n{content}\n\nCriterios:\n"
+    async def validate_board_section(self, category: str, content: str) -> Dict:
+        """Valida una sección específica del tablero Lean Kata usando la categoría unificada"""
+        criteria = self.validation_criteria.get(category, {})
+        validation_prompt = f"Evalúa el siguiente contenido para la categoría {category} del tablero Lean Kata:\n\n{content}\n\nCriterios:\n"
         for key, criterion in criteria.items():
             validation_prompt += f"- {criterion}\n"
         
         request = LLMRequest(
             query=validation_prompt,
             response_type=ResponseType.VALIDATION,
-            context={"section_type": section_type}
+            context={"category": category}
         )
         return await self.process_request(request)
 
-    async def get_section_suggestions(self, section_type: str, content: str, context: Optional[Dict] = None) -> LLMResponse:
-        """Get improvement suggestions for a specific board section"""
-        suggestion_prompt = f"Analiza el siguiente contenido de la sección {section_type} y proporciona sugerencias de mejora específicas:\n\n{content}"
+    async def get_section_suggestions(self, category: str, content: str, context: Optional[Dict] = None) -> LLMResponse:
+        """Obtiene sugerencias de mejora para una categoría específica del tablero Lean Kata"""
+        suggestion_prompt = f"Analiza el siguiente contenido de la categoría {category} y proporciona sugerencias de mejora específicas:\n\n{content}"
         
         request = LLMRequest(
             query=suggestion_prompt,
             response_type=ResponseType.SUGGESTION,
             context={
-                "section_type": section_type,
+                "category": category,
                 "board_context": context or {}
             }
         )

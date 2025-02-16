@@ -1,116 +1,107 @@
-from typing import List, Dict
-import logging
-from .types import SearchResult, RelevanceType
+from typing import List, Dict, Any
+from app.retriever.types import SearchResult, RankingConfig
 
-logger = logging.getLogger(__name__)
+class RankEngine:
+    """Motor de ranking de resultados"""
+    
+    def __init__(self, config: RankingConfig = RankingConfig()):
+        self.config = config
+        
+        # Factores de boost por tipo de contenido
+        self.type_boosts = {
+            "challenge": {
+                "keywords": ["objetivo", "meta", "reto"],
+                "boost": 1.1  # Reducir el boost para evitar que todos alcancen el máximo
+            },
+            "target": {
+                "keywords": ["estado objetivo", "meta intermedia"],
+                "boost": 1.1
+            },
+            "experiment": {
+                "keywords": ["experimento", "hipótesis", "prueba"],
+                "boost": 1.1
+            },
+            "hypothesis": {
+                "keywords": ["hipótesis", "predicción", "resultado esperado"],
+                "boost": 1.1
+            }
+        }
 
-class RankingEngine:
-    def __init__(self):
-        """Inicializa el motor de ranking"""
-        self.category_weights = {
-            'Process': 1.2,
-            'Challenge': 1.1,
-            'Experiment': 1.1,
-            'Results': 1.0,
-            'Learning': 1.0
-        }
-        
-        self.type_weights = {
-            'main_content': 1.2,
-            'example': 1.1,
-            'procedure': 1.3,
-            'concept': 1.0
-        }
-        
-    def rerank(self, results: List[SearchResult], query: str) -> List[SearchResult]:
+    def rank_results(
+        self,
+        results: List[SearchResult],
+        metadata: Dict[str, str],
+        keywords: List[str] = None
+    ) -> List[Dict[str, Any]]:
         """
-        Reordena los resultados aplicando criterios adicionales
-        
-        Args:
-            results: Lista de resultados a reordenar
-            query: Query original para contexto
-            
-        Returns:
-            Lista reordenada de resultados
+        Rankea y ajusta scores de los resultados basándose en la categoría y palabras clave.
         """
-        try:
-            # Calcular scores ajustados
-            scored_results = []
-            for result in results:
-                final_score = self._calculate_final_score(result, query)
-                scored_results.append((final_score, result))
-                
-            # Ordenar por score final
-            scored_results.sort(key=lambda x: x[0], reverse=True)
+        ranked_results = []
+
+        # Si no se proporciona metadata, inicializarla como un diccionario vacío
+        if metadata is None:
+            metadata = {}
+
+        # Si no se proporcionan keywords, inicializarlas como una lista vacía
+        if keywords is None:
+            keywords = []
+
+        # Obtener la categoría de la metadata (o usar "general" por defecto)
+        category = metadata.get("category", "general")
+        print(f"Resultados recibidos: {results}")
+
+        for result in results:
+            # Calcular score ajustado usando la categoría
+            adjusted_score = self._calculate_adjusted_score(
+                result.score,
+                result.text,
+                category,  # Usar la categoría extraída
+                keywords
+            )
+
+            print(f"Adjusted score: {adjusted_score}, Threshold: {self.config.base_threshold}")
             
-            # Actualizar scores y retornar resultados
-            reranked_results = []
-            for final_score, result in scored_results:
-                result.score = final_score
-                result.relevance = self._determine_relevance(final_score)
-                reranked_results.append(result)
-                
-            return reranked_results
-            
-        except Exception as e:
-            logger.error(f"Error en reranking: {str(e)}")
-            return results
-            
-    def _calculate_final_score(self, result: SearchResult, query: str) -> float:
-        """Calcula el score final considerando múltiples factores"""
-        try:
-            base_score = result.score
-            multiplier = 1.0
-            
-            # 1. Ajuste por categoría
-            category = result.metadata.get('category', '')
-            if category in self.category_weights:
-                multiplier *= self.category_weights[category]
-                
-            # 2. Ajuste por tipo de contenido
-            content_type = result.metadata.get('type', '')
-            if content_type in self.type_weights:
-                multiplier *= self.type_weights[content_type]
-                
-            # 3. Ajuste por longitud
-            text_length = len(result.text)
-            if text_length < 100:
-                multiplier *= 0.8
-            elif text_length > 1000:
-                multiplier *= 0.9
-                
-            # 4. Ajuste por coherencia semántica
-            if self._check_semantic_relevance(result.text, query):
-                multiplier *= 1.2
-                
-            # 5. Ajuste por contexto
-            if result.context and result.context.get('position'):
-                position = result.context['position']
-                if position.get('is_first'):
-                    multiplier *= 1.1
-                    
-            final_score = base_score * multiplier
-            
-            # Normalizar entre 0 y 1
-            return min(max(final_score, 0.0), 1.0)
-            
-        except Exception as e:
-            logger.error(f"Error calculando score final: {str(e)}")
-            return result.score
-            
-    def _check_semantic_relevance(self, text: str, query: str) -> bool:
-        """Verifica relevancia semántica básica"""
-        # Implementación simple, podría mejorarse con NLP
-        query_terms = query.lower().split()
-        text_lower = text.lower()
+            # Filtrar resultados que superen el umbral
+            if adjusted_score >= self.config.base_threshold:
+                ranked_results.append({
+                    "id": result.id,
+                    "text": result.text,
+                    "score": adjusted_score,
+                    "metadata": result.metadata
+                })
+                 
+        # Ordenar por score ajustado de mayor a menor
+        ranked_results = sorted(ranked_results, key=lambda x: x['score'], reverse=True)
+        print("Resultados rankeados:", ranked_results)
+        return ranked_results
+
+    def _calculate_adjusted_score(
+        self,
+        base_score: float,
+        text: str,
+        category: str,  # Renombrado: se espera el string de la categoría
+        keywords: List[str]
+    ) -> float:
+        """
+        Calcula score ajustado basado en múltiples factores
+        """
+        adjusted_score = base_score
         
-        found_terms = sum(1 for term in query_terms if term in text_lower)
-        return found_terms >= len(query_terms) * 0.5
+        # 1. Ajuste por keywords relevantes
+        keyword_matches = sum(1 for keyword in keywords 
+                              if keyword.lower() in text.lower())
+        adjusted_score += (keyword_matches * self.config.keyword_boost)
         
-    def _determine_relevance(self, score: float) -> RelevanceType:
-        """Determina nivel de relevancia basado en score"""
-        if score >= 0.8:
-            return RelevanceType.HIGH
-        elif score >= 0.5:
-            return RelevanceType.MEDIUM
-        return RelevanceType.LOW
+        # 2. Ajuste por tipo de contenido (usando la categoría)
+        type_boost = self.type_boosts.get(category)
+        if type_boost:
+            if any(kw.lower() in text.lower() for kw in type_boost["keywords"]):
+                adjusted_score *= type_boost["boost"]
+        
+        # 3. Ajuste por calidad de contenido
+        # Bonus por contener elementos estructurales
+        if any(marker in text for marker in ["1.", "2.", "•", "-", ":"]):
+            adjusted_score *= 1.05  # Reducir el boost para evitar que todos alcancen el máximo
+             
+        # Asegurar que el score final está en el rango [0, self.config.max_score]
+        return min(max(adjusted_score, 0.0), self.config.max_score)

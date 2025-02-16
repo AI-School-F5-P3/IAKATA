@@ -1027,6 +1027,11 @@ IMPORTANTE: Devolver SOLO JSON válido, sin texto adicional."""
             for i, page in enumerate(book_content['pages']):
                 page_text = page['text']
                 
+                # Asegurar que cada sección tenga una categoría por defecto
+                if "metadata" in page and "category" not in page["metadata"]:
+                    page["metadata"]["category"] = "default"
+                    logger.warning(f"Falta 'category' en la sección de la página {i}. Asignando 'default'.")
+                    
                 # Priorizar secciones que contengan procedimientos Kata
                 if any(keyword in page_text.lower() for keyword in 
                     ['kata de mejora', 'kata de coaching', 'rutina de mejora', 'ciclo pdca']):
