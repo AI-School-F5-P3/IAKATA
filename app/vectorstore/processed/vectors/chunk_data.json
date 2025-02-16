@@ -1,0 +1,467 @@
+{
+  "relations": {
+    "101_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": null,
+      "section_id": "101"
+    },
+    "101_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": " ventaja competitiva que se mantiene en el tiempo.",
+      "overlap_next": "endiendo, que han evaluado mis pensamientos y que ",
+      "section_id": "101"
+    },
+    "101_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "endiendo, que han evaluado mis pensamientos y que ",
+      "overlap_next": null,
+      "section_id": "101"
+    },
+    "212_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": null,
+      "section_id": "212"
+    },
+    "212_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": " ventaja competitiva que se mantiene en el tiempo.",
+      "overlap_next": "endiendo, que han evaluado mis pensamientos y que ",
+      "section_id": "212"
+    },
+    "212_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "endiendo, que han evaluado mis pensamientos y que ",
+      "overlap_next": null,
+      "section_id": "212"
+    },
+    "169_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": null,
+      "section_id": "169"
+    },
+    "169_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": " ventaja competitiva que se mantiene en el tiempo.",
+      "overlap_next": "endiendo, que han evaluado mis pensamientos y que ",
+      "section_id": "169"
+    },
+    "169_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "endiendo, que han evaluado mis pensamientos y que ",
+      "overlap_next": null,
+      "section_id": "169"
+    },
+    "279_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": "s que aplicamos a nuestros problemas específicos? ",
+      "section_id": "279"
+    },
+    "279_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "s que aplicamos a nuestros problemas específicos? ",
+      "overlap_next": null,
+      "section_id": "279"
+    },
+    "4_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": null,
+      "section_id": "4"
+    },
+    "4_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "o se olvida de subrayar que ya desde Sakichi Toyod",
+      "overlap_next": "ea de montaje hasta que la causa raíz fuera detect",
+      "section_id": "4"
+    },
+    "4_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "ea de montaje hasta que la causa raíz fuera detect",
+      "overlap_next": "finales del siglo XIX hasta nuestros días. Este co",
+      "section_id": "4"
+    },
+    "4_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "finales del siglo XIX hasta nuestros días. Este co",
+      "overlap_next": null,
+      "section_id": "4"
+    },
+    "80_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": "misma respuesta: Después del Lean viene Lean Kata.",
+      "section_id": "80"
+    },
+    "80_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "misma respuesta: Después del Lean viene Lean Kata.",
+      "overlap_next": null,
+      "section_id": "80"
+    },
+    "80_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
+      "overlap_next": "te se recupere de forma rápida tras la cirugía es ",
+      "section_id": "80"
+    },
+    "80_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
+      "overlap_next": null,
+      "section_id": "80"
+    },
+    "82_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": "sicóloga Gabriele Oettingen, cuando alguien se pro",
+      "section_id": "82"
+    },
+    "82_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "sicóloga Gabriele Oettingen, cuando alguien se pro",
+      "overlap_next": null,
+      "section_id": "82"
+    },
+    "82_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
+      "overlap_next": "te se recupere de forma rápida tras la cirugía es ",
+      "section_id": "82"
+    },
+    "82_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
+      "overlap_next": null,
+      "section_id": "82"
+    },
+    "83_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": "sicóloga Gabriele Oettingen, cuando alguien se pro",
+      "section_id": "83"
+    },
+    "83_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "sicóloga Gabriele Oettingen, cuando alguien se pro",
+      "overlap_next": null,
+      "section_id": "83"
+    },
+    "83_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
+      "overlap_next": "te se recupere de forma rápida tras la cirugía es ",
+      "section_id": "83"
+    },
+    "83_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
+      "overlap_next": null,
+      "section_id": "83"
+    },
+    "84_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": "sicóloga Gabriele Oettingen, cuando alguien se pro",
+      "section_id": "84"
+    },
+    "84_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "sicóloga Gabriele Oettingen, cuando alguien se pro",
+      "overlap_next": null,
+      "section_id": "84"
+    },
+    "84_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
+      "overlap_next": "te se recupere de forma rápida tras la cirugía es ",
+      "section_id": "84"
+    },
+    "84_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
+      "overlap_next": null,
+      "section_id": "84"
+    },
+    "85_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": "sicóloga Gabriele Oettingen, cuando alguien se pro",
+      "section_id": "85"
+    },
+    "85_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "sicóloga Gabriele Oettingen, cuando alguien se pro",
+      "overlap_next": null,
+      "section_id": "85"
+    },
+    "85_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
+      "overlap_next": "te se recupere de forma rápida tras la cirugía es ",
+      "section_id": "85"
+    },
+    "85_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
+      "overlap_next": null,
+      "section_id": "85"
+    },
+    "87_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": " existen expectativas claras de conseguir el reto.",
+      "section_id": "87"
+    },
+    "87_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": " existen expectativas claras de conseguir el reto.",
+      "overlap_next": "• Las personas que realizan contraste mental, de f",
+      "section_id": "87"
+    },
+    "87_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "• Las personas que realizan contraste mental, de f",
+      "overlap_next": null,
+      "section_id": "87"
+    },
+    "87_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "para llevar adelante con éxito la metodología Lean",
+      "overlap_next": null,
+      "section_id": "87"
+    },
+    "94_chunk_0": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": null,
+      "overlap_next": " existen expectativas claras de conseguir el reto.",
+      "section_id": "94"
+    },
+    "94_chunk_1": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": " existen expectativas claras de conseguir el reto.",
+      "overlap_next": "• Las personas que realizan contraste mental, de f",
+      "section_id": "94"
+    },
+    "94_chunk_2": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "• Las personas que realizan contraste mental, de f",
+      "overlap_next": null,
+      "section_id": "94"
+    },
+    "94_chunk_3": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
+      "overlap_next": null,
+      "section_id": "94"
+    }
+  },
+  "section_mappings": {
+    "101": [
+      "101_chunk_0",
+      "101_chunk_1",
+      "101_chunk_2",
+      "101_chunk_0",
+      "101_chunk_0",
+      "101_chunk_0",
+      "101_chunk_0",
+      "101_chunk_1",
+      "101_chunk_2",
+      "101_chunk_0"
+    ],
+    "212": [
+      "212_chunk_0",
+      "212_chunk_1",
+      "212_chunk_2",
+      "212_chunk_0",
+      "212_chunk_0",
+      "212_chunk_0",
+      "212_chunk_1",
+      "212_chunk_2",
+      "212_chunk_0"
+    ],
+    "169": [
+      "169_chunk_0",
+      "169_chunk_1",
+      "169_chunk_2",
+      "169_chunk_0",
+      "169_chunk_0",
+      "169_chunk_1",
+      "169_chunk_2",
+      "169_chunk_0"
+    ],
+    "279": [
+      "279_chunk_0",
+      "279_chunk_1",
+      "279_chunk_0",
+      "279_chunk_0",
+      "279_chunk_1"
+    ],
+    "4": [
+      "4_chunk_0",
+      "4_chunk_0",
+      "4_chunk_1",
+      "4_chunk_0",
+      "4_chunk_1",
+      "4_chunk_2",
+      "4_chunk_3",
+      "4_chunk_0"
+    ],
+    "80": [
+      "80_chunk_0",
+      "80_chunk_1",
+      "80_chunk_2",
+      "80_chunk_3",
+      "80_chunk_0",
+      "80_chunk_1",
+      "80_chunk_0",
+      "80_chunk_1",
+      "80_chunk_0",
+      "80_chunk_1",
+      "80_chunk_0",
+      "80_chunk_1",
+      "80_chunk_0",
+      "80_chunk_1",
+      "80_chunk_0",
+      "80_chunk_1"
+    ],
+    "82": [
+      "82_chunk_0",
+      "82_chunk_1",
+      "82_chunk_2",
+      "82_chunk_3",
+      "82_chunk_0",
+      "82_chunk_1",
+      "82_chunk_0",
+      "82_chunk_1",
+      "82_chunk_0",
+      "82_chunk_1",
+      "82_chunk_0",
+      "82_chunk_1",
+      "82_chunk_0",
+      "82_chunk_1",
+      "82_chunk_0",
+      "82_chunk_1"
+    ],
+    "83": [
+      "83_chunk_0",
+      "83_chunk_1",
+      "83_chunk_2",
+      "83_chunk_3",
+      "83_chunk_0",
+      "83_chunk_1",
+      "83_chunk_0",
+      "83_chunk_1",
+      "83_chunk_0",
+      "83_chunk_1",
+      "83_chunk_0",
+      "83_chunk_1",
+      "83_chunk_0",
+      "83_chunk_1",
+      "83_chunk_0",
+      "83_chunk_1"
+    ],
+    "84": [
+      "84_chunk_0",
+      "84_chunk_1",
+      "84_chunk_2",
+      "84_chunk_3",
+      "84_chunk_0",
+      "84_chunk_1",
+      "84_chunk_0",
+      "84_chunk_1",
+      "84_chunk_0",
+      "84_chunk_1",
+      "84_chunk_0",
+      "84_chunk_1",
+      "84_chunk_0",
+      "84_chunk_1"
+    ],
+    "85": [
+      "85_chunk_0",
+      "85_chunk_1",
+      "85_chunk_2",
+      "85_chunk_3",
+      "85_chunk_0",
+      "85_chunk_1",
+      "85_chunk_0",
+      "85_chunk_1",
+      "85_chunk_0",
+      "85_chunk_1",
+      "85_chunk_0",
+      "85_chunk_1"
+    ],
+    "87": [
+      "87_chunk_0",
+      "87_chunk_1",
+      "87_chunk_2",
+      "87_chunk_3",
+      "87_chunk_0",
+      "87_chunk_1",
+      "87_chunk_0",
+      "87_chunk_1",
+      "87_chunk_0",
+      "87_chunk_1",
+      "87_chunk_2"
+    ],
+    "94": [
+      "94_chunk_0",
+      "94_chunk_1",
+      "94_chunk_2",
+      "94_chunk_3",
+      "94_chunk_0",
+      "94_chunk_1",
+      "94_chunk_0",
+      "94_chunk_1",
+      "94_chunk_0",
+      "94_chunk_1",
+      "94_chunk_2"
+    ]
+  }
+}

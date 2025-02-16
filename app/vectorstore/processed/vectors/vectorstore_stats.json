@@ -1,0 +1,26 @@
+{
+  "total_vectores": 63,
+  "dimension_vectores": 384,
+  "total_batches": 2,
+  "batch_size": 32,
+  "textos_exitosos": 63,
+  "textos_fallidos": 0,
+  "tasa_exito": 100.0,
+  "metadata_stats": {
+    "total_entries": 63,
+    "total_sections": 7,
+    "entries_by_type": {
+      "main_content": 7,
+      "example": 9,
+      "procedure": 47
+    },
+    "average_text_length": 677.6190476190476
+  },
+  "integrity_check": {
+    "total_vectors": 63,
+    "total_metadata": 63,
+    "missing_metadata": [],
+    "metadata_coverage": 100.0,
+    "integrity_ok": true
+  }
+}
