@@ -47,7 +47,7 @@ class RetrieverSystem:
             search_results = await self.search_engine.search(search_query)
             
             # 3. Obtener keywords para ranking
-            keywords = self.search_engine.get_keywords_from_metadata(board_content.metadata)
+            keywords = self.search_engine.get_section_keywords(board_content.metadata)
             
             # 4. Rankear resultados
             ranked_results = self.rank_engine.rank_results(

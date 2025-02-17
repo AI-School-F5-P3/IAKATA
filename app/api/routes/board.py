@@ -9,6 +9,7 @@ router = APIRouter()
 @router.post("/ai")
 async def improve_with_ai(data: FormData): # -> ResponseOutput:
     try:
+        print(data)
         response = await rag_response(data)
         return JSONResponse(
             status_code=status.HTTP_200_OK,
@@ -18,10 +19,12 @@ async def improve_with_ai(data: FormData): # -> ResponseOutput:
                 "data": response,
             }
         )
+    except Exception as e:
+        raise e
     except HTTPException as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail=f"Error: {str(e)}"
+            detail=f"Error en la api: {str(e)}"
             )
 
 # obtener info del proyecto

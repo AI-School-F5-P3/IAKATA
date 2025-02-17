@@ -35,11 +35,11 @@ class SearchEngine:
             enriched_query = self._enrich_query(query.text, query.metadata)
             
             # Buscar en vector store
-            results = await self.vector_store.hybrid_search(
+            results = self.vector_store.hybrid_search(
                 query=enriched_query,
                 top_k=query.max_results * 2  # Buscar más para filtrar después
             )
-            
+            print(results)
             # Convertir a SearchResults
             return [
                 SearchResult(
@@ -62,8 +62,9 @@ class SearchEngine:
             return f"{content}\nRelacionado con: {category}"
         return content
 
-    def get_section_keywords(self, section_type: str) -> List[str]:
+    def get_section_keywords(self, section_type: dict) -> List[str]:
         """
         Retorna keywords asociadas a un tipo de sección
         """
-        return self.section_keywords.get(section_type, [])
+        section = section_type["category"]
+        return self.category_keywords.get(section, [])
