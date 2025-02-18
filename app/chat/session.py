@@ -1,5 +1,5 @@
 from typing import Dict, Optional, List
-from uuid import UUID
+from uuid import UUID, uuid4
 import logging
 from datetime import datetime, timedelta
 
@@ -21,7 +21,7 @@ class SessionManager:
     ) -> ChatSession:
         """Crea una nueva sesión de chat"""
         session = ChatSession(
-            id=UUID.uuid4(),
+            id=uuid4(),  # Cambiado aquí
             user_id=user_id,
             board_id=board_id,
             created_at=datetime.utcnow(),

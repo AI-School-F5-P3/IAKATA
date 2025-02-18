@@ -1,7 +1,8 @@
 from typing import Dict, List, Optional, Any
-from uuid import UUID
+from uuid import UUID, uuid4
 import logging
 from datetime import datetime
+import json
 
 from app.orchestrator.orchestrator import RAGOrchestrator
 from app.llm.types import ResponseType, LLMResponse
@@ -29,12 +30,17 @@ class ChatManager:
         metadata: Optional[Dict[str, Any]] = None
     ) -> UUID:
         """Crea una nueva sesión de chat y retorna su ID"""
-        session = self.session_manager.create_session(
-            user_id=user_id,
-            board_id=board_id,
-            metadata=metadata
-        )
-        return session.id
+        try:
+            session = self.session_manager.create_session(
+                user_id=user_id,
+                board_id=board_id,
+                metadata=metadata
+            )
+            logger.info(f"Nueva sesión de chat creada con ID: {session.id}")
+            return session.id
+        except Exception as e:
+            logger.error(f"Error creando sesión de chat: {str(e)}")
+            raise
 
     async def process_message(
         self,
@@ -48,7 +54,7 @@ class ChatManager:
             session = self.session_manager.get_session(session_id)
             
             user_message = Message(
-                id=UUID.uuid4(),
+                id=uuid4(),
                 session_id=session_id,
                 role="user",
                 content=content,
@@ -62,20 +68,23 @@ class ChatManager:
             # Construir contexto para el orquestador
             context = self._build_conversation_context(session_id)
             
+            # Serializar el contexto en un string para metadata
+            context_str = json.dumps({
+                "session_id": str(session_id),
+                "board_id": session.board_id or "",
+                "context": context
+            })
+            
             # Procesar mediante el orquestador
             llm_response = await self.orchestrator.process_query(
                 query=content,
                 response_type=ResponseType.CHAT,
-                metadata={
-                    "session_id": str(session_id),
-                    "board_id": session.board_id or "",
-                    "context": context
-                }
+                metadata={"context": context_str}
             )
 
             # Crear y registrar mensaje del asistente
             assistant_message = Message(
-                id=UUID.uuid4(),
+                id=uuid4(),
                 session_id=session_id,
                 role="assistant",
                 content=llm_response.content,
@@ -123,8 +132,7 @@ class ChatManager:
             # Añadir contexto del tablero si existe
             if session.board_id:
                 context["board_context"] = {
-                    "board_id": session.board_id,
-                    # Aquí se podría añadir más información específica del tablero
+                    "board_id": session.board_id
                 }
 
             return context
@@ -135,7 +143,12 @@ class ChatManager:
 
     async def close_chat_session(self, session_id: UUID) -> None:
         """Cierra una sesión de chat"""
-        self.session_manager.close_session(session_id)
+        try:
+            self.session_manager.close_session(session_id)
+            logger.info(f"Sesión de chat {session_id} cerrada")
+        except Exception as e:
+            logger.error(f"Error cerrando sesión de chat: {str(e)}")
+            raise
 
     async def get_session_history(
         self,
@@ -143,8 +156,12 @@ class ChatManager:
         limit: Optional[int] = None
     ) -> List[Message]:
         """Obtiene el historial de mensajes de una sesión"""
-        session = self.session_manager.get_session(session_id)
-        messages = session.messages
-        if limit:
-            messages = messages[-limit:]
-        return messages
+        try:
+            session = self.session_manager.get_session(session_id)
+            messages = session.messages
+            if limit:
+                messages = messages[-limit:]
+            return messages
+        except Exception as e:
+            logger.error(f"Error obteniendo historial de sesión: {str(e)}")
+            raise
