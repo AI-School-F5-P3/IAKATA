@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Servicio para el contenedor client
+  react:
+    build:
+      context: ./app/front/client
+    ports:
+      - "80:80"
+    networks:
+      - backend
+    depends_on:
+      - node_api
+
+  # Servicio para el contenedor server
+  node_api:
+    build:
+      context: ./app/front/server
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+      - mysql_network
+    environment:
+      - DB_DEV_NAME=kataweb
+      - DB_USER=root
+      - DB_PASSWORD=Password12345
+      - TK_SECRET=4d5e6f7b8c9a1b2c3d4e5f67890abcd1234567890abcdef1234567890abcdef
+    depends_on:
+      - mysql
+
+  # Servicio para rag api FastAPI
+  fastapi:
+    build:
+      context: ./app/api
+    ports:
+      - "8001:8001"
+    networks:
+      - backend
+    depends_on:
+      - node_api
+
+  # Servicio para la base de datos MySQL
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: Password12345
+      MYSQL_DATABASE: kataweb
+    networks:
+      - mysql_network
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+  
+
+networks:
+  backend:
+    driver: bridge
+  mysql_network:
+    driver: bridge
+
+
+volumes:
+  mysql_data:
+    driver: local
