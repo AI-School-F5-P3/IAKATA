@@ -10,6 +10,7 @@ from app.retriever.search import SearchEngine
 from app.retriever.rank import RankEngine
 from app.retriever.filter import FilterSystem
 from app.llm.types import ResponseType
+from app.vectorstore.common_types import ProcessedText
 from tqdm import tqdm
 import json
 from pathlib import Path
