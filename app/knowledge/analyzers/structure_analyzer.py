@@ -816,7 +816,7 @@ IMPORTANTE: Devolver SOLO JSON válido, sin texto adicional."""
         except Exception as e:
             logger.error(f"Error validando rango: {str(e)}")
             return False
-        
+    
     def validate_section(self, section: Dict) -> bool:
         """
         Valida que una sección tenga todos los campos requeridos y sean válidos

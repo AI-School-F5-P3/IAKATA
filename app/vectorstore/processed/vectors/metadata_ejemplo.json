@@ -1,0 +1,115 @@
+{
+    "101_main_content_0": {
+      "text": "personas -- borrado para ejemplo-- adaptación constantes.",
+      "type": "main_content",
+      "metadata": {
+        "title": "Parte III. La kata de mejora: cómo mejora Toyota continuamente",
+        "category": "Process",
+        "relevance": "alta",
+        "chunk_number": 0,
+        "text_type": "main_content",
+        "chunk_info": {
+          "start_idx": 0,
+          "end_idx": 2156,
+          "tokens": 426,
+          "chunk_id": "101_chunk_0",
+          "overlap_prev": null,
+          "overlap_next": " incorpore una mejora y una adaptación constantes."
+        }
+      },
+      "section_id": null
+    },
+    "101_main_content_1": {
+      "text": " incorp -- borrado para ejemplo-- e nos permitirá avanzar, por",
+      "type": "main_content",
+      "metadata": {
+        "title": "Parte III. La kata de mejora: cómo mejora Toyota continuamente",
+        "category": "Process",
+        "relevance": "alta",
+        "chunk_number": 1,
+        "text_type": "main_content",
+        "chunk_info": {
+          "start_idx": 2106,
+          "end_idx": 6294,
+          "tokens": 849,
+          "chunk_id": "101_chunk_1",
+          "overlap_prev": " incorpore una mejora y una adaptación constantes.",
+          "overlap_next": " nuestra percepción que nos permitirá avanzar, por"
+        }
+      },
+      "section_id": null
+    },
+    "101_main_content_2": {
+      "text": " nuestr -- borrado para ejemplo--regunta es.",
+      "type": "main_content",
+      "metadata": {
+        "title": "Parte III. La kata de mejora: cómo mejora Toyota continuamente",
+        "category": "Process",
+        "relevance": "alta",
+        "chunk_number": 2,
+        "text_type": "main_content",
+        "chunk_info": {
+          "start_idx": 6244,
+          "end_idx": 14540,
+          "tokens": 796,
+          "chunk_id": "101_chunk_2",
+          "overlap_prev": " nuestra percepción que nos permitirá avanzar, por",
+          "overlap_next": null
+        }
+      },
+      "section_id": null
+    },
+    "101_example_3": {
+      "text": "procec --borrado para ejemplo--s un punto de.",
+      "type": "example",
+      "metadata": {
+        "type": "example",
+        "chunk_number": 0,
+        "text_type": "example",
+        "chunk_info": {
+          "start_idx": 0,
+          "end_idx": 3782,
+          "tokens": 393,
+          "chunk_id": "101_chunk_0",
+          "overlap_prev": null,
+          "overlap_next": null
+        }
+      },
+      "section_id": null
+    },
+    "101_procedure_4": {
+      "text": "I. La situaci--borrado para ejemplo-- parte III.",
+      "type": "procedure",
+      "metadata": {
+        "type": "procedure",
+        "chunk_number": 0,
+        "text_type": "procedure",
+        "chunk_info": {
+          "start_idx": 0,
+          "end_idx": 680,
+          "tokens": 101,
+          "chunk_id": "101_chunk_0",
+          "overlap_prev": null,
+          "overlap_next": null
+        }
+      },
+      "section_id": null
+    },
+    "101_procedure_5": {
+      "text": "5. Planifi---borrado para ejemplo--- flujo de material e.",
+      "type": "procedure",
+      "metadata": {
+        "type": "procedure",
+        "chunk_number": 0,
+        "text_type": "procedure",
+        "chunk_info": {
+          "start_idx": 0,
+          "end_idx": 4476,
+          "tokens": 535,
+          "chunk_id": "101_chunk_0",
+          "overlap_prev": null,
+          "overlap_next": null
+        }
+      },
+      "section_id": null
+    },

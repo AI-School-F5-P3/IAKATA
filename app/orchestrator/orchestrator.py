@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Any, Awaitable
 from pydantic import BaseModel
 
-from app.vectorstore.vector_store import VectorStore
+from app.retriever.search import SearchEngine
 from app.vectorstore.common_types import TextType, ProcessedText
 from app.llm.types import LLMRequest, LLMResponse, ResponseType
 from app.llm.gpt import LLMModule
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class RAGOrchestrator:
     def __init__(
         self,
-        vector_store: VectorStore,
+        vector_store: SearchEngine,
         llm: LLMModule,
         validator: ResponseValidator
     ):
@@ -113,9 +113,10 @@ class RAGOrchestrator:
                 max_results=top_k
             )
             
-            results = self.vector_store.hybrid_search(
-                query=search_query.text,
-                top_k=search_query.max_results
+            search_engine = SearchEngine(self.vector_store)
+            results = search_engine.hybrid_search(
+            query=search_query.text,
+            top_k=search_query.max_results
             )
             
             # Asegurarse de que los resultados tienen el formato correcto
@@ -201,26 +202,35 @@ class RAGOrchestrator:
         """
         Enriquece los metadatos de la respuesta
         """
-        if not response.metadata:
-            response.metadata = {}
+        try:
+            if not response.metadata:
+                response.metadata = {}
+                    
+            # Añadir información de fuentes
+            # Añadir log para debug
+            logger.info(f"Resultados de búsqueda recibidos: {len(search_results)}")
+            
+            response.metadata["sources"] = [
+                {
+                    "id": result['id'],
+                    "score": result['score'],
+                    "metadata": result.get('metadata', {})
+                } for result in search_results
+            ]
+            
+            # Añadir resultados de validación
+            response.metadata["validation"] = validation_results
+            
+            # Añadir confianza promedio basada en scores de búsqueda
+            if search_results:
+                response.confidence = sum(result['score'] for result in search_results) / len(search_results)
+                logger.info(f"Confianza calculada: {response.confidence}")
+            
+            return response
                 
-        # Añadir información de fuentes
-        response.metadata["sources"] = [
-            {
-                "id": result['id'],  # Usar notación de diccionario
-                "score": result['score'],  # Usar notación de diccionario
-                "metadata": result.get('metadata', {})  # Usar .get() con valor por defecto
-            } for result in search_results
-        ]
-        
-        # Añadir resultados de validación
-        response.metadata["validation"] = validation_results
-        
-        # Añadir confianza promedio basada en scores de búsqueda
-        if search_results:
-            response.confidence = sum(result['score'] for result in search_results) / len(search_results)
-        
-        return response
+        except Exception as e:
+            logger.error(f"Error enriqueciendo metadatos de respuesta: {e}")
+            return response
     
     async def validate_board_section(self, category: str, content: str) -> LLMResponse:
         """
