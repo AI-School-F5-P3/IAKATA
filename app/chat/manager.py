@@ -74,12 +74,16 @@ class ChatManager:
                 "board_id": session.board_id or "",
                 "context": context
             })
-            
+
+            metadata = {"context": context_str}
+            if "category" not in metadata:
+                metadata["category"] = "general"
+
             # Procesar mediante el orquestador
             llm_response = await self.orchestrator.process_query(
                 query=content,
                 response_type=ResponseType.CHAT,
-                metadata={"context": context_str}
+                metadata={"context": context_str, "category": metadata["category"]}
             )
 
             # Crear y registrar mensaje del asistente

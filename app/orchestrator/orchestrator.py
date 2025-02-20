@@ -1,6 +1,8 @@
 from typing import Dict, List, Optional, Any, Awaitable
 from pydantic import BaseModel
+from datetime import datetime
 
+from .query_classifier import QueryClassifier
 from app.vectorstore.vector_store import VectorStore
 from app.vectorstore.common_types import TextType, ProcessedText
 from app.llm.types import LLMRequest, LLMResponse, ResponseType
@@ -21,7 +23,8 @@ class RAGOrchestrator:
         self.vector_store = vector_store
         self.llm = llm
         self.validator = validator
-        self.context_window = 4000  # Tamaño máximo del contexto para el LLM
+        self.query_classifier = QueryClassifier()
+        self.context_window = 4000
 
     async def process_query(
         self,
@@ -33,40 +36,47 @@ class RAGOrchestrator:
         metadata: Optional[Dict[str, str]] = None
     ) -> LLMResponse:
         """
-        Procesa una consulta a través del pipeline RAG completo
+        Procesa una consulta determinando si usar RAG para Lean Kata o respuesta general
         """
         try:
-            # 1. Búsqueda de documentos relevantes
-            search_results = await self._search_relevant_docs(
-                query=query,
-                metadata=metadata,
-                top_k=top_k
-            )
-
-            # 2. Construcción del contexto
-            context = {
-                "relevant_texts": [],
-                "metadata": {}
+            # Clasificar la consulta
+            is_lean_kata, query_metadata = self.query_classifier.classify_query(query)
+            
+            # Base metadata
+            base_metadata = {
+                'text': query,
+                'type': response_type.value,
+                'metadata': {
+                    'timestamp': datetime.utcnow().isoformat(),
+                    'language': language,
+                    **(metadata or {}),
+                    **query_metadata['metadata']
+                },
+                'section_id': query_metadata['section_id']
             }
 
-            total_tokens = 0
-            for result in search_results:
-                # Verificar que estamos dentro del límite de contexto
-                if total_tokens + len(result['text'].split()) <= self.context_window:
-                    context["relevant_texts"].append({
-                        "text": result['text'],
-                        "score": result['score'],
-                        "id": result['id']
-                    })
-                    total_tokens += len(result['text'].split())
-                    
-                    # Agregar metadatos si existen
-                    if result.get('metadata'):
-                        section_id = result['metadata'].get('section_id')
-                        if section_id:
-                            context["metadata"][section_id] = result['metadata']
+            if is_lean_kata:
+                # Proceso completo RAG para consultas Lean Kata
+                search_results = await self._search_relevant_docs(
+                    query=query,
+                    metadata=base_metadata,
+                    top_k=top_k
+                )
+                
+                context = await self._build_context(search_results)
+                base_metadata['metadata'].update({
+                    'search_results': len(search_results),
+                    'top_score': max(r['score'] for r in search_results) if search_results else 0
+                })
+            else:
+                # Para consultas generales, no necesitamos búsqueda
+                search_results = []
+                context = {
+                    'query_type': 'general',
+                    'metadata': base_metadata
+                }
 
-            # 3. Preparación de la solicitud al LLM
+            # Preparar solicitud al LLM
             llm_request = LLMRequest(
                 query=query,
                 context=context,
@@ -75,27 +85,42 @@ class RAGOrchestrator:
                 language=language
             )
             
-            # 4. Obtención de respuesta del LLM
+            # Obtener respuesta
             llm_response = await self.llm.process_request(llm_request)
             
-            # 5. Validación de la respuesta
-            validation_results = await self._validate_response(
-                llm_response.content,
-                response_type
-            )
-            
-            # 6. Enriquecimiento de metadatos
-            enriched_response = self._enrich_response_metadata(
-                llm_response,
-                search_results,
-                validation_results
-            )
-            
-            return enriched_response
+            if is_lean_kata:
+                # Solo validar y enriquecer respuestas Lean Kata
+                validation_results = await self._validate_response(
+                    llm_response.content,
+                    response_type
+                )
+                
+                enriched_response = self._enrich_response_metadata(
+                    llm_response,
+                    search_results,
+                    validation_results
+                )
+                
+                enriched_response.metadata.update({
+                    'text': llm_response.content,
+                    'original_query': query,
+                    'search_context': context
+                })
+                
+                return enriched_response
+            else:
+                # Metadata simple para respuestas generales
+                llm_response.metadata = {
+                    'text': llm_response.content,
+                    'type': 'general',
+                    'metadata': base_metadata['metadata'],
+                    'section_id': 'general'
+                }
+                return llm_response
 
         except Exception as e:
             logger.error(f"Error en el orquestador RAG: {str(e)}")
-            raise Exception(f"Error en el orquestador RAG: {str(e)}")
+            raise
 
     async def _search_relevant_docs(
         self,
@@ -103,37 +128,22 @@ class RAGOrchestrator:
         metadata: Optional[Dict[str, str]],
         top_k: int
     ) -> List[Dict[str, Any]]:
-        """
-        Busca documentos relevantes en el vector store usando la metadata para filtrar
-        """
-        try:
-            search_query = SearchQuery(
-                text=query,
-                metadata=metadata or {},
-                max_results=top_k
-            )
-            
-            results = self.vector_store.hybrid_search(
-                query=search_query.text,
-                top_k=search_query.max_results
-            )
-            
-            # Asegurarse de que los resultados tienen el formato correcto
-            formatted_results = []
-            for result in results:
-                formatted_results.append({
-                    'id': result['id'],
-                    'text': result['text'],
-                    'score': result['score'],
-                    'metadata': result.get('metadata', {}),
-                    'type': result.get('type', 'unknown')
-                })
-                
-            return formatted_results
-            
-        except Exception as e:
-            logger.error(f"Error en búsqueda de documentos relevantes: {str(e)}")
-            return []
+        from app.retriever.types import BoardSection
+
+        # Creamos un objeto BoardSection para pasarlo al Retriever
+        board_section = BoardSection(
+            content=query,
+            metadata=metadata or {}
+        )
+
+        # Usamos el método process_content del RetrieverSystem
+        retriever_response = await self.retriever.process_content(
+            board_content=board_section,
+            max_results=top_k
+        )
+
+        # Extraemos los resultados del response
+        return retriever_response.search_results
 
 
     async def _build_context(

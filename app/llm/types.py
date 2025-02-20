@@ -21,3 +21,10 @@ class LLMResponse(BaseModel):
     confidence: Optional[float] = None
     suggestions: Optional[List[str]] = None
     validation_results: Optional[Dict[str, Any]] = None
+
+class TextType(Enum):
+    MAIN_CONTENT = "main_content"
+    CONCEPT = "concept"
+    EXAMPLE = "example"
+    PROCEDURE = "procedure"
+    DEFINITION = "definition"
