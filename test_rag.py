@@ -19,7 +19,6 @@ async def test_board_validation():
         vector_store_dir = Path("app/vectorstore/processed/vectors")
         vector_store = VectorStore()
         vector_store.load(vector_store_dir)
-        search_engine = SearchEngine(vector_store)
 
         # Inicializar el LLM real
         llm = LLMModule()

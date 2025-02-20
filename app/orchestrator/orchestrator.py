@@ -1,7 +1,7 @@
 from typing import Dict, List, Optional, Any, Awaitable
 from pydantic import BaseModel
 
-from app.retriever.search import SearchEngine
+from app.retriever.retriever import RetrieverSystem
 from app.vectorstore.common_types import TextType, ProcessedText
 from app.llm.types import LLMRequest, LLMResponse, ResponseType
 from app.llm.gpt import LLMModule
@@ -14,11 +14,11 @@ logger = logging.getLogger(__name__)
 class RAGOrchestrator:
     def __init__(
         self,
-        vector_store: SearchEngine,
+        vector_store,
         llm: LLMModule,
         validator: ResponseValidator
     ):
-        self.vector_store = vector_store
+        self.retriever = RetrieverSystem(vector_store)
         self.llm = llm
         self.validator = validator
         self.context_window = 4000  # Tamaño máximo del contexto para el LLM
@@ -103,38 +103,22 @@ class RAGOrchestrator:
         metadata: Optional[Dict[str, str]],
         top_k: int
     ) -> List[Dict[str, Any]]:
-        """
-        Busca documentos relevantes en el vector store usando la metadata para filtrar
-        """
-        try:
-            search_query = SearchQuery(
-                text=query,
-                metadata=metadata or {},
-                max_results=top_k
-            )
-            
-            search_engine = SearchEngine(self.vector_store)
-            results = search_engine.hybrid_search(
-            query=search_query.text,
-            top_k=search_query.max_results
-            )
-            
-            # Asegurarse de que los resultados tienen el formato correcto
-            formatted_results = []
-            for result in results:
-                formatted_results.append({
-                    'id': result['id'],
-                    'text': result['text'],
-                    'score': result['score'],
-                    'metadata': result.get('metadata', {}),
-                    'type': result.get('type', 'unknown')
-                })
-                
-            return formatted_results
-            
-        except Exception as e:
-            logger.error(f"Error en búsqueda de documentos relevantes: {str(e)}")
-            return []
+        from app.retriever.types import BoardSection
+
+        # Creamos un objeto BoardSection para pasarlo al Retriever
+        board_section = BoardSection(
+            content=query,
+            metadata=metadata or {}
+        )
+
+        # Usamos el método `process_content` del `RetrieverSystem`
+        retriever_response = await self.retriever.process_content(
+            board_content=board_section,
+            max_results=top_k
+        )
+
+        # Extraemos los resultados del response
+        return retriever_response.search_results
 
 
     async def _build_context(
