@@ -6,11 +6,14 @@ import "./css/Forms.css";
 import Swal from 'sweetalert2';
 import PropTypes from 'prop-types';
 
+import ImproveWithAIButton from '../buttonIa/ImproveWithAIButton';
+
 const Hypothesis = ({ editHypothesisId, editObstacleId, setLoading, setEditHypothesis, isEdit = false }) => {
-    const { register, formState: { errors }, handleSubmit, setValue } = useForm();
+    const { register, formState: { errors }, handleSubmit, setValue, getValues} = useForm();
     const [hypothesisData, setHypothesisData] = useState(null);
     const { WS_EVENTS, sendMessage } = useWebSocket();
 
+    const idForm = "HI";
 
     useEffect(() => {
         const fetchHypothesis = async () => {
@@ -92,6 +95,11 @@ const Hypothesis = ({ editHypothesisId, editObstacleId, setLoading, setEditHypot
         }
     };
 
+    const handleImproveResult = (improvedData) => {
+        console.log('Datos mejorados:', improvedData);
+        setValue('description', improvedData.description); // Actualiza el campo de descripción
+    };
+
     return (
         <div className="form-container">
             <form className="form-create" onSubmit={handleSubmit(onSubmit)}>
@@ -146,7 +154,14 @@ const Hypothesis = ({ editHypothesisId, editObstacleId, setLoading, setEditHypot
                 >
                     Cerrar
                 </button>
-                <button className='button-forms'>MEJORAR CON IA 🪄</button>
+                <ImproveWithAIButton
+                    className="button-forms"
+                    getValues={() => ({
+                        idForm,
+                        ...getValues()
+                    })}
+                    onResult={handleImproveResult} 
+                />
             </form>
         </div>
     );

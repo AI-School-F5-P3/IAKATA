@@ -5,10 +5,14 @@ import { useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 import './css/Forms.css';
 
+import ImproveWithAIButton from '../buttonIa/ImproveWithAIButton';
+
 const Process = ({ processId, setLoading, setEditable, isEdit = false }) => {
-  const { register, formState: { errors }, handleSubmit, setValue } = useForm();
+  const { register, formState: { errors }, handleSubmit, setValue, getValues} = useForm();
   const navigate = useNavigate();
   const [processData, setProcessData] = useState({});
+
+  const idForm = "PR";
 
   useEffect(() => {
     if (isEdit && processId) {
@@ -43,6 +47,11 @@ const Process = ({ processId, setLoading, setEditable, isEdit = false }) => {
     }
   };
 
+  const handleImproveResult = (improvedData) => {
+    console.log('Datos mejorados:', improvedData);
+    setValue('description', improvedData.description); // Actualiza el campo de descripción
+  };
+
   return (
     <div className={isEdit ? "form-container" : "form-box"}>
       <form className='form-create' onSubmit={handleSubmit(onSubmit)}>
@@ -69,14 +78,28 @@ const Process = ({ processId, setLoading, setEditable, isEdit = false }) => {
           <button className='button-forms' onClick={() => setEditable(false)}>
             CERRAR
           </button>
-          <button className='button-forms'>MEJORAR CON IA 🪄</button>
+          <ImproveWithAIButton
+            className="button-forms"
+            getValues={() => ({
+                idForm,
+                ...getValues()
+            })}
+            onResult={handleImproveResult} 
+        />
           </>
         ) : (
           <>
           <button className='button-forms' onClick={() => navigate('/home')}>
             VOLVER
           </button>
-          <button className='button-forms'>MEJORAR CON IA 🪄</button>
+          <ImproveWithAIButton
+            className="button-forms"
+            getValues={() => ({
+                idForm,
+                ...getValues()
+            })}
+            onResult={handleImproveResult} 
+        />
           </>
         )}
       </form>
