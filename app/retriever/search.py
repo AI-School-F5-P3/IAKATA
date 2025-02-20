@@ -46,7 +46,7 @@ class SearchEngine:
             enriched_query = self._enrich_query(query.text, query.metadata)
             
             # Buscar en vector store
-            results = self.vector_store.hybrid_search(
+            results = self.hybrid_search(
                 query=enriched_query,
                 top_k=query.max_results * 2  # Buscar más para filtrar después
             )
