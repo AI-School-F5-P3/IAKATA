@@ -12,7 +12,7 @@ iakata/
 ├── requirements.txt               # Dependencias del proyecto
 ├── README.md                      # Documentación principal
 ├── .gitignore                     # Archivos ignorados por git
-|
+├── .env                          # Variables de entorno (no versionado)
 │
 ├── app/                           # Código principal de la aplicación
 │   ├── __init__.py
@@ -24,92 +24,87 @@ iakata/
 │   │   │   ├── __init__.py
 │   │   │   ├── chat.py           # Endpoints de chat
 │   │   │   ├── board.py          # Endpoints de tableros
-│   │   │   ├── doc.py            # Endpoints de documentación
-│   │   │   ├── monitor.py        # Endpoints de monitorización
-│   │   │   └── analysis.py       # Endpoints de análisis
-│   │   └── middleware/
-│   │       └── error_handler.py
+│   │   │   └── monitor.py        # Endpoints de monitorización
+│   │   ├── models.py             # Modelos de datos Pydantic
+│   │   ├── services/             # Servicios de la API
+│   │   │   ├── __init__.py
+│   │   │   └── rag_services.py   # Servicios RAG
+│   │   └── middleware/           # Middleware de la API
+│   │       └── error_handler.py  # Manejo de errores
+│   │
+│   ├── chat/                      # Módulo de Chat
+│   │   ├── __init__.py
+│   │   ├── manager.py            # Gestión de chat
+│   │   ├── session.py            # Manejo de sesiones
+│   │   ├── types.py              # Tipos de datos
+│   │   └── exceptions.py         # Excepciones específicas
 │   │
 │   ├── orchestrator/              # Módulo RAG Orchestrator
 │   │   ├── __init__.py
-│   │   ├── orchestrator.py        # Lógica de orquestación
-│   │   └── chat.py               # Gestión de chat
+│   │   └── orchestrator.py       # Orquestación de componentes
 │   │
 │   ├── retriever/                 # Módulo Retriever
 │   │   ├── __init__.py
+│   │   ├── retriever.py          # Sistema principal
 │   │   ├── search.py             # Motor de búsqueda
 │   │   ├── rank.py               # Motor de ranking
-│   │   └── filter.py             # Sistema de filtrado
+│   │   ├── filter.py             # Sistema de filtrado
+│   │   └── types.py              # Tipos de datos
 │   │
 │   ├── llm/                       # Módulo LLM
 │   │   ├── __init__.py
 │   │   ├── gpt.py                # Integración GPT-4
 │   │   ├── temperature.py        # Control de temperatura
-│   │   └── validator.py          # Validaciones
+│   │   ├── validator.py          # Validaciones
+│   │   └── types.py              # Tipos de datos
 │   │
 │   ├── knowledge/                 # Knowledge Sources Manager
 │   │   ├── __init__.py
-│   │   ├── pdf_processor.py      # Procesamiento PDFs
-│   │   ├── db_reader.py          # Lectura BD
-│   │   └── source_manager.py     # Gestión fuentes
+│   │   ├── processors/           # Procesadores de datos
+│   │   │   ├── __init__.py
+│   │   │   ├── pdf_processor.py  # Procesamiento PDFs
+│   │   │   ├── categories.py     # Categorización
+│   │   │   └── structure_analyzer.py # Análisis estructural
+│   │   └── processed/            # Datos procesados
+│   │       └── books/            # Libros procesados
 │   │
 │   ├── vectorstore/              # Index & Vector Store
 │   │   ├── __init__.py
-│   │   ├── tokenizer.py          # Tokenización
-│   │   ├── normalizer.py         # Normalización
-│   │   ├── embeddings.py         # Generación embeddings
-│   │   └── index_manager.py      # Gestión índices
+│   │   ├── processed/
+│   │   │   └── vectors/         # Vectores generados
+│   │   ├── vector_store.py       # Almacén principal
+│   │   ├── vectorizer.py         # Generación de embeddings
+│   │   ├── text_processor.py     # Procesamiento de texto
+│   │   ├── chunk_manager.py      # Gestión de chunks
+│   │   ├── cache_manager.py      # Gestión de caché
+│   │   ├── metadata_manager.py   # Gestión de metadatos
+│   │   ├── quality_validator.py  # Validación de calidad
+│   │   ├── retry_manager.py      # Gestión de reintentos
+│   │   └── common_types.py       # Tipos comunes
 │   │
-│   ├── documentation/            # Sistema Documentación
-│   │   ├── __init__.py
-│   │   ├── generator.py          # Generación docs
-│   │   ├── templates.py          # Gestión plantillas
-│   │   └── learning_store.py     # Almacén aprendizaje
-│   │
-│   ├── monitoring/               # Sistema Monitorización
-│   │   ├── __init__.py
-│   │   ├── status.py            # Estado sistema
-│   │   ├── metrics.py           # Métricas
-│   │   └── alerts.py            # Alertas
-│   │
-│   ├── analysis/                 # Sistema Análisis
-│   │   ├── __init__.py
-│   │   ├── kpi.py               # Análisis KPIs
-│   │   ├── advisor.py           # Recomendaciones
-│   │   └── feedback.py          # Sistema feedback
-│   │
-│   ├── config/                   # Configuraciones
-│   │   ├── __init__.py
-│   │   ├── settings.py          # Config general
-│   │   └── logging.py           # Config logs
-│   │
-│   └── utils/                    # Utilidades
+│   └── config/                   # Configuraciones
 │       ├── __init__.py
-│       ├── db.py                # Utils BD
-│       └── helpers.py           # Utils generales
+│       ├── settings.py           # Config general
+│       └── logging.py            # Config logs
 │
 ├── tests/                        # Tests
 │   ├── __init__.py
 │   ├── test_api/
+│   ├── test_chat/
 │   ├── test_orchestrator/
 │   ├── test_retriever/
 │   ├── test_llm/
-│   ├── test_knowledge/
-│   ├── test_vectorstore/
-│   ├── test_documentation/
-│   ├── test_monitoring/
-│   └── test_analysis/
+│   └── test_vectorstore/
 │
 ├── docs/                         # Documentación
-│   ├── api/
-│   ├── architecture/
-│   └── deployment/
+│   ├── api/                      # Docs de la API
+│   ├── architecture/             # Docs de arquitectura
+│   └── deployment/               # Docs de despliegue
 │
 └── logs/                        # Archivos de log
-    ├── api/
-    ├── app/
-    ├── error/
-    └── audit/
+    ├── api/                     # Logs de API
+    ├── app/                     # Logs de aplicación
+    └── error/                   # Logs de errores
 ```
 
 ## Notas Importantes

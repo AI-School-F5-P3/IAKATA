@@ -1,27 +1,36 @@
-from typing import Dict, List, Optional, Any, Awaitable
-from pydantic import BaseModel
+# En app/orchestrator/orchestrator.py
 
+from typing import Dict, List, Optional, Any, Awaitable
+from datetime import datetime
+import logging
+
+# Imports de documentación
+from app.documentation.generator import DocumentGenerator
+from app.documentation.templates import TemplateManager
+from app.documentation.storage import DocumentStorage
+from app.documentation.types import Document, DocumentFormat
+
+# Imports existentes
 from app.retriever.retriever import RetrieverSystem
 from app.vectorstore.common_types import TextType, ProcessedText
 from app.llm.types import LLMRequest, LLMResponse, ResponseType
 from app.llm.gpt import LLMModule
 from app.llm.validator import ResponseValidator
 from app.retriever.types import SearchQuery, SearchResult
-import logging
+from app.retriever.types import BoardSection
 
 logger = logging.getLogger(__name__)
 
 class RAGOrchestrator:
-    def __init__(
-        self,
-        vector_store,
-        llm: LLMModule,
-        validator: ResponseValidator
-    ):
+    def __init__(self, vector_store, llm, validator, 
+                 doc_generator=None, template_manager=None, doc_storage=None):
         self.retriever = RetrieverSystem(vector_store)
         self.llm = llm
         self.validator = validator
         self.context_window = 4000  # Tamaño máximo del contexto para el LLM
+        self.doc_generator = doc_generator or DocumentGenerator(llm)
+        self.template_manager = template_manager or TemplateManager()
+        self.doc_storage = doc_storage
 
     async def process_query(
         self,
@@ -96,30 +105,152 @@ class RAGOrchestrator:
         except Exception as e:
             logger.error(f"Error en el orquestador RAG: {str(e)}")
             raise Exception(f"Error en el orquestador RAG: {str(e)}")
+        
+    async def generate_documentation(
+        self,
+        project_data: Dict,
+        template_id: str = "project_report",
+        format: DocumentFormat = DocumentFormat.MARKDOWN
+    ) -> Document:
+        """
+        Genera documentación para un proyecto
+        Args:
+            project_data: Datos del proyecto
+            template_id: ID del template a usar
+            format: Formato de salida deseado
+        Returns:
+            Document generado
+        """
+        try:
+            # 1. Búsqueda de documentos relevantes usando el sistema existente
+            enriched_context = await self._build_documentation_context(project_data)
 
+            # 2. Obtener y validar template
+            if not self.template_manager:
+                raise ValueError("Template manager no configurado")
+            
+            template = self.template_manager.get_template(template_id)
+            if not template:
+                raise ValueError(f"Template no encontrado: {template_id}")
+
+            # 3. Generar documento usando DocumentGenerator
+            if not self.doc_generator:
+                self.doc_generator = DocumentGenerator(self.llm)
+
+            document = await self.doc_generator.generate_document(
+                template=template,
+                context=enriched_context,
+                format=format
+            )
+
+            # 4. Almacenar si hay storage configurado
+            if self.doc_storage:
+                doc_path = self.doc_storage.save_document(document)
+                document.metadata = document.metadata or {}
+                document.metadata["file_path"] = str(doc_path)
+
+            return document
+            
+        except Exception as e:
+            logger.error(f"Error generando documentación: {str(e)}")
+            raise
+
+    async def _build_documentation_context(self, project_data: Dict) -> Dict:
+        """
+        Construye el contexto enriquecido para la documentación
+        usando el sistema RAG existente.
+        """
+        try:
+            # 1. Extraer términos clave del proyecto para búsqueda
+            search_query = self._extract_search_terms(project_data)
+
+            # 2. Preparar metadata con tipo de documento y categoría
+            metadata = {
+                "type": "documentation",
+                "category": "general",  # Categoría por defecto
+                "project_type": project_data.get("type", "challenge")
+            }
+
+            # 3. Realizar búsqueda usando el retriever existente
+            search_results = await self._search_relevant_docs(
+                query=search_query,
+                metadata=metadata,
+                top_k=5
+            )
+
+            # 4. Construir contexto enriquecido
+            enriched_context = {
+                "project_data": project_data,
+                "relevant_documents": search_results,
+                "metadata": {
+                    "generated_at": datetime.utcnow().isoformat(),
+                    "source": "RAG System",
+                    "project_type": project_data.get("type", "challenge")
+                }
+            }
+
+            return enriched_context
+
+        except Exception as e:
+            logger.error(f"Error construyendo contexto de documentación: {str(e)}")
+            raise
+
+    def _extract_search_terms(self, project_data: Dict) -> str:
+        """
+        Extrae términos relevantes del proyecto para la búsqueda
+        """
+        search_terms = []
+        
+        # Extraer términos clave del proyecto
+        if 'title' in project_data:
+            search_terms.append(project_data['title'])
+        if 'description' in project_data:
+            search_terms.append(project_data['description'])
+        if 'challenge' in project_data:
+            if isinstance(project_data['challenge'], dict):
+                search_terms.extend([
+                    project_data['challenge'].get('description', ''),
+                    project_data['challenge'].get('current_state', ''),
+                    project_data['challenge'].get('target_state', '')
+                ])
+            else:
+                search_terms.append(str(project_data['challenge']))
+
+        # Unir términos en una query
+        return " ".join(filter(None, search_terms))
+    
     async def _search_relevant_docs(
         self,
         query: str,
         metadata: Optional[Dict[str, str]],
         top_k: int
     ) -> List[Dict[str, Any]]:
-        from app.retriever.types import BoardSection
+        
 
-        # Creamos un objeto BoardSection para pasarlo al Retriever
-        board_section = BoardSection(
-            content=query,
-            metadata=metadata or {}
-        )
+        try:
+        # Asegurar que metadata tenga una categoría
+            if metadata is None:
+                metadata = {}
+            if 'category' not in metadata:
+                metadata['category'] = 'general'
+                
+            # Crear BoardSection para el retriever
+            board_section = BoardSection(
+                content=query,
+                metadata=metadata
+            )
 
-        # Usamos el método `process_content` del `RetrieverSystem`
-        retriever_response = await self.retriever.process_content(
-            board_content=board_section,
-            max_results=top_k
-        )
+            # Procesar contenido
+            retriever_response = await self.retriever.process_content(
+                board_content=board_section,
+                max_results=top_k
+            )
 
-        # Extraemos los resultados del response
-        return retriever_response.search_results
-
+            return retriever_response.search_results if retriever_response else []
+            
+        except Exception as e:
+            logger.error(f"Error en búsqueda de documentos: {str(e)}")
+            return []
 
     async def _build_context(
         self,
@@ -255,3 +386,5 @@ class RAGOrchestrator:
             metadata=metadata,
             language="es"
         )
+    
+    
