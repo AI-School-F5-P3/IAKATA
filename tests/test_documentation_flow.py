@@ -18,7 +18,9 @@ async def test_documentation_generation():
     try:
         # 1. Configurar componentes
         print("Configurando componentes...")
+        vector_store_dir = Path("app/vectorstore/processed/vectors")
         vector_store = VectorStore()
+        vector_store.load(vector_store_dir)
         llm = LLMModule()
         validator = ResponseValidator()
         template_manager = TemplateManager()
