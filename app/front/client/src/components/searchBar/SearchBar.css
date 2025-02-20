@@ -1,0 +1,31 @@
+.search-bar {
+    border: none;
+    outline: none;
+    border-radius: 50px;
+    padding: 1em;
+    background-color: #ECF0F1;
+    box-shadow: inset 2px 5px 10px rgba(0,0,0,0.3);
+    transition: 300ms ease-in-out;
+    margin-top: 9%;
+    width: 20%;
+  }
+  
+  .search-bar:focus {
+    background-color: #f9f9f9;
+    transform: scale(1.0);
+    box-shadow: 13px 13px 100px #969696, -13px -13px 100px #ffffff;
+  }
+
+  @media (max-width: 580px) {
+    .search-bar {
+    width: 40%;
+    margin-top: 10%;
+    }
+
+  }
+
+  @media (max-width: 768px){
+    .search-bar {
+      width: 30%;
+    }
+  }

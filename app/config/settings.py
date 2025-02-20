@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     
     # Configuración de OpenAI
     OPENAI_API_KEY: str
-    LLM_MODEL: str = "gpt-4"
+    LLM_MODEL: str = "gpt-4o-mini"
     DEFAULT_TEMPERATURE: float = 0.7
     
     # Configuración de Vector Store
