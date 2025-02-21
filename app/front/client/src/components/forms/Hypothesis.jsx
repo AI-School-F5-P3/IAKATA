@@ -158,7 +158,7 @@ const Hypothesis = ({ editHypothesisId, editObstacleId, setLoading, setEditHypot
                     className="button-forms"
                     getValues={() => ({
                         idForm,
-                        ...getValues()
+                        ...getValues(["description"])
                     })}
                     onResult={handleImproveResult} 
                 />

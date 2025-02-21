@@ -96,7 +96,7 @@ const Process = ({ processId, setLoading, setEditable, isEdit = false }) => {
             className="button-forms"
             getValues={() => ({
                 idForm,
-                ...getValues()
+                ...getValues(["description"])
             })}
             onResult={handleImproveResult} 
         />

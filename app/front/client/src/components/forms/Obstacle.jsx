@@ -201,7 +201,7 @@ const Obstacle = ({
           className="button-forms"
           getValues={() => ({
               idForm,
-              ...getValues()
+              ...getValues(["description"])
           })}
           onResult={handleImproveResult} 
         />

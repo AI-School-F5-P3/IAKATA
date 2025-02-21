@@ -263,7 +263,7 @@ const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => 
                         className="button-forms"
                         getValues={() => ({
                             idForm,
-                            ...getValues()
+                            ...getValues(["name", "description"])
                         })}
                         onResult={handleImproveResult} 
                     />
