@@ -28,10 +28,10 @@ async def rag_response(data: FormData) -> str:
         section_type = "challenge"
     # section = BoardSection(content=data["description"], metadata={"category": section_type})
     # response = await retriever_system.process_content(section)
-    response = await orchestrator.process_query(section_type, data['category'])
+    # response = await orchestrator.process_query(section_type, data['category'])
 
-    print(response)
-    return {"description": f"sugerencia: {response}"}
+    # print(response)
+    # return {"description": f"sugerencia: {response}"}
 
 
 async def store_context_db(data: dict) -> str:
