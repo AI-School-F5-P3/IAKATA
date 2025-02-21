@@ -1,0 +1,111 @@
+```mermaid
+    flowchart TD
+    classDef default fill:#f9f9f9,stroke:#333
+    classDef storage fill:#f5f5f5,stroke:#333
+    classDef external fill:#e9e9e9,stroke:#333
+
+    %% Nivel 1 - Sistema Externo
+    subgraph LK-WEB["LK-WEB System"]
+        LKDB[(LK-WEB DB)]:::external
+        subgraph LKAPI["LK-WEB API"]
+            LKA1["/chat"]
+            LKA2["/board"]
+            LKA3["/db"]
+        end
+        LKDB --> LKA1 & LKA2 & LKA3
+    end
+
+    %% Nivel 2 - API IAKATA
+    subgraph IAKATA_API["IAKATA API Layer"]
+        IA1["/chat endpoint"]
+        IA2["/board endpoint"]
+        IA3["/db endpoint"]
+        
+        IAR1["/chat response"]
+        IAR2["/board response"]
+        IAR3["/db response"]
+    end
+
+    %% Nivel 3 - Orquestador
+    subgraph Orchestrator["RAG Orchestrator"]
+        direction TB
+        O1[process_query]
+        O2[validate_board_section]
+        O3[get_section_suggestions]
+        O4[process_db_input]
+    end
+
+    %% Nivel 4 - Gestores y Core
+    subgraph ProcessingLayer["Processing Layer"]
+        direction LR
+        subgraph Managers["State Management"]
+            direction TB
+            CM[ChatManager]
+            SM[SessionManager]
+            TM[TemplateManager]
+        end
+
+        subgraph Core["Core Processing"]
+            direction TB
+            C1[RetrieverSystem]
+            C2[LLMModule]
+            C3[ResponseValidator]
+        end
+    end
+
+    %% Nivel 5 - Storage y Analysis
+    subgraph BottomLayer["Bottom Layer"]
+        direction LR
+        subgraph Storage["Storage Layer"]
+            direction TB
+            IAKAT[(IAKATA MySQL DB)]:::storage
+            VS[VectorStore]:::storage
+            DS[DocumentStorage]:::storage
+        end
+
+        subgraph Analysis["Analysis & Documentation"]
+            direction TB
+            AN1[KPIAnalyzer]
+            AN2[MonitorSystem]
+            AN3[DocumentGenerator]
+        end
+    end
+
+    %% Flujos de entrada y salida
+    LKA1 --- IA1 --- O1
+    LKA2 --- IA2 --- O2
+    LKA3 --- IA3 --- O4
+
+    O1 --> C1 & C2
+    O2 --> C1 & C2 & C3
+    O4 --> C1 & C2
+
+    O1 --> CM --> SM
+    O2 --> TM
+
+    C1 --> VS --> IAKAT
+
+    O2 --> AN1 & AN2 & AN3
+    O4 --> AN1 & AN2 & AN3
+
+    %% Retornos
+    O1 --- IAR1 --- LKA1
+    O2 --- IAR2 --- LKA2
+    O4 --- IAR3 --- LKA3
+
+    C2 ---> O1
+    C2 & C3 ---> O2
+    C2 ---> O4
+
+    %% Estilos de las flechas
+    linkStyle 0,1,2 stroke:#999999,stroke-width:2px
+    %% Chat flow (entrada y salida)
+    linkStyle 3,4,6,9,12,15,18,21 stroke:#990000,stroke-width:2px
+    linkStyle 24,27,30 stroke:#ffcccc,stroke-width:2px
+    %% Board flow (entrada y salida)
+    linkStyle 5,7,10,13,16,19,22 stroke:#009900,stroke-width:2px
+    linkStyle 25,28,31 stroke:#ccffcc,stroke-width:2px
+    %% DB flow (entrada y salida)
+    linkStyle 8,11,14,17,20,23 stroke:#000099,stroke-width:2px
+    linkStyle 26,29,32 stroke:#ccccff,stroke-width:2px
+    ```

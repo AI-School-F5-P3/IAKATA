@@ -1,3 +1,10 @@
+import sys
+from pathlib import Path
+
+# Add the project root directory to the Python path
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(project_root))
+
 import os
 from dotenv import load_dotenv
 import json
@@ -7,6 +14,8 @@ from typing import Dict, List, Optional
 from .types import LLMRequest, LLMResponse, ResponseType
 from .temperature import TemperatureManager
 from .validator import ResponseValidator
+from orchestrator.query_classifier import QueryClassifier  # Importación del clasificador de consultas
+
 
 load_dotenv()
 
@@ -21,11 +30,14 @@ class LLMModule:
             raise ValueError("OpenAI API Key not found in .env file")
         
         self.model = model
-        openai.api_key = self.api_key
+        self.client = openai.OpenAI(api_key=self.api_key)
         self.temp_manager = TemperatureManager()
         self.validator = ResponseValidator()
-        
-        # System prompts for different contexts
+
+        # Agregar esta línea para inicializar el query_classifier
+        self.query_classifier = QueryClassifier()
+
+        # System prompts originales para diferentes propósitos
         self.system_prompts = {
             ResponseType.CHAT: """Eres un asistente experto en metodología Lean Kata, especializado en guiar a usuarios a través del proceso de mejora continua. Tu objetivo es ayudar a mantener el enfoque en el aprendizaje científico y la experimentación sistemática.
 
@@ -158,8 +170,19 @@ La documentación debe incluir:
    - Datos completos
    - Referencias y recursos utilizados"""
         }
-        
-        # Validation criteria for each board section
+
+        # Prompt para consultas generales
+        self.general_prompt = """Eres un asistente AI versátil y servicial. Tu objetivo es proporcionar respuestas claras, precisas y útiles para cualquier tipo de consulta.
+
+Cuando se te pregunte sobre temas generales (no relacionados con Lean Kata):
+- Proporciona información precisa y relevante
+- Mantén un tono conversacional y profesional
+- Adapta el nivel de detalle según la consulta
+- Sé claro y directo en tus explicaciones
+
+Si la pregunta es ambigua, solicita clarificación. Si no tienes información suficiente sobre un tema, indícalo claramente."""
+
+        # Criterios de validación para cada sección del tablero
         self.validation_criteria = {
             "challenge": {
                 "specific": "El desafío debe ser específico y claro",
@@ -182,79 +205,64 @@ La documentación debe incluir:
                 "specific": "Debe ser específica y clara",
                 "predictive": "Debe incluir una predicción concreta",
                 "related": "Debe estar relacionada con el experimento"
-            },
-            "learnings": {
-                "evidence_based": "Debe basarse en evidencia concreta",
-                "actionable": "Debe ser accionable para futuros experimentos",
-                "related": "Debe relacionarse con la hipótesis planteada",
-                "clear": "Debe ser claro y específico"
-            },
-            "mental_contrast": {
-                "balanced": "Debe incluir tanto aspectos positivos como negativos",
-                "realistic": "Debe ser realista y basado en hechos",
-                "specific": "Debe ser específico y detallado",
-                "actionable": "Debe conducir a acciones concretas"
-            },
-            "obstacle": {
-                "current": "Debe ser un obstáculo actual y real",
-                "specific": "Debe ser específico y bien definido",
-                "relevant": "Debe estar relacionado con el target",
-                "not_solution": "No debe ser una solución disfrazada"
-            },
-            "process": {
-                "sequential": "Debe ser secuencial y lógico",
-                "detailed": "Debe incluir pasos detallados",
-                "assignable": "Debe tener responsables claros",
-                "timebound": "Debe incluir plazos definidos"
-            },
-            "results": {
-                "quantitative": "Debe incluir datos cuantitativos cuando sea posible",
-                "complete": "Debe ser completo y detallado",
-                "relevant": "Debe relacionarse con la hipótesis",
-                "verifiable": "Debe ser verificable"
-            },
-            "task": {
-                "specific": "Debe ser específica y clara",
-                "assignable": "Debe tener un responsable definido",
-                "timebound": "Debe tener un plazo establecido",
-                "achievable": "Debe ser realizable con los recursos disponibles"
-            },
-            "tribe": {
-                "roles": "Debe definir roles claros",
-                "coach": "Debe identificar al coach del equipo",
-                "meetings": "Debe especificar frecuencia de reuniones",
-                "responsibilities": "Debe establecer responsabilidades claras"
             }
         }
 
-    def _prepare_messages(self, request: LLMRequest) -> List[Dict]:
-        """Prepare the message list for the OpenAI API call"""
-        messages = [
-            {"role": "system", "content": self.system_prompts[request.response_type]}
-        ]
-        
-        if request.context:
-            context_str = json.dumps(request.context, ensure_ascii=False)
-            messages.append({"role": "system", "content": f"Contexto: {context_str}"})
-        
-        messages.append({"role": "user", "content": request.query})
-        return messages
+    def _get_query_classifier(self):
+        """
+        Lazy import of QueryClassifier to avoid circular imports
+        This method imports the QueryClassifier only when it's needed
+        """
+        from app.orchestrator.query_classifier import QueryClassifier
+        return QueryClassifier()
 
     async def process_request(self, request: LLMRequest) -> LLMResponse:
-        """Process an LLM request and return a response"""
+        """Procesa una solicitud al LLM"""
         try:
-            temperature = self.temp_manager.get_temperature(
-                request.response_type, 
-                request.temperature
+            # Ensure context is a dictionary if it's None
+            request.context = request.context or {}
+
+            # Lazy import of query classifier
+            query_classifier = self._get_query_classifier()
+            
+            # Determinar si es consulta Lean Kata o general
+            is_lean_kata = (
+                request.context and 
+                request.context.get('metadata', {}).get('query_type') == 'lean_kata'
             )
             
-            messages = self._prepare_messages(request)
+            # Clasificar la consulta si no se ha hecho
+            if not is_lean_kata:
+                is_lean_kata, query_metadata = self.query_classifier.classify_query(request.query)
+                request.context['metadata'] = query_metadata['metadata']
             
-            client = openai.OpenAI()
-
-            logger.debug(f"Sending request to OpenAI - Model: {self.model}, Temperature: {temperature}")
+            # Seleccionar prompt apropiado
+            if is_lean_kata:
+                system_prompt = self.system_prompts[request.response_type]
+                temperature = self.temp_manager.get_temperature(
+                    request.response_type, 
+                    request.temperature
+                )
+            else:
+                system_prompt = self.general_prompt
+                temperature = 0.7  # Temperatura estándar para consultas generales
             
-            response = client.chat.completions.create(
+            # Preparar mensajes
+            messages = [
+                {"role": "system", "content": system_prompt}
+            ]
+            
+            # Añadir contexto si existe
+            if request.context:
+                messages.append({
+                    "role": "system", 
+                    "content": f"Contexto: {json.dumps(request.context, ensure_ascii=False)}"
+                })
+            
+            messages.append({"role": "user", "content": request.query})
+            
+            # Realizar llamada a la API
+            response = self.client.chat.completions.create(
                 model=self.model,
                 messages=messages,
                 temperature=temperature,
@@ -262,95 +270,109 @@ La documentación debe incluir:
             )
             
             content = response.choices[0].message.content
+            
+            # Metadata consistente
             metadata = {
-                "model": self.model,
-                "response_type": request.response_type.value,
-                "temperature": temperature,
-                "tokens_used": response.usage.total_tokens
+                'text': content,
+                'type': 'lean_kata' if is_lean_kata else 'general',
+                'metadata': {
+                    'model': self.model,
+                    'temperature': temperature,
+                    'tokens_used': response.usage.total_tokens,
+                    'response_type': request.response_type.value,
+                    'query_type': 'lean_kata' if is_lean_kata else 'general'
+                },
+                'section_id': 'lean_kata' if is_lean_kata else 'general'
             }
             
-            if request.response_type == ResponseType.VALIDATION:
-                validation_results = self.validator.process_validation(content)
-                return LLMResponse(
-                    content=content,
-                    metadata=metadata,
-                    validation_results=validation_results
-                )
+            # Procesar respuesta según el tipo
+            if is_lean_kata:
+                if request.response_type == ResponseType.VALIDATION:
+                    validation_results = self.validator.process_validation(content)
+                    return LLMResponse(
+                        content=content,
+                        metadata=metadata,
+                        validation_results=validation_results
+                    )
+                elif request.response_type == ResponseType.SUGGESTION:
+                    suggestions = self.validator.process_suggestions(content)
+                    return LLMResponse(
+                        content=content,
+                        metadata=metadata,
+                        suggestions=suggestions
+                    )
             
-            elif request.response_type == ResponseType.SUGGESTION:
-                suggestions = self.validator.process_suggestions(content)
-                return LLMResponse(
-                    content=content,
-                    metadata=metadata,
-                    suggestions=suggestions
-                )
-            
+            # Respuesta estándar
             return LLMResponse(
                 content=content,
-                metadata=metadata
+                metadata=metadata,
+                confidence=request.context.get('metadata', {}).get('confidence', 0.7)
             )
 
         except Exception as e:
-            logger.error(f"Error processing LLM request: {str(e)}")
+            logger.error(f"Error procesando LLM request: {str(e)}")
             raise
 
-    async def validate_board(self, board_data: Dict) -> LLMResponse:
-        """Validate a board's content"""
-        request = LLMRequest(
-            query=f"Valida el siguiente tablero Lean Kata: {json.dumps(board_data, ensure_ascii=False)}",
-            response_type=ResponseType.VALIDATION,
-            context={"board_type": board_data.get("type", "unknown")}
-        )
-        return await self.process_request(request)
-
     async def validate_board_section(self, category: str, content: str) -> Dict:
-        """Valida una sección específica del tablero Lean Kata usando la categoría unificada"""
+        """Valida una sección específica del tablero Lean Kata"""
         criteria = self.validation_criteria.get(category, {})
         validation_prompt = f"Evalúa el siguiente contenido para la categoría {category} del tablero Lean Kata:\n\n{content}\n\nCriterios:\n"
+        
         for key, criterion in criteria.items():
             validation_prompt += f"- {criterion}\n"
         
         request = LLMRequest(
             query=validation_prompt,
             response_type=ResponseType.VALIDATION,
-            context={"category": category}
+            context={
+                'metadata': {
+                    'category': category,
+                    'query_type': 'lean_kata'
+                }
+            }
         )
+        
         return await self.process_request(request)
 
-    async def get_section_suggestions(self, category: str, content: str, context: Optional[Dict] = None) -> LLMResponse:
-        """Obtiene sugerencias de mejora para una categoría específica del tablero Lean Kata"""
+    async def get_section_suggestions(
+        self, 
+        category: str, 
+        content: str, 
+        context: Optional[Dict] = None
+    ) -> LLMResponse:
+        """Obtiene sugerencias de mejora para una sección"""
         suggestion_prompt = f"Analiza el siguiente contenido de la categoría {category} y proporciona sugerencias de mejora específicas:\n\n{content}"
+        
+        metadata = {
+            'category': category,
+            'query_type': 'lean_kata',
+            **(context or {})
+        }
         
         request = LLMRequest(
             query=suggestion_prompt,
             response_type=ResponseType.SUGGESTION,
+            context={'metadata': metadata}
+        )
+        
+        return await self.process_request(request)
+
+    async def generate_documentation(self, project_data: Dict) -> LLMResponse:
+        """Genera documentación para un proyecto"""
+        request = LLMRequest(
+            query="Genera un reporte detallado del proyecto.",
+            response_type=ResponseType.DOCUMENTATION,
             context={
-                "category": category,
-                "board_context": context or {}
+                'metadata': {
+                    'query_type': 'lean_kata',
+                    **project_data
+                }
             }
         )
         return await self.process_request(request)
 
-    async def generate_suggestions(self, context: Dict) -> LLMResponse:
-        """Generate suggestions based on current context"""
-        request = LLMRequest(
-            query="Genera sugerencias de mejora basadas en el contexto proporcionado.",
-            response_type=ResponseType.SUGGESTION,
-            context=context
-        )
-        return await self.process_request(request)
-
-    async def generate_documentation(self, project_data: Dict) -> LLMResponse:
-        """Generate documentation for a project"""
-        request = LLMRequest(
-            query="Genera un reporte detallado del proyecto.",
-            response_type=ResponseType.DOCUMENTATION,
-            context=project_data
-        )
-        return await self.process_request(request)
-
     async def generate_experiment_tasks(self, experiment_data: Dict) -> LLMResponse:
-        """Generate specific tasks for an experiment"""
+        """Genera tareas específicas para un experimento"""
         task_prompt = f"""
         Basado en el siguiente experimento:
         {json.dumps(experiment_data, ensure_ascii=False)}
@@ -366,6 +388,11 @@ La documentación debe incluir:
         request = LLMRequest(
             query=task_prompt,
             response_type=ResponseType.DOCUMENTATION,
-            context=experiment_data
+            context={
+                'metadata': {
+                    'query_type': 'lean_kata',
+                    **experiment_data
+                }
+            }
         )
         return await self.process_request(request)
