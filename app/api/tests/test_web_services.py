@@ -20,4 +20,3 @@ def test_generate_response_missing_description():
     )
     assert response.status_code == 422  # Unprocessable Entity (faltan datos)
     assert "detail" in response.json()
-

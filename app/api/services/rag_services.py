@@ -28,7 +28,7 @@ async def rag_response(data: FormData) -> str:
         section_type = "challenge"
     # section = BoardSection(content=data["description"], metadata={"category": section_type})
     # response = await retriever_system.process_content(section)
-    response = await orchestrator.validate_board_section(section_type, data['description'])
+    response = await orchestrator.process_query(section_type, data['category'])
 
     print(response)
     return {"description": f"sugerencia: {response}"}

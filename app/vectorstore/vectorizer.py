@@ -273,6 +273,9 @@ class Vectorizer:
             Tuple con (scores, indices)
         """
         try:
+
+            logger.info(f"Realizando búsqueda FAISS con k={k}")
+
             # Normalizar vector de consulta
             faiss.normalize_L2(query_vector)
             
@@ -281,6 +284,8 @@ class Vectorizer:
             
             # Realizar búsqueda
             distances, indices = self.index.search(query_vector, actual_k)
+            
+            logger.info(f"Búsqueda completada - encontrados {len(indices[0])} resultados")
             
             # Convertir distancias a scores de similitud
             scores = 1 - (distances / 2)  # Convertir distancia coseno a similitud

@@ -26,6 +26,7 @@ from app.models.LearningsModel import LearningModel
 from app.models.MentalContrastModel import MentalContrastModel
 
 class KataMetrics(BaseModel):
+
     """Métricas específicas de Lean Kata"""
     process_adherence: float = Field(..., description="Adherencia al proceso Kata (0-1)")
     experiment_cycle_time: float = Field(..., description="Tiempo medio del ciclo PDCA en días")
@@ -36,6 +37,7 @@ class KataMetrics(BaseModel):
     mental_contrast_score: float = Field(..., description="Puntuación del contraste mental")
 
 class KataStatus(BaseModel):
+
     """Estado actual del proyecto Kata"""
     status: str = Field(..., description="Estado global: on_track, needs_adjustment, at_risk")
     coaching_needs: List[str] = Field(default_factory=list, description="Áreas que necesitan coaching")
@@ -44,6 +46,7 @@ class KataStatus(BaseModel):
     risk_factors: List[str] = Field(default_factory=list, description="Factores de riesgo identificados")
 
 class KataAnalysis(BaseModel):
+
     """Análisis completo del proyecto Kata"""
     project_id: str
     metrics: KataMetrics
@@ -51,6 +54,7 @@ class KataAnalysis(BaseModel):
     insights: List[str]
     recommendations: List[Dict[str, Any]]
     timestamp: datetime
+
 class KataAnalyzer:
     def __init__(
         self,
@@ -66,7 +70,9 @@ class KataAnalyzer:
         self._last_update = {}
 
     async def analyze_project(self, project_id: str) -> KataAnalysis:
+
         """Analiza un proyecto Lean Kata completo"""
+
         try:
             if self._is_cache_valid(project_id):
                 return self._cache[project_id]
@@ -103,7 +109,9 @@ class KataAnalyzer:
             raise
 
     async def _fetch_project_data(self, project_id: str) -> Dict:
+
         """Obtiene datos completos del proyecto desde LK-WEB"""
+
         try:
             # Obtener proceso y tribu
             process = await ProcessModel.findByPk(project_id)
@@ -183,7 +191,9 @@ class KataAnalyzer:
             raise
 
     def _is_cache_valid(self, project_id: str) -> bool:
+
         """Verifica si el caché para un proyecto es válido"""
+
         if project_id not in self._last_update:
             return False
         time_since_update = (datetime.utcnow() - self._last_update[project_id]).total_seconds()
@@ -193,6 +203,7 @@ class KataAnalyzer:
         """Actualiza el caché con un nuevo análisis"""
         self._cache[project_id] = analysis
         self._last_update[project_id] = datetime.utcnow()
+
     async def _calculate_metrics(self, project_data: Dict) -> KataMetrics:
         """Calcula métricas del proyecto Kata"""
         try:
@@ -253,7 +264,9 @@ class KataAnalyzer:
         experiments: List[Dict],
         learnings: List[Dict]
     ) -> float:
+        
         """Calcula la adherencia al proceso Kata basado en la calidad de experimentos y aprendizajes"""
+
         if not experiments:
             return 0.0
 
@@ -299,7 +312,9 @@ class KataAnalyzer:
         return (exp_score * 0.6) + (learn_score * 0.4)
 
     def _calculate_experiment_cycle_time(self, experiments: List[Dict]) -> float:
+
         """Calcula el tiempo promedio del ciclo PDCA en días"""
+
         if not experiments:
             return 0.0
 
@@ -326,7 +341,9 @@ class KataAnalyzer:
         learnings: List[Dict],
         experiments: List[Dict]
     ) -> float:
+        
         """Evalúa la calidad de los aprendizajes usando el RAG para análisis semántico"""
+        
         if not learnings:
             return 0.0
 
@@ -391,7 +408,9 @@ class KataAnalyzer:
         self,
         actual_state: Dict,
         target_state: Dict
+
     ) -> float:
+        
         """Calcula el progreso hacia el estado objetivo"""
         try:
             actual_metrics = actual_state.get("metrics", {})
@@ -436,12 +455,15 @@ class KataAnalyzer:
                 pass
 
         return max(0, min(1, score))  # Normalizar entre 0 y 1
+    
     async def _evaluate_status(
         self,
         project_data: Dict,
         metrics: KataMetrics
     ) -> KataStatus:
+        
         """Evalúa el estado actual del proyecto Kata"""
+
         try:
             # Determinar estado general
             status = self._determine_project_status(metrics)
@@ -637,7 +659,9 @@ class KataAnalyzer:
         project_data: Dict,
         metrics: KataMetrics
     ) -> List[str]:
+        
         """Genera insights basados en datos y métricas del proyecto"""
+
         try:
             # Preparar contexto
             context = self._prepare_insight_context(project_data, metrics)
@@ -662,7 +686,9 @@ class KataAnalyzer:
         project_data: Dict,
         metrics: KataMetrics
     ) -> Dict:
+        
         """Prepara el contexto para generación de insights"""
+
         return {
             "challenge": {
                 "description": project_data["challenge"].get("description"),
@@ -687,23 +713,27 @@ class KataAnalyzer:
         }
 
     def _generate_insight_prompt(self, context: Dict) -> str:
+
         """Genera el prompt para solicitar insights"""
+
         return f"""Analiza el siguiente proyecto Kata y genera insights significativos:
 
-Challenge: {context['challenge']['description']}
-Estado Objetivo: {context['challenge']['target']}
-Estado Actual: {context['challenge']['current']}
+        Challenge: {context['challenge']['description']}
+        Estado Objetivo: {context['challenge']['target']}
+        Estado Actual: {context['challenge']['current']}
 
-Métricas actuales:
-{json.dumps(context['progress'], indent=2)}
+        Métricas actuales:
+        {json.dumps(context['progress'], indent=2)}
 
-Tendencias:
-{json.dumps(context['trends'], indent=2)}
+        Tendencias:
+        {json.dumps(context['trends'], indent=2)}
 
-Genera 3-5 insights relevantes que ayuden a mejorar el proceso Kata."""
+        Genera 3-5 insights relevantes que ayuden a mejorar el proceso Kata."""
 
     def _process_llm_insights(self, response: LLMResponse) -> List[str]:
+
         """Procesa y valida los insights generados por el LLM"""
+
         insights = []
         
         # Separar por líneas y filtrar líneas vacías
@@ -728,7 +758,9 @@ Genera 3-5 insights relevantes que ayuden a mejorar el proceso Kata."""
         metrics: KataMetrics,
         status: KataStatus
     ) -> List[Dict[str, Any]]:
+        
         """Genera recomendaciones específicas para el proyecto"""
+
         try:
             # Preparar contexto
             context = {
@@ -759,25 +791,29 @@ Genera 3-5 insights relevantes que ayuden a mejorar el proceso Kata."""
             return []
 
     def _generate_recommendation_prompt(self, context: Dict) -> str:
+
         """Genera el prompt para solicitar recomendaciones"""
+
         return f"""Basado en el siguiente estado del proyecto Kata:
 
-Estado actual: {context['status']['status']}
-Métricas clave: {json.dumps(context['metrics'], indent=2)}
-Obstáculos bloqueantes: {len(context['project_state']['blocking_obstacles'])}
+        Estado actual: {context['status']['status']}
+        Métricas clave: {json.dumps(context['metrics'], indent=2)}
+        Obstáculos bloqueantes: {len(context['project_state']['blocking_obstacles'])}
 
-Genera 3-5 recomendaciones específicas y accionables para mejorar el proceso Kata.
-Para cada recomendación, incluye:
-1. Acción específica
-2. Prioridad (alta/media/baja)
-3. Impacto esperado
-4. Tiempo estimado de implementación"""
+        Genera 3-5 recomendaciones específicas y accionables para mejorar el proceso Kata.
+        Para cada recomendación, incluye:
+        1. Acción específica
+        2. Prioridad (alta/media/baja)
+        3. Impacto esperado
+        4. Tiempo estimado de implementación"""
 
     def _process_llm_recommendations(
         self,
         response: LLMResponse
     ) -> List[Dict[str, Any]]:
+        
         """Procesa y estructura las recomendaciones generadas por el LLM"""
+
         recommendations = []
         
         # Separar por líneas y filtrar líneas vacías
@@ -801,8 +837,11 @@ Para cada recomendación, incluye:
             recommendations.append(current_rec)
 
         return recommendations
+    
     def _calculate_experiment_trend(self, experiments: List[Dict]) -> Dict[str, Any]:
+
         """Calcula tendencias en experimentos"""
+        
         if not experiments:
             return {"trend": "no_data", "success_rate": 0}
 
@@ -844,7 +883,9 @@ Para cada recomendación, incluye:
         }
 
     def _calculate_learning_trend(self, learnings: List[Dict]) -> Dict[str, Any]:
+
         """Calcula tendencias en la calidad de aprendizajes"""
+
         if not learnings:
             return {"trend": "no_data", "quality_score": 0}
 
@@ -888,7 +929,9 @@ Para cada recomendación, incluye:
         }
 
     def _evaluate_single_learning(self, learning: Dict) -> float:
+
         """Evalúa la calidad de un único aprendizaje"""
+
         score = 0
         max_score = 5
 
@@ -922,7 +965,9 @@ Para cada recomendación, incluye:
         text1: str,
         text2: str
     ) -> float:
+        
         """Calcula la similitud semántica entre dos textos usando el vector store"""
+        
         try:
             # Convertir textos a vectores usando el vector store
             vector1 = await self.vector_store.vectorizer.vectorize([text1])
@@ -940,7 +985,9 @@ Para cada recomendación, incluye:
             return 0.0
 
     def _evaluate_actionability(self, action_items: List[str]) -> float:
+
         """Evalúa la accionabilidad de los items propuestos"""
+        
         if not action_items:
             return 0.0
 
@@ -968,7 +1015,9 @@ Para cada recomendación, incluye:
         return score / len(action_items)
 
     def _format_date(self, date_str: str) -> str:
+
         """Formatea una fecha para presentación"""
+        
         try:
             date = datetime.fromisoformat(date_str)
             return date.strftime("%Y-%m-%d")
@@ -980,7 +1029,9 @@ Para cada recomendación, incluye:
         start_date: str,
         end_date: str
     ) -> Optional[int]:
+        
         """Calcula la diferencia en días entre dos fechas"""
+        
         try:
             start = datetime.fromisoformat(start_date)
             end = datetime.fromisoformat(end_date)
@@ -989,6 +1040,7 @@ Para cada recomendación, incluye:
             return None
 
     def _is_valid_experiment(self, experiment: Dict) -> bool:
+
         """Valida si un experimento cumple con los criterios mínimos"""
         required_fields = [
             "hypothesis",
@@ -999,8 +1051,11 @@ Para cada recomendación, incluye:
         ]
         return all(experiment.get(field) for field in required_fields)
 
+
     def _is_valid_learning(self, learning: Dict) -> bool:
+
         """Valida si un aprendizaje cumple con los criterios mínimos"""
+        
         required_fields = [
             "description",
             "learning_date",

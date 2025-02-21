@@ -67,3 +67,57 @@ class QualityValidator:
         except Exception as e:
             logger.error(f"Error en validación de resultado: {e}")
             return False
+        
+    def validate_section(self, section: Dict) -> bool:
+        """
+        Valida que una sección tenga todos los campos requeridos y sean válidos
+        """
+        required_fields = {
+            'title': str,
+            'page_range': list,
+            'primary_category': str,
+            'secondary_categories': list,
+            'relevance': dict,
+            'key_concepts': dict
+        }
+        
+        try:
+            # Validar campos requeridos y tipos
+            for field, field_type in required_fields.items():
+                if field not in section:
+                    self.logger.warning(f"Campo requerido faltante: {field}")
+                    return False
+                if not isinstance(section[field], field_type):
+                    self.logger.warning(f"Tipo inválido para {field}: {type(section[field])}")
+                    return False
+                    
+            # Validar estructura de relevance
+            if not all(k in section['relevance'] for k in ['level', 'score']):
+                self.logger.warning("Estructura de relevance incompleta")
+                return False
+                
+            # Validar estructura de key_concepts
+            required_concept_types = ['methodologies', 'practices', 'tools', 'roles']
+            if not all(k in section['key_concepts'] for k in required_concept_types):
+                self.logger.warning("Estructura de key_concepts incompleta")
+                return False
+            
+            # Validación más flexible para secciones críticas
+            if self.is_critical_section(section):
+                # Si es una sección crítica pero no tiene conceptos, los añadimos
+                if 'key_concepts' not in section:
+                    section['key_concepts'] = {}
+                if 'methodologies' not in section['key_concepts']:
+                    section['key_concepts']['methodologies'] = []
+                
+                # Asegurar que tenga al menos un concepto Kata
+                if not any(concept in section['key_concepts']['methodologies'] 
+                        for concept in ['Kata de mejora', 'Coaching Kata']):
+                    section['key_concepts']['methodologies'].append('Kata de mejora')
+                    self.logger.info(f"Añadido concepto Kata a sección crítica: {section['title']}")
+                
+            return True
+            
+        except Exception as e:
+            self.logger.error(f"Error en validación de sección: {str(e)}")
+            return False

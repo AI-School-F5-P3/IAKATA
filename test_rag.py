@@ -3,11 +3,11 @@ import logging
 from app.config.logging import setup_logging
 from app.orchestrator.orchestrator import RAGOrchestrator
 from app.vectorstore.vector_store import VectorStore
+from app.retriever.search import SearchEngine
 from app.llm.types import LLMResponse
 from app.llm.gpt import LLMModule
 from pathlib import Path
 from unittest.mock import AsyncMock
-
 
 # Configurar logging
 setup_logging()
@@ -15,24 +15,23 @@ logger = logging.getLogger(__name__)
 
 async def test_board_validation():
     try:
-        # Inicializar vector store y cargar datos
+        # Inicializar vector store y search engine
         vector_store_dir = Path("app/vectorstore/processed/vectors")
         vector_store = VectorStore()
         vector_store.load(vector_store_dir)
 
-        # Inicializar el LLM real (o, si se requiere, un mock para pruebas unitarias)
-        llm = LLMModule()  # O usa un mock si lo prefieres en pruebas unitarias
-        # También inicializa o proporciona el validador si es necesario
-        validator = llm.validator  # o ResponseValidator()
+        # Inicializar el LLM real
+        llm = LLMModule()
+        validator = llm.validator
 
-        # Inicializar el orquestador con instancias reales
+        # Inicializar el orquestador con las instancias actualizadas
         rag = RAGOrchestrator(
-            vector_store=vector_store,
+            vector_store=vector_store,  # Todavía necesitamos vector_store para otras operaciones
             llm=llm,
             validator=validator
         )
 
-        # Simular board content como lo recibiría la API
+        # Simular board content
         board_content = {
             "title": "Mejorar eficiencia en línea de producción",
             "description": """
@@ -46,7 +45,7 @@ async def test_board_validation():
             "previous_challenges": []
         }
 
-        # Llamar al nuevo método que simula la llamada de API
+        # Llamar al método de procesamiento
         response = await rag.process_board_request(
             board_id="TEST-001",
             section_type="challenge",
@@ -61,7 +60,7 @@ async def test_board_validation():
         if response.validation_results:
             print("\nEstado de la validación:")
             for key, value in response.validation_results.items():
-                if key != 'validation_error':  # No mostrar errores de validación como resultados
+                if key != 'validation_error':
                     print(f"- {key}: {'✓' if value else '✗'}")
 
         if response.suggestions:
@@ -74,16 +73,12 @@ async def test_board_validation():
             for source in response.metadata["sources"]:
                 print(f"- ID: {source['id']} (Score: {source['score']:.2f})")
 
-        # Si hubo algún error de validación, mostrarlo al final
         if response.validation_results and 'validation_error' in response.validation_results:
             print(f"\nError de validación: {response.validation_results['validation_error']}")
 
     except Exception as e:
-        print(f"Error durante la ejecución: {e}")
+        logger.error(f"Error durante la ejecución: {e}")
+        raise
 
 if __name__ == "__main__":
-    import asyncio
     asyncio.run(test_board_validation())
-
-
-
