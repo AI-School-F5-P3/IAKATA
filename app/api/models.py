@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Optional
 
 class FormData(BaseModel):
-    formId: str = Field(..., description="Id de la sección.")
+    idForm: str = Field(..., description="Id de la sección.")
     description: str = Field(..., description="Descripción de la sección")
 
 class ResponseOutput(BaseModel):
