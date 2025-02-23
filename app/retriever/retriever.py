@@ -11,6 +11,8 @@ from app.retriever.rank import RankEngine
 from app.retriever.filter import FilterSystem
 from app.llm.types import ResponseType
 from app.vectorstore.common_types import ProcessedText
+from app.vectorstore.text_processor import TextProcessor
+from app.vectorstore.metadata_manager import MetadataManager
 from tqdm import tqdm
 import json
 from pathlib import Path
@@ -28,11 +30,16 @@ class RetrieverSystem:
         self,
         vector_store,
         ranking_config: RankingConfig = RankingConfig(),
-        filter_config: FilterConfig = FilterConfig()
+        filter_config: FilterConfig = FilterConfig(),
+        batch_size: int =32
     ):
+        self.metadata_manager = MetadataManager()
+        self.vector_store = vector_store
+        self.text_processor = TextProcessor()
         self.search_engine = SearchEngine(vector_store)
         self.rank_engine = RankEngine(ranking_config)
         self.filter_system = FilterSystem(filter_config)
+        self.batch_size = batch_size
 
     async def process_content(
         self,
@@ -143,22 +150,22 @@ class RetrieverSystem:
                             if not processed_text.text.strip():
                                 continue
                                 
-                            text_id = self.metadata_manager.generate_id(processed_text)
+                            text_id = self.vector_store.metadata_manager.generate_id(processed_text)
                             current_batch['texts'].append(processed_text.text)
                             current_batch['ids'].append(text_id)
                             current_batch['metadata'].append(processed_text.metadata)
                             
                             if len(current_batch['texts']) >= self.batch_size:
-                                self._process_batch(current_batch)
+                                self.vector_store._process_batch(current_batch)
                                 current_batch = {'texts': [], 'ids': [], 'metadata': []}
                                 
                         pbar.update(1)
                 
                 # Procesar último batch si existe
                 if current_batch['texts']:
-                    self._process_batch(current_batch)
+                    self.vector_store._process_batch(current_batch)
                     
-            return self.get_stats()
+            return self.vector_store.get_stats()
             
         except Exception as e:
             logger.error(f"Error en process_and_index: {str(e)}")
@@ -202,7 +209,7 @@ class RetrieverSystem:
                 chunk_id = chunk_info['chunk_id']
                 
                 # Registrar en chunk_relations
-                self.chunk_relations[chunk_id] = {
+                self.vector_store.chunk_relations[chunk_id] = {
                     'prev_chunk': None,
                     'next_chunk': None,
                     'overlap_prev': chunk_info.get('overlap_prev'),
@@ -211,9 +218,9 @@ class RetrieverSystem:
                 }
                 
                 # Registrar en section_chunks
-                if text.section_id not in self.section_chunks:
-                    self.section_chunks[text.section_id] = []
-                self.section_chunks[text.section_id].append(chunk_id)
+                if text.section_id not in self.vector_store.section_chunks:
+                    self.vector_store.section_chunks[text.section_id] = []
+                self.vector_store.section_chunks[text.section_id].append(chunk_id)
                 
         except Exception as e:
             logger.error(f"Error registrando relaciones de chunks: {str(e)}")

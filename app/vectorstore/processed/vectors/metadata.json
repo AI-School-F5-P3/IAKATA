@@ -4,7 +4,7 @@
     "type": "main_content",
     "metadata": {
       "title": "Parte III. La kata de mejora: cómo mejora Toyota continuamente",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -12,7 +12,7 @@
         "start_idx": 0,
         "end_idx": 2156,
         "tokens": 426,
-        "chunk_id": "101_chunk_0",
+        "chunk_id": "101_chunk_0_process",
         "overlap_prev": null,
         "overlap_next": " incorpore una mejora y una adaptación constantes."
       }
@@ -24,7 +24,7 @@
     "type": "main_content",
     "metadata": {
       "title": "Parte III. La kata de mejora: cómo mejora Toyota continuamente",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 1,
       "text_type": "main_content",
@@ -32,7 +32,7 @@
         "start_idx": 2106,
         "end_idx": 6294,
         "tokens": 849,
-        "chunk_id": "101_chunk_1",
+        "chunk_id": "101_chunk_1_process",
         "overlap_prev": " incorpore una mejora y una adaptación constantes.",
         "overlap_next": " nuestra percepción que nos permitirá avanzar, por"
       }
@@ -44,7 +44,7 @@
     "type": "main_content",
     "metadata": {
       "title": "Parte III. La kata de mejora: cómo mejora Toyota continuamente",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 2,
       "text_type": "main_content",
@@ -52,7 +52,7 @@
         "start_idx": 6244,
         "end_idx": 14540,
         "tokens": 796,
-        "chunk_id": "101_chunk_2",
+        "chunk_id": "101_chunk_2_process",
         "overlap_prev": " nuestra percepción que nos permitirá avanzar, por",
         "overlap_next": null
       }
@@ -64,13 +64,14 @@
     "type": "example",
     "metadata": {
       "type": "example",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "example",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 3782,
         "tokens": 393,
-        "chunk_id": "101_chunk_0",
+        "chunk_id": "101_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -82,13 +83,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 680,
         "tokens": 101,
-        "chunk_id": "101_chunk_0",
+        "chunk_id": "101_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -100,13 +102,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 4476,
         "tokens": 535,
-        "chunk_id": "101_chunk_0",
+        "chunk_id": "101_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -118,13 +121,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2121,
         "tokens": 433,
-        "chunk_id": "101_chunk_0",
+        "chunk_id": "101_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": " ventaja competitiva que se mantiene en el tiempo."
       }
@@ -136,13 +140,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2071,
         "end_idx": 6264,
         "tokens": 868,
-        "chunk_id": "101_chunk_1",
+        "chunk_id": "101_chunk_1_general",
         "overlap_prev": " ventaja competitiva que se mantiene en el tiempo.",
         "overlap_next": "endiendo, que han evaluado mis pensamientos y que "
       }
@@ -154,13 +159,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 2,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 6214,
         "end_idx": 14509,
         "tokens": 621,
-        "chunk_id": "101_chunk_2",
+        "chunk_id": "101_chunk_2_general",
         "overlap_prev": "endiendo, que han evaluado mis pensamientos y que ",
         "overlap_next": null
       }
@@ -172,13 +178,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 3520,
         "tokens": 367,
-        "chunk_id": "101_chunk_0",
+        "chunk_id": "101_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -190,7 +197,7 @@
     "type": "main_content",
     "metadata": {
       "title": "Parte IV. La kata de coaching: cómo enseña Toyota la kata de mejora",
-      "category": "Tribe",
+      "category": "tribe",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -198,7 +205,7 @@
         "start_idx": 0,
         "end_idx": 2156,
         "tokens": 426,
-        "chunk_id": "212_chunk_0",
+        "chunk_id": "212_chunk_0_tribe",
         "overlap_prev": null,
         "overlap_next": " incorpore una mejora y una adaptación constantes."
       }
@@ -210,7 +217,7 @@
     "type": "main_content",
     "metadata": {
       "title": "Parte IV. La kata de coaching: cómo enseña Toyota la kata de mejora",
-      "category": "Tribe",
+      "category": "tribe",
       "relevance": "alta",
       "chunk_number": 1,
       "text_type": "main_content",
@@ -218,7 +225,7 @@
         "start_idx": 2106,
         "end_idx": 6294,
         "tokens": 849,
-        "chunk_id": "212_chunk_1",
+        "chunk_id": "212_chunk_1_tribe",
         "overlap_prev": " incorpore una mejora y una adaptación constantes.",
         "overlap_next": " nuestra percepción que nos permitirá avanzar, por"
       }
@@ -230,7 +237,7 @@
     "type": "main_content",
     "metadata": {
       "title": "Parte IV. La kata de coaching: cómo enseña Toyota la kata de mejora",
-      "category": "Tribe",
+      "category": "tribe",
       "relevance": "alta",
       "chunk_number": 2,
       "text_type": "main_content",
@@ -238,7 +245,7 @@
         "start_idx": 6244,
         "end_idx": 14540,
         "tokens": 1161,
-        "chunk_id": "212_chunk_2",
+        "chunk_id": "212_chunk_2_tribe",
         "overlap_prev": " nuestra percepción que nos permitirá avanzar, por",
         "overlap_next": null
       }
@@ -250,13 +257,14 @@
     "type": "example",
     "metadata": {
       "type": "example",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "example",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 3782,
         "tokens": 393,
-        "chunk_id": "212_chunk_0",
+        "chunk_id": "212_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -268,13 +276,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 4476,
         "tokens": 535,
-        "chunk_id": "212_chunk_0",
+        "chunk_id": "212_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -286,13 +295,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2121,
         "tokens": 433,
-        "chunk_id": "212_chunk_0",
+        "chunk_id": "212_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": " ventaja competitiva que se mantiene en el tiempo."
       }
@@ -304,13 +314,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2071,
         "end_idx": 6264,
         "tokens": 868,
-        "chunk_id": "212_chunk_1",
+        "chunk_id": "212_chunk_1_general",
         "overlap_prev": " ventaja competitiva que se mantiene en el tiempo.",
         "overlap_next": "endiendo, que han evaluado mis pensamientos y que "
       }
@@ -322,13 +333,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 2,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 6214,
         "end_idx": 14509,
         "tokens": 621,
-        "chunk_id": "212_chunk_2",
+        "chunk_id": "212_chunk_2_general",
         "overlap_prev": "endiendo, que han evaluado mis pensamientos y que ",
         "overlap_next": null
       }
@@ -340,13 +352,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 3520,
         "tokens": 367,
-        "chunk_id": "212_chunk_0",
+        "chunk_id": "212_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -358,7 +371,7 @@
     "type": "main_content",
     "metadata": {
       "title": "Ciclo PDCA en la kata de mejora",
-      "category": "Experiment",
+      "category": "experiment",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -366,7 +379,7 @@
         "start_idx": 0,
         "end_idx": 2156,
         "tokens": 426,
-        "chunk_id": "169_chunk_0",
+        "chunk_id": "169_chunk_0_experiment",
         "overlap_prev": null,
         "overlap_next": " incorpore una mejora y una adaptación constantes."
       }
@@ -378,7 +391,7 @@
     "type": "main_content",
     "metadata": {
       "title": "Ciclo PDCA en la kata de mejora",
-      "category": "Experiment",
+      "category": "experiment",
       "relevance": "alta",
       "chunk_number": 1,
       "text_type": "main_content",
@@ -386,7 +399,7 @@
         "start_idx": 2106,
         "end_idx": 6294,
         "tokens": 849,
-        "chunk_id": "169_chunk_1",
+        "chunk_id": "169_chunk_1_experiment",
         "overlap_prev": " incorpore una mejora y una adaptación constantes.",
         "overlap_next": " nuestra percepción que nos permitirá avanzar, por"
       }
@@ -398,7 +411,7 @@
     "type": "main_content",
     "metadata": {
       "title": "Ciclo PDCA en la kata de mejora",
-      "category": "Experiment",
+      "category": "experiment",
       "relevance": "alta",
       "chunk_number": 2,
       "text_type": "main_content",
@@ -406,7 +419,7 @@
         "start_idx": 6244,
         "end_idx": 14540,
         "tokens": 1411,
-        "chunk_id": "169_chunk_2",
+        "chunk_id": "169_chunk_2_experiment",
         "overlap_prev": " nuestra percepción que nos permitirá avanzar, por",
         "overlap_next": null
       }
@@ -418,13 +431,14 @@
     "type": "example",
     "metadata": {
       "type": "example",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "example",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 3782,
         "tokens": 393,
-        "chunk_id": "169_chunk_0",
+        "chunk_id": "169_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -436,13 +450,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2121,
         "tokens": 433,
-        "chunk_id": "169_chunk_0",
+        "chunk_id": "169_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": " ventaja competitiva que se mantiene en el tiempo."
       }
@@ -454,13 +469,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2071,
         "end_idx": 6264,
         "tokens": 868,
-        "chunk_id": "169_chunk_1",
+        "chunk_id": "169_chunk_1_general",
         "overlap_prev": " ventaja competitiva que se mantiene en el tiempo.",
         "overlap_next": "endiendo, que han evaluado mis pensamientos y que "
       }
@@ -472,13 +488,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 2,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 6214,
         "end_idx": 14509,
         "tokens": 621,
-        "chunk_id": "169_chunk_2",
+        "chunk_id": "169_chunk_2_general",
         "overlap_prev": "endiendo, que han evaluado mis pensamientos y que ",
         "overlap_next": null
       }
@@ -490,13 +507,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 3520,
         "tokens": 367,
-        "chunk_id": "169_chunk_0",
+        "chunk_id": "169_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -508,7 +526,7 @@
     "type": "main_content",
     "metadata": {
       "title": "Establecimiento del comportamiento de kata de mejora en su organización",
-      "category": "TargetState",
+      "category": "target_state",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -516,7 +534,7 @@
         "start_idx": 0,
         "end_idx": 2136,
         "tokens": 448,
-        "chunk_id": "279_chunk_0",
+        "chunk_id": "279_chunk_0_target_state",
         "overlap_prev": null,
         "overlap_next": "uestran el rendimiento superior que ofrece Toyota."
       }
@@ -528,7 +546,7 @@
     "type": "main_content",
     "metadata": {
       "title": "Establecimiento del comportamiento de kata de mejora en su organización",
-      "category": "TargetState",
+      "category": "target_state",
       "relevance": "alta",
       "chunk_number": 1,
       "text_type": "main_content",
@@ -536,7 +554,7 @@
         "start_idx": 2086,
         "end_idx": 6220,
         "tokens": 620,
-        "chunk_id": "279_chunk_1",
+        "chunk_id": "279_chunk_1_target_state",
         "overlap_prev": "uestran el rendimiento superior que ofrece Toyota.",
         "overlap_next": null
       }
@@ -548,13 +566,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 4078,
         "tokens": 419,
-        "chunk_id": "279_chunk_0",
+        "chunk_id": "279_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -566,13 +585,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2079,
         "tokens": 414,
-        "chunk_id": "279_chunk_0",
+        "chunk_id": "279_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "s que aplicamos a nuestros problemas específicos? "
       }
@@ -584,13 +604,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2029,
         "end_idx": 5625,
         "tokens": 312,
-        "chunk_id": "279_chunk_1",
+        "chunk_id": "279_chunk_1_general",
         "overlap_prev": "s que aplicamos a nuestros problemas específicos? ",
         "overlap_next": null
       }
@@ -602,7 +623,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora de Rother",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -610,7 +631,7 @@
         "start_idx": 0,
         "end_idx": 2500,
         "tokens": 281,
-        "chunk_id": "4_chunk_0",
+        "chunk_id": "4_chunk_0_process",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -622,13 +643,14 @@
     "type": "example",
     "metadata": {
       "type": "example",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "example",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2112,
         "tokens": 457,
-        "chunk_id": "4_chunk_0",
+        "chunk_id": "4_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "os y muchos de ellos combinaban diversos trabajos."
       }
@@ -640,13 +662,14 @@
     "type": "example",
     "metadata": {
       "type": "example",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "example",
       "chunk_info": {
         "start_idx": 2062,
         "end_idx": 4774,
         "tokens": 143,
-        "chunk_id": "4_chunk_1",
+        "chunk_id": "4_chunk_1_general",
         "overlap_prev": "os y muchos de ellos combinaban diversos trabajos.",
         "overlap_next": null
       }
@@ -658,13 +681,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 502,
-        "chunk_id": "4_chunk_0",
+        "chunk_id": "4_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "o se olvida de subrayar que ya desde Sakichi Toyod"
       }
@@ -676,13 +700,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 1998,
         "end_idx": 6044,
         "tokens": 818,
-        "chunk_id": "4_chunk_1",
+        "chunk_id": "4_chunk_1_general",
         "overlap_prev": "o se olvida de subrayar que ya desde Sakichi Toyod",
         "overlap_next": "ea de montaje hasta que la causa raíz fuera detect"
       }
@@ -694,13 +719,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 2,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 5994,
         "end_idx": 14084,
         "tokens": 1650,
-        "chunk_id": "4_chunk_2",
+        "chunk_id": "4_chunk_2_general",
         "overlap_prev": "ea de montaje hasta que la causa raíz fuera detect",
         "overlap_next": "finales del siglo XIX hasta nuestros días. Este co"
       }
@@ -712,13 +738,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 3,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 14034,
         "end_idx": 30116,
         "tokens": 707,
-        "chunk_id": "4_chunk_3",
+        "chunk_id": "4_chunk_3_general",
         "overlap_prev": "finales del siglo XIX hasta nuestros días. Este co",
         "overlap_next": null
       }
@@ -730,13 +757,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 574,
         "tokens": 98,
-        "chunk_id": "4_chunk_0",
+        "chunk_id": "4_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": null
       }
@@ -748,7 +776,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -756,7 +784,7 @@
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 422,
-        "chunk_id": "80_chunk_0",
+        "chunk_id": "80_chunk_0_process",
         "overlap_prev": null,
         "overlap_next": "nseguir los logros que uno se proponga. Este halla"
       }
@@ -768,7 +796,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 1,
       "text_type": "main_content",
@@ -776,7 +804,7 @@
         "start_idx": 1998,
         "end_idx": 6044,
         "tokens": 807,
-        "chunk_id": "80_chunk_1",
+        "chunk_id": "80_chunk_1_process",
         "overlap_prev": "nseguir los logros que uno se proponga. Este halla",
         "overlap_next": "ero ninguna de las definiciones cubría mi visión r"
       }
@@ -788,7 +816,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 2,
       "text_type": "main_content",
@@ -796,7 +824,7 @@
         "start_idx": 5994,
         "end_idx": 14055,
         "tokens": 1695,
-        "chunk_id": "80_chunk_2",
+        "chunk_id": "80_chunk_2_process",
         "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
         "overlap_next": "te se recupere de forma rápida tras la cirugía es "
       }
@@ -808,7 +836,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 3,
       "text_type": "main_content",
@@ -816,7 +844,7 @@
         "start_idx": 14005,
         "end_idx": 29493,
         "tokens": 318,
-        "chunk_id": "80_chunk_3",
+        "chunk_id": "80_chunk_3_process",
         "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
         "overlap_next": null
       }
@@ -828,13 +856,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2159,
         "tokens": 444,
-        "chunk_id": "80_chunk_0",
+        "chunk_id": "80_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "y qué es lo importante a considerar en cada paso. "
       }
@@ -846,13 +875,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2109,
         "end_idx": 6171,
         "tokens": 431,
-        "chunk_id": "80_chunk_1",
+        "chunk_id": "80_chunk_1_general",
         "overlap_prev": "y qué es lo importante a considerar en cada paso. ",
         "overlap_next": null
       }
@@ -864,13 +894,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2143,
         "tokens": 437,
-        "chunk_id": "80_chunk_0",
+        "chunk_id": "80_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "remos conseguir -y definiremos solo uno cada vez-."
       }
@@ -882,13 +913,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2093,
         "end_idx": 6374,
         "tokens": 755,
-        "chunk_id": "80_chunk_1",
+        "chunk_id": "80_chunk_1_general",
         "overlap_prev": "remos conseguir -y definiremos solo uno cada vez-.",
         "overlap_next": null
       }
@@ -900,13 +932,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2144,
         "tokens": 453,
-        "chunk_id": "80_chunk_0",
+        "chunk_id": "80_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "al para preparar adecuadamente el siguiente ciclo."
       }
@@ -918,13 +951,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2094,
         "end_idx": 5281,
         "tokens": 227,
-        "chunk_id": "80_chunk_1",
+        "chunk_id": "80_chunk_1_general",
         "overlap_prev": "al para preparar adecuadamente el siguiente ciclo.",
         "overlap_next": null
       }
@@ -936,13 +970,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2073,
         "tokens": 429,
-        "chunk_id": "80_chunk_0",
+        "chunk_id": "80_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "gente. Son la parte no visible del Sistema Toyota."
       }
@@ -954,13 +989,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2023,
         "end_idx": 4875,
         "tokens": 180,
-        "chunk_id": "80_chunk_1",
+        "chunk_id": "80_chunk_1_general",
         "overlap_prev": "gente. Son la parte no visible del Sistema Toyota.",
         "overlap_next": null
       }
@@ -972,13 +1008,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2064,
         "tokens": 474,
-        "chunk_id": "80_chunk_0",
+        "chunk_id": "80_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "Como él mismo dice, se aprende Kata haciendo Kata."
       }
@@ -990,13 +1027,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2014,
         "end_idx": 5783,
         "tokens": 353,
-        "chunk_id": "80_chunk_1",
+        "chunk_id": "80_chunk_1_general",
         "overlap_prev": "Como él mismo dice, se aprende Kata haciendo Kata.",
         "overlap_next": null
       }
@@ -1008,13 +1046,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2083,
         "tokens": 428,
-        "chunk_id": "80_chunk_0",
+        "chunk_id": "80_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "misma respuesta: Después del Lean viene Lean Kata."
       }
@@ -1026,13 +1065,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2033,
         "end_idx": 5023,
         "tokens": 193,
-        "chunk_id": "80_chunk_1",
+        "chunk_id": "80_chunk_1_general",
         "overlap_prev": "misma respuesta: Después del Lean viene Lean Kata.",
         "overlap_next": null
       }
@@ -1044,7 +1084,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -1052,7 +1092,7 @@
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 422,
-        "chunk_id": "82_chunk_0",
+        "chunk_id": "82_chunk_0_process",
         "overlap_prev": null,
         "overlap_next": "nseguir los logros que uno se proponga. Este halla"
       }
@@ -1064,7 +1104,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 1,
       "text_type": "main_content",
@@ -1072,7 +1112,7 @@
         "start_idx": 1998,
         "end_idx": 6044,
         "tokens": 807,
-        "chunk_id": "82_chunk_1",
+        "chunk_id": "82_chunk_1_process",
         "overlap_prev": "nseguir los logros que uno se proponga. Este halla",
         "overlap_next": "ero ninguna de las definiciones cubría mi visión r"
       }
@@ -1084,7 +1124,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 2,
       "text_type": "main_content",
@@ -1092,7 +1132,7 @@
         "start_idx": 5994,
         "end_idx": 14055,
         "tokens": 1695,
-        "chunk_id": "82_chunk_2",
+        "chunk_id": "82_chunk_2_process",
         "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
         "overlap_next": "te se recupere de forma rápida tras la cirugía es "
       }
@@ -1104,7 +1144,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 3,
       "text_type": "main_content",
@@ -1112,7 +1152,7 @@
         "start_idx": 14005,
         "end_idx": 29493,
         "tokens": 318,
-        "chunk_id": "82_chunk_3",
+        "chunk_id": "82_chunk_3_process",
         "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
         "overlap_next": null
       }
@@ -1124,13 +1164,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2143,
         "tokens": 437,
-        "chunk_id": "82_chunk_0",
+        "chunk_id": "82_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "remos conseguir -y definiremos solo uno cada vez-."
       }
@@ -1142,13 +1183,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2093,
         "end_idx": 6374,
         "tokens": 755,
-        "chunk_id": "82_chunk_1",
+        "chunk_id": "82_chunk_1_general",
         "overlap_prev": "remos conseguir -y definiremos solo uno cada vez-.",
         "overlap_next": null
       }
@@ -1160,13 +1202,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2144,
         "tokens": 453,
-        "chunk_id": "82_chunk_0",
+        "chunk_id": "82_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "al para preparar adecuadamente el siguiente ciclo."
       }
@@ -1178,13 +1221,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2094,
         "end_idx": 5281,
         "tokens": 227,
-        "chunk_id": "82_chunk_1",
+        "chunk_id": "82_chunk_1_general",
         "overlap_prev": "al para preparar adecuadamente el siguiente ciclo.",
         "overlap_next": null
       }
@@ -1196,13 +1240,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2073,
         "tokens": 429,
-        "chunk_id": "82_chunk_0",
+        "chunk_id": "82_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "gente. Son la parte no visible del Sistema Toyota."
       }
@@ -1214,13 +1259,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2023,
         "end_idx": 4875,
         "tokens": 180,
-        "chunk_id": "82_chunk_1",
+        "chunk_id": "82_chunk_1_general",
         "overlap_prev": "gente. Son la parte no visible del Sistema Toyota.",
         "overlap_next": null
       }
@@ -1232,13 +1278,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2064,
         "tokens": 474,
-        "chunk_id": "82_chunk_0",
+        "chunk_id": "82_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "Como él mismo dice, se aprende Kata haciendo Kata."
       }
@@ -1250,13 +1297,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2014,
         "end_idx": 5783,
         "tokens": 353,
-        "chunk_id": "82_chunk_1",
+        "chunk_id": "82_chunk_1_general",
         "overlap_prev": "Como él mismo dice, se aprende Kata haciendo Kata.",
         "overlap_next": null
       }
@@ -1268,13 +1316,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2083,
         "tokens": 428,
-        "chunk_id": "82_chunk_0",
+        "chunk_id": "82_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "misma respuesta: Después del Lean viene Lean Kata."
       }
@@ -1286,13 +1335,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2033,
         "end_idx": 5023,
         "tokens": 193,
-        "chunk_id": "82_chunk_1",
+        "chunk_id": "82_chunk_1_general",
         "overlap_prev": "misma respuesta: Después del Lean viene Lean Kata.",
         "overlap_next": null
       }
@@ -1304,13 +1354,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 419,
-        "chunk_id": "82_chunk_0",
+        "chunk_id": "82_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "sicóloga Gabriele Oettingen, cuando alguien se pro"
       }
@@ -1322,13 +1373,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 1998,
         "end_idx": 5024,
         "tokens": 219,
-        "chunk_id": "82_chunk_1",
+        "chunk_id": "82_chunk_1_general",
         "overlap_prev": "sicóloga Gabriele Oettingen, cuando alguien se pro",
         "overlap_next": null
       }
@@ -1340,7 +1392,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Obstacle",
+      "category": "obstacle",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -1348,7 +1400,7 @@
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 422,
-        "chunk_id": "83_chunk_0",
+        "chunk_id": "83_chunk_0_obstacle",
         "overlap_prev": null,
         "overlap_next": "nseguir los logros que uno se proponga. Este halla"
       }
@@ -1360,7 +1412,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Obstacle",
+      "category": "obstacle",
       "relevance": "alta",
       "chunk_number": 1,
       "text_type": "main_content",
@@ -1368,7 +1420,7 @@
         "start_idx": 1998,
         "end_idx": 6044,
         "tokens": 807,
-        "chunk_id": "83_chunk_1",
+        "chunk_id": "83_chunk_1_obstacle",
         "overlap_prev": "nseguir los logros que uno se proponga. Este halla",
         "overlap_next": "ero ninguna de las definiciones cubría mi visión r"
       }
@@ -1380,7 +1432,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Obstacle",
+      "category": "obstacle",
       "relevance": "alta",
       "chunk_number": 2,
       "text_type": "main_content",
@@ -1388,7 +1440,7 @@
         "start_idx": 5994,
         "end_idx": 14055,
         "tokens": 1695,
-        "chunk_id": "83_chunk_2",
+        "chunk_id": "83_chunk_2_obstacle",
         "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
         "overlap_next": "te se recupere de forma rápida tras la cirugía es "
       }
@@ -1400,7 +1452,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Obstacle",
+      "category": "obstacle",
       "relevance": "alta",
       "chunk_number": 3,
       "text_type": "main_content",
@@ -1408,7 +1460,7 @@
         "start_idx": 14005,
         "end_idx": 29493,
         "tokens": 318,
-        "chunk_id": "83_chunk_3",
+        "chunk_id": "83_chunk_3_obstacle",
         "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
         "overlap_next": null
       }
@@ -1420,13 +1472,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2182,
         "tokens": 462,
-        "chunk_id": "83_chunk_0",
+        "chunk_id": "83_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "ran ciertas, a partir de los resultados obtenidos."
       }
@@ -1438,13 +1491,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2132,
         "end_idx": 4906,
         "tokens": 146,
-        "chunk_id": "83_chunk_1",
+        "chunk_id": "83_chunk_1_general",
         "overlap_prev": "ran ciertas, a partir de los resultados obtenidos.",
         "overlap_next": null
       }
@@ -1456,13 +1510,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2144,
         "tokens": 453,
-        "chunk_id": "83_chunk_0",
+        "chunk_id": "83_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "al para preparar adecuadamente el siguiente ciclo."
       }
@@ -1474,13 +1529,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2094,
         "end_idx": 5281,
         "tokens": 227,
-        "chunk_id": "83_chunk_1",
+        "chunk_id": "83_chunk_1_general",
         "overlap_prev": "al para preparar adecuadamente el siguiente ciclo.",
         "overlap_next": null
       }
@@ -1492,13 +1548,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2073,
         "tokens": 429,
-        "chunk_id": "83_chunk_0",
+        "chunk_id": "83_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "gente. Son la parte no visible del Sistema Toyota."
       }
@@ -1510,13 +1567,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2023,
         "end_idx": 4875,
         "tokens": 180,
-        "chunk_id": "83_chunk_1",
+        "chunk_id": "83_chunk_1_general",
         "overlap_prev": "gente. Son la parte no visible del Sistema Toyota.",
         "overlap_next": null
       }
@@ -1528,13 +1586,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2064,
         "tokens": 474,
-        "chunk_id": "83_chunk_0",
+        "chunk_id": "83_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "Como él mismo dice, se aprende Kata haciendo Kata."
       }
@@ -1546,13 +1605,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2014,
         "end_idx": 5783,
         "tokens": 353,
-        "chunk_id": "83_chunk_1",
+        "chunk_id": "83_chunk_1_general",
         "overlap_prev": "Como él mismo dice, se aprende Kata haciendo Kata.",
         "overlap_next": null
       }
@@ -1564,13 +1624,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2083,
         "tokens": 428,
-        "chunk_id": "83_chunk_0",
+        "chunk_id": "83_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "misma respuesta: Después del Lean viene Lean Kata."
       }
@@ -1582,13 +1643,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2033,
         "end_idx": 5023,
         "tokens": 193,
-        "chunk_id": "83_chunk_1",
+        "chunk_id": "83_chunk_1_general",
         "overlap_prev": "misma respuesta: Después del Lean viene Lean Kata.",
         "overlap_next": null
       }
@@ -1600,13 +1662,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 419,
-        "chunk_id": "83_chunk_0",
+        "chunk_id": "83_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "sicóloga Gabriele Oettingen, cuando alguien se pro"
       }
@@ -1618,13 +1681,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 1998,
         "end_idx": 5024,
         "tokens": 219,
-        "chunk_id": "83_chunk_1",
+        "chunk_id": "83_chunk_1_general",
         "overlap_prev": "sicóloga Gabriele Oettingen, cuando alguien se pro",
         "overlap_next": null
       }
@@ -1636,7 +1700,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -1644,7 +1708,7 @@
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 422,
-        "chunk_id": "84_chunk_0",
+        "chunk_id": "84_chunk_0_process",
         "overlap_prev": null,
         "overlap_next": "nseguir los logros que uno se proponga. Este halla"
       }
@@ -1656,7 +1720,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 1,
       "text_type": "main_content",
@@ -1664,7 +1728,7 @@
         "start_idx": 1998,
         "end_idx": 6044,
         "tokens": 807,
-        "chunk_id": "84_chunk_1",
+        "chunk_id": "84_chunk_1_process",
         "overlap_prev": "nseguir los logros que uno se proponga. Este halla",
         "overlap_next": "ero ninguna de las definiciones cubría mi visión r"
       }
@@ -1676,7 +1740,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 2,
       "text_type": "main_content",
@@ -1684,7 +1748,7 @@
         "start_idx": 5994,
         "end_idx": 14055,
         "tokens": 1695,
-        "chunk_id": "84_chunk_2",
+        "chunk_id": "84_chunk_2_process",
         "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
         "overlap_next": "te se recupere de forma rápida tras la cirugía es "
       }
@@ -1696,7 +1760,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 3,
       "text_type": "main_content",
@@ -1704,7 +1768,7 @@
         "start_idx": 14005,
         "end_idx": 29493,
         "tokens": 318,
-        "chunk_id": "84_chunk_3",
+        "chunk_id": "84_chunk_3_process",
         "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
         "overlap_next": null
       }
@@ -1716,13 +1780,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2144,
         "tokens": 453,
-        "chunk_id": "84_chunk_0",
+        "chunk_id": "84_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "al para preparar adecuadamente el siguiente ciclo."
       }
@@ -1734,13 +1799,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2094,
         "end_idx": 5281,
         "tokens": 227,
-        "chunk_id": "84_chunk_1",
+        "chunk_id": "84_chunk_1_general",
         "overlap_prev": "al para preparar adecuadamente el siguiente ciclo.",
         "overlap_next": null
       }
@@ -1752,13 +1818,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2073,
         "tokens": 429,
-        "chunk_id": "84_chunk_0",
+        "chunk_id": "84_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "gente. Son la parte no visible del Sistema Toyota."
       }
@@ -1770,13 +1837,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2023,
         "end_idx": 4875,
         "tokens": 180,
-        "chunk_id": "84_chunk_1",
+        "chunk_id": "84_chunk_1_general",
         "overlap_prev": "gente. Son la parte no visible del Sistema Toyota.",
         "overlap_next": null
       }
@@ -1788,13 +1856,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2064,
         "tokens": 474,
-        "chunk_id": "84_chunk_0",
+        "chunk_id": "84_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "Como él mismo dice, se aprende Kata haciendo Kata."
       }
@@ -1806,13 +1875,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2014,
         "end_idx": 5783,
         "tokens": 353,
-        "chunk_id": "84_chunk_1",
+        "chunk_id": "84_chunk_1_general",
         "overlap_prev": "Como él mismo dice, se aprende Kata haciendo Kata.",
         "overlap_next": null
       }
@@ -1824,13 +1894,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2083,
         "tokens": 428,
-        "chunk_id": "84_chunk_0",
+        "chunk_id": "84_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "misma respuesta: Después del Lean viene Lean Kata."
       }
@@ -1842,13 +1913,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2033,
         "end_idx": 5023,
         "tokens": 193,
-        "chunk_id": "84_chunk_1",
+        "chunk_id": "84_chunk_1_general",
         "overlap_prev": "misma respuesta: Después del Lean viene Lean Kata.",
         "overlap_next": null
       }
@@ -1860,13 +1932,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 419,
-        "chunk_id": "84_chunk_0",
+        "chunk_id": "84_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "sicóloga Gabriele Oettingen, cuando alguien se pro"
       }
@@ -1878,13 +1951,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 1998,
         "end_idx": 5024,
         "tokens": 219,
-        "chunk_id": "84_chunk_1",
+        "chunk_id": "84_chunk_1_general",
         "overlap_prev": "sicóloga Gabriele Oettingen, cuando alguien se pro",
         "overlap_next": null
       }
@@ -1896,7 +1970,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -1904,7 +1978,7 @@
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 422,
-        "chunk_id": "85_chunk_0",
+        "chunk_id": "85_chunk_0_process",
         "overlap_prev": null,
         "overlap_next": "nseguir los logros que uno se proponga. Este halla"
       }
@@ -1916,7 +1990,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 1,
       "text_type": "main_content",
@@ -1924,7 +1998,7 @@
         "start_idx": 1998,
         "end_idx": 6044,
         "tokens": 807,
-        "chunk_id": "85_chunk_1",
+        "chunk_id": "85_chunk_1_process",
         "overlap_prev": "nseguir los logros que uno se proponga. Este halla",
         "overlap_next": "ero ninguna de las definiciones cubría mi visión r"
       }
@@ -1936,7 +2010,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 2,
       "text_type": "main_content",
@@ -1944,7 +2018,7 @@
         "start_idx": 5994,
         "end_idx": 14055,
         "tokens": 1695,
-        "chunk_id": "85_chunk_2",
+        "chunk_id": "85_chunk_2_process",
         "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
         "overlap_next": "te se recupere de forma rápida tras la cirugía es "
       }
@@ -1956,7 +2030,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 3,
       "text_type": "main_content",
@@ -1964,7 +2038,7 @@
         "start_idx": 14005,
         "end_idx": 29493,
         "tokens": 318,
-        "chunk_id": "85_chunk_3",
+        "chunk_id": "85_chunk_3_process",
         "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
         "overlap_next": null
       }
@@ -1976,13 +2050,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2073,
         "tokens": 429,
-        "chunk_id": "85_chunk_0",
+        "chunk_id": "85_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "gente. Son la parte no visible del Sistema Toyota."
       }
@@ -1994,13 +2069,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2023,
         "end_idx": 4875,
         "tokens": 180,
-        "chunk_id": "85_chunk_1",
+        "chunk_id": "85_chunk_1_general",
         "overlap_prev": "gente. Son la parte no visible del Sistema Toyota.",
         "overlap_next": null
       }
@@ -2012,13 +2088,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2064,
         "tokens": 474,
-        "chunk_id": "85_chunk_0",
+        "chunk_id": "85_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "Como él mismo dice, se aprende Kata haciendo Kata."
       }
@@ -2030,13 +2107,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2014,
         "end_idx": 5783,
         "tokens": 353,
-        "chunk_id": "85_chunk_1",
+        "chunk_id": "85_chunk_1_general",
         "overlap_prev": "Como él mismo dice, se aprende Kata haciendo Kata.",
         "overlap_next": null
       }
@@ -2048,13 +2126,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2083,
         "tokens": 428,
-        "chunk_id": "85_chunk_0",
+        "chunk_id": "85_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "misma respuesta: Después del Lean viene Lean Kata."
       }
@@ -2066,13 +2145,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2033,
         "end_idx": 5023,
         "tokens": 193,
-        "chunk_id": "85_chunk_1",
+        "chunk_id": "85_chunk_1_general",
         "overlap_prev": "misma respuesta: Después del Lean viene Lean Kata.",
         "overlap_next": null
       }
@@ -2084,13 +2164,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 419,
-        "chunk_id": "85_chunk_0",
+        "chunk_id": "85_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "sicóloga Gabriele Oettingen, cuando alguien se pro"
       }
@@ -2102,13 +2183,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 1998,
         "end_idx": 5024,
         "tokens": 219,
-        "chunk_id": "85_chunk_1",
+        "chunk_id": "85_chunk_1_general",
         "overlap_prev": "sicóloga Gabriele Oettingen, cuando alguien se pro",
         "overlap_next": null
       }
@@ -2120,7 +2202,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Learning",
+      "category": "learning",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -2128,7 +2210,7 @@
         "start_idx": 0,
         "end_idx": 2083,
         "tokens": 430,
-        "chunk_id": "87_chunk_0",
+        "chunk_id": "87_chunk_0_learning",
         "overlap_prev": null,
         "overlap_next": "ata de mejora para conseguir un determinado reto? "
       }
@@ -2140,7 +2222,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Learning",
+      "category": "learning",
       "relevance": "alta",
       "chunk_number": 1,
       "text_type": "main_content",
@@ -2148,7 +2230,7 @@
         "start_idx": 2033,
         "end_idx": 6166,
         "tokens": 841,
-        "chunk_id": "87_chunk_1",
+        "chunk_id": "87_chunk_1_learning",
         "overlap_prev": "ata de mejora para conseguir un determinado reto? ",
         "overlap_next": "ido cualquier tipo de práctica para el entrenamien"
       }
@@ -2160,7 +2242,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Learning",
+      "category": "learning",
       "relevance": "alta",
       "chunk_number": 2,
       "text_type": "main_content",
@@ -2168,7 +2250,7 @@
         "start_idx": 6116,
         "end_idx": 14398,
         "tokens": 1701,
-        "chunk_id": "87_chunk_2",
+        "chunk_id": "87_chunk_2_learning",
         "overlap_prev": "ido cualquier tipo de práctica para el entrenamien",
         "overlap_next": "para llevar adelante con éxito la metodología Lean"
       }
@@ -2180,7 +2262,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de mejora",
-      "category": "Learning",
+      "category": "learning",
       "relevance": "alta",
       "chunk_number": 3,
       "text_type": "main_content",
@@ -2188,7 +2270,7 @@
         "start_idx": 14348,
         "end_idx": 30801,
         "tokens": 1019,
-        "chunk_id": "87_chunk_3",
+        "chunk_id": "87_chunk_3_learning",
         "overlap_prev": "para llevar adelante con éxito la metodología Lean",
         "overlap_next": null
       }
@@ -2200,13 +2282,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2083,
         "tokens": 428,
-        "chunk_id": "87_chunk_0",
+        "chunk_id": "87_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "misma respuesta: Después del Lean viene Lean Kata."
       }
@@ -2218,13 +2301,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2033,
         "end_idx": 5023,
         "tokens": 193,
-        "chunk_id": "87_chunk_1",
+        "chunk_id": "87_chunk_1_general",
         "overlap_prev": "misma respuesta: Después del Lean viene Lean Kata.",
         "overlap_next": null
       }
@@ -2236,13 +2320,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 419,
-        "chunk_id": "87_chunk_0",
+        "chunk_id": "87_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "sicóloga Gabriele Oettingen, cuando alguien se pro"
       }
@@ -2254,13 +2339,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 1998,
         "end_idx": 5024,
         "tokens": 219,
-        "chunk_id": "87_chunk_1",
+        "chunk_id": "87_chunk_1_general",
         "overlap_prev": "sicóloga Gabriele Oettingen, cuando alguien se pro",
         "overlap_next": null
       }
@@ -2272,13 +2358,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2091,
         "tokens": 432,
-        "chunk_id": "87_chunk_0",
+        "chunk_id": "87_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": " existen expectativas claras de conseguir el reto."
       }
@@ -2290,13 +2377,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2041,
         "end_idx": 6130,
         "tokens": 855,
-        "chunk_id": "87_chunk_1",
+        "chunk_id": "87_chunk_1_general",
         "overlap_prev": " existen expectativas claras de conseguir el reto.",
         "overlap_next": "• Las personas que realizan contraste mental, de f"
       }
@@ -2308,13 +2396,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 2,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 6080,
         "end_idx": 12792,
         "tokens": 125,
-        "chunk_id": "87_chunk_2",
+        "chunk_id": "87_chunk_2_general",
         "overlap_prev": "• Las personas que realizan contraste mental, de f",
         "overlap_next": null
       }
@@ -2326,7 +2415,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de coaching",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 0,
       "text_type": "main_content",
@@ -2334,7 +2423,7 @@
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 422,
-        "chunk_id": "94_chunk_0",
+        "chunk_id": "94_chunk_0_process",
         "overlap_prev": null,
         "overlap_next": "nseguir los logros que uno se proponga. Este halla"
       }
@@ -2346,7 +2435,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de coaching",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 1,
       "text_type": "main_content",
@@ -2354,7 +2443,7 @@
         "start_idx": 1998,
         "end_idx": 6044,
         "tokens": 807,
-        "chunk_id": "94_chunk_1",
+        "chunk_id": "94_chunk_1_process",
         "overlap_prev": "nseguir los logros que uno se proponga. Este halla",
         "overlap_next": "ero ninguna de las definiciones cubría mi visión r"
       }
@@ -2366,7 +2455,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de coaching",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 2,
       "text_type": "main_content",
@@ -2374,7 +2463,7 @@
         "start_idx": 5994,
         "end_idx": 14055,
         "tokens": 1695,
-        "chunk_id": "94_chunk_2",
+        "chunk_id": "94_chunk_2_process",
         "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
         "overlap_next": "te se recupere de forma rápida tras la cirugía es "
       }
@@ -2386,7 +2475,7 @@
     "type": "main_content",
     "metadata": {
       "title": "kata de coaching",
-      "category": "Process",
+      "category": "process",
       "relevance": "alta",
       "chunk_number": 3,
       "text_type": "main_content",
@@ -2394,7 +2483,7 @@
         "start_idx": 14005,
         "end_idx": 30202,
         "tokens": 647,
-        "chunk_id": "94_chunk_3",
+        "chunk_id": "94_chunk_3_process",
         "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
         "overlap_next": null
       }
@@ -2406,13 +2495,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2083,
         "tokens": 428,
-        "chunk_id": "94_chunk_0",
+        "chunk_id": "94_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "misma respuesta: Después del Lean viene Lean Kata."
       }
@@ -2424,13 +2514,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2033,
         "end_idx": 5023,
         "tokens": 193,
-        "chunk_id": "94_chunk_1",
+        "chunk_id": "94_chunk_1_general",
         "overlap_prev": "misma respuesta: Después del Lean viene Lean Kata.",
         "overlap_next": null
       }
@@ -2442,13 +2533,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2048,
         "tokens": 419,
-        "chunk_id": "94_chunk_0",
+        "chunk_id": "94_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": "sicóloga Gabriele Oettingen, cuando alguien se pro"
       }
@@ -2460,13 +2552,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 1998,
         "end_idx": 5024,
         "tokens": 219,
-        "chunk_id": "94_chunk_1",
+        "chunk_id": "94_chunk_1_general",
         "overlap_prev": "sicóloga Gabriele Oettingen, cuando alguien se pro",
         "overlap_next": null
       }
@@ -2478,13 +2571,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 0,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 0,
         "end_idx": 2091,
         "tokens": 432,
-        "chunk_id": "94_chunk_0",
+        "chunk_id": "94_chunk_0_general",
         "overlap_prev": null,
         "overlap_next": " existen expectativas claras de conseguir el reto."
       }
@@ -2496,13 +2590,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 1,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 2041,
         "end_idx": 6130,
         "tokens": 855,
-        "chunk_id": "94_chunk_1",
+        "chunk_id": "94_chunk_1_general",
         "overlap_prev": " existen expectativas claras de conseguir el reto.",
         "overlap_next": "• Las personas que realizan contraste mental, de f"
       }
@@ -2514,13 +2609,14 @@
     "type": "procedure",
     "metadata": {
       "type": "procedure",
+      "category": "general",
       "chunk_number": 2,
       "text_type": "procedure",
       "chunk_info": {
         "start_idx": 6080,
         "end_idx": 12792,
         "tokens": 125,
-        "chunk_id": "94_chunk_2",
+        "chunk_id": "94_chunk_2_general",
         "overlap_prev": "• Las personas que realizan contraste mental, de f",
         "overlap_next": null
       }
