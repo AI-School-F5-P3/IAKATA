@@ -18,6 +18,8 @@ const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => 
     const startDate = watch('start_date');
     const endDate = watch('end_date');
 
+    const idForm = "RE";
+
     // useEffect(() => {
     //     if (!socket || !isConnected) return;
 
@@ -258,7 +260,11 @@ const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => 
                         {isEdit ? "CANCELAR" : "VOLVER"}
                     </button>
                     <ImproveWithAIButton
-                        getValues={getValues} 
+                        className="button-forms"
+                        getValues={() => ({
+                            idForm,
+                            ...getValues(["name", "description"])
+                        })}
                         onResult={handleImproveResult} 
                     />
                 </div>

@@ -17,4 +17,17 @@ router.delete('/:id', authRol(['user','admin']),  deleteTask);
 
 router.get('/:id', authRol(['user','admin']),  getOneTask);
 
+router.post('/ai', async (req, res) => {
+    try {
+      const {idForm, description} = req.body;
+      const filteredData = {idForm, description };
+
+      const response = await axios.post('http://localhost:8001/board/ai', filteredData); // FastAPI
+      res.json(response.data);
+    } catch (error) {
+      console.error('Error en la API FastAPI:', error);
+      res.status(500).json({ error: 'Error al comunicarse con la IA' });
+    }
+  });
+
 export default router;

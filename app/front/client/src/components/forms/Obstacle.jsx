@@ -11,6 +11,8 @@ import "./css/Forms.css";
 import { useWebSocket } from "../../context/SocketContext";
 import Swal from "sweetalert2";
 
+import ImproveWithAIButton from '../buttonIa/ImproveWithAIButton';
+
 const Obstacle = ({
   editObstacleId,
   editTargetId,
@@ -19,6 +21,7 @@ const Obstacle = ({
   isEdit = false,
 }) => {
   const {
+    getValues,
     handleSubmit,
     register,
     formState: { errors },
@@ -29,6 +32,8 @@ const Obstacle = ({
   const [imageUrl, setImageUrl] = useState("");
   const [obstacleData, setObstacleData] = useState(null);
   const { WS_EVENTS, sendMessage } = useWebSocket();
+
+  const idForm = "OB";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -148,6 +153,11 @@ const Obstacle = ({
     setEditObstacle(false);
   }, [reset, setEditObstacle, isEdit, editObstacleId]);
   
+  const handleImproveResult = (improvedData) => {
+    console.log('Datos mejorados:', improvedData);
+    setValue('description', improvedData.description); // Actualiza el campo de descripción
+    };
+
   return (
     <div className="form-container">
       <form className="form-create" onSubmit={handleSubmit(onSubmit)}>
@@ -187,9 +197,14 @@ const Obstacle = ({
         <button type="button" className="button-forms" onClick={handleClose}>
           Cerrar
         </button>
-        <button type="button" className="button-forms">
-          MEJORAR CON IA 🪄
-        </button>
+        <ImproveWithAIButton
+          className="button-forms"
+          getValues={() => ({
+              idForm,
+              ...getValues(["description"])
+          })}
+          onResult={handleImproveResult} 
+        />
       </form>
     </div>
   );

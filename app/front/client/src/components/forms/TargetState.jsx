@@ -7,10 +7,14 @@ import PropTypes from 'prop-types';
 import Swal from 'sweetalert2';
 import './css/Forms.css';
 
+import ImproveWithAIButton from '../buttonIa/ImproveWithAIButton';
+
 const TargetState = ({ challengeId, targetStateId, setLoading, setEditTargetState, setCreateTarget, isEdit = false }) => {
-    const { register, handleSubmit, formState: { errors }, setValue } = useForm();
+    const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
     const [targetStateData, setTargetStateData] = useState({});
     const { WS_EVENTS, sendMessage } = useWebSocket();
+
+    const idForm = "TA";
 
     useSocket(
         WS_EVENTS.TARGET_STATE,
@@ -113,6 +117,11 @@ const TargetState = ({ challengeId, targetStateId, setLoading, setEditTargetStat
     };
 
     const handleClose = () => isEdit ? setEditTargetState(false) : (setCreateTarget && setCreateTarget(false)) || setEditTargetState(false);
+
+    const handleImproveResult = (improvedData) => {
+        console.log('Datos mejorados:', improvedData);
+        setValue('description', improvedData.description); // Actualiza el campo de descripción
+    };
     
     return (
         <div className={isEdit ? "form-box" : "form-container"}>
@@ -159,7 +168,14 @@ const TargetState = ({ challengeId, targetStateId, setLoading, setEditTargetStat
                     <button type="button" className='button-forms' onClick={handleClose}>
                         {isEdit ? "CANCELAR" : "CERRAR"}
                     </button>
-                    <button className='button-forms'>MEJORAR CON IA 🪄</button>
+                    <ImproveWithAIButton
+                        className="button-forms"
+                        getValues={() => ({
+                            idForm,
+                            ...getValues(["description"])
+                        })}
+                        onResult={handleImproveResult} 
+                    />
                 </div>
             </form>
         </div>
