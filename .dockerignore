@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+*.log
+.git
+.gitignore
+.vscode
+node_modules
+
+# Directorios de desarrollo
+.git
+.gitignore
+.env
+.venv
+venv/
+ENV/
+.idea/
+.vscode/
+
+# Logs y datos
+logs/
+*.log
+*.csv
+*.json
+*.sqlite
+
+# Archivos específicos de IAKATA que no queremos en la imagen
+vectorstore/processed/vectors/
+cache/
+tests/
+docs/
+
+# Docker
+.docker
+docker-compose*.yml
+Dockerfile*
