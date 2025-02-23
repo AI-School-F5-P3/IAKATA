@@ -15,6 +15,7 @@ from .types import LLMRequest, LLMResponse, ResponseType
 from .temperature import TemperatureManager
 from .validator import ResponseValidator
 from orchestrator.query_classifier import QueryClassifier  # Importación del clasificador de consultas
+from .conversation_manager import ConversationManager
 
 
 load_dotenv()
@@ -34,8 +35,9 @@ class LLMModule:
         self.temp_manager = TemperatureManager()
         self.validator = ResponseValidator()
 
-        # Agregar esta línea para inicializar el query_classifier
-        self.query_classifier = QueryClassifier()
+        self.conversation_manager = ConversationManager(max_history=5)
+
+        self.query_classifier = None
 
         # System prompts originales para diferentes propósitos
         self.system_prompts = {
@@ -171,7 +173,7 @@ La documentación debe incluir:
    - Referencias y recursos utilizados"""
         }
 
-        # Prompt para consultas generales
+                # Prompt para consultas generales
         self.general_prompt = """Eres un asistente AI versátil y servicial. Tu objetivo es proporcionar respuestas claras, precisas y útiles para cualquier tipo de consulta.
 
 Cuando se te pregunte sobre temas generales (no relacionados con Lean Kata):
@@ -219,22 +221,23 @@ Si la pregunta es ambigua, solicita clarificación. Si no tienes información su
     async def process_request(self, request: LLMRequest) -> LLMResponse:
         """Procesa una solicitud al LLM"""
         try:
-            # Ensure context is a dictionary if it's None
+            # Asegurar que el contexto sea un diccionario
             request.context = request.context or {}
 
-            # Lazy import of query classifier
+            # Lazy import del clasificador de consultas
             query_classifier = self._get_query_classifier()
             
-            # Determinar si es consulta Lean Kata o general
-            is_lean_kata = (
-                request.context and 
-                request.context.get('metadata', {}).get('query_type') == 'lean_kata'
+            # Obtener historial de conversación del contexto
+            conversation_history = request.context.get('conversation_history', [])
+            
+            # Clasificar la consulta con contexto
+            is_lean_kata, query_metadata = query_classifier.classify_query_with_context(
+                request.query, 
+                conversation_history
             )
             
-            # Clasificar la consulta si no se ha hecho
-            if not is_lean_kata:
-                is_lean_kata, query_metadata = self.query_classifier.classify_query(request.query)
-                request.context['metadata'] = query_metadata['metadata']
+            # Actualizar metadatos del contexto
+            request.context['metadata'] = query_metadata['metadata']
             
             # Seleccionar prompt apropiado
             if is_lean_kata:
@@ -247,7 +250,7 @@ Si la pregunta es ambigua, solicita clarificación. Si no tienes información su
                 system_prompt = self.general_prompt
                 temperature = 0.7  # Temperatura estándar para consultas generales
             
-            # Preparar mensajes
+            # Preparar mensajes para la API
             messages = [
                 {"role": "system", "content": system_prompt}
             ]
@@ -259,9 +262,10 @@ Si la pregunta es ambigua, solicita clarificación. Si no tienes información su
                     "content": f"Contexto: {json.dumps(request.context, ensure_ascii=False)}"
                 })
             
+            # Añadir mensaje del usuario
             messages.append({"role": "user", "content": request.query})
             
-            # Realizar llamada a la API
+            # Realizar llamada a la API de OpenAI
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=messages,
@@ -269,9 +273,10 @@ Si la pregunta es ambigua, solicita clarificación. Si no tienes información su
                 max_tokens=2000
             )
             
+            # Extraer contenido de la respuesta
             content = response.choices[0].message.content
             
-            # Metadata consistente
+            # Crear metadatos consistentes
             metadata = {
                 'text': content,
                 'type': 'lean_kata' if is_lean_kata else 'general',
@@ -288,6 +293,7 @@ Si la pregunta es ambigua, solicita clarificación. Si no tienes información su
             # Procesar respuesta según el tipo
             if is_lean_kata:
                 if request.response_type == ResponseType.VALIDATION:
+                    # Validar contenido para secciones Lean Kata
                     validation_results = self.validator.process_validation(content)
                     return LLMResponse(
                         content=content,
@@ -295,6 +301,7 @@ Si la pregunta es ambigua, solicita clarificación. Si no tienes información su
                         validation_results=validation_results
                     )
                 elif request.response_type == ResponseType.SUGGESTION:
+                    # Procesar sugerencias para secciones Lean Kata
                     suggestions = self.validator.process_suggestions(content)
                     return LLMResponse(
                         content=content,
@@ -302,7 +309,7 @@ Si la pregunta es ambigua, solicita clarificación. Si no tienes información su
                         suggestions=suggestions
                     )
             
-            # Respuesta estándar
+            # Respuesta estándar para consultas generales
             return LLMResponse(
                 content=content,
                 metadata=metadata,
@@ -310,6 +317,7 @@ Si la pregunta es ambigua, solicita clarificación. Si no tienes información su
             )
 
         except Exception as e:
+            # Registrar cualquier error durante el procesamiento
             logger.error(f"Error procesando LLM request: {str(e)}")
             raise
 
