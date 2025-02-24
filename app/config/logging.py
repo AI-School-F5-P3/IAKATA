@@ -118,3 +118,7 @@ class CustomLogger:
             f"Error: {str(error)} - Contexto: {context}",
             exc_info=True
         )
+        
+    def warning(self, message):
+        # Implementation of the warning method
+        print(f"WARNING: {message}")

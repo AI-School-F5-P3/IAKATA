@@ -1,17 +1,14 @@
-import axios from 'axios';
-import { getApiUrl } from './api';
-
-const API_URL = getApiUrl('auth');
+import { authApi } from './api';
 
 const getDeviceInfo = () => ({
-  userAgent: navigator.userAgent,
-  platform: navigator.platform,
-  language: navigator.language,
-  screenResolution: `${window.screen.width}x${window.screen.height}`,
-  timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-  timestamp: Date.now(),
-  colorDepth: window.screen.colorDepth,
-  pixelRatio: window.devicePixelRatio
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    language: navigator.language,
+    screenResolution: `${window.screen.width}x${window.screen.height}`,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    timestamp: Date.now(),
+    colorDepth: window.screen.colorDepth,
+    pixelRatio: window.devicePixelRatio
 });
 
 const setSessionData = (data) => {
@@ -38,9 +35,10 @@ const setSessionData = (data) => {
 
 export const loginUser = async (email, password, forceLogin = false) => {
     try {
+        console.log('Attempting login with:', { email, forceLogin });
         sessionStorage.clear();
 
-        const response = await axios.post(`${API_URL}/login`, 
+        const response = await authApi.post('/auth/login', 
             { 
                 email, 
                 password,
@@ -48,11 +46,12 @@ export const loginUser = async (email, password, forceLogin = false) => {
             },
             {
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-Force-Login': forceLogin ? 'true' : 'false'
                 }
             }
         );
+
+        console.log('Login response:', response.data);
 
         if (!response.data?.success) {
             if (response.data?.data?.isActive && !forceLogin) {
@@ -63,15 +62,11 @@ export const loginUser = async (email, password, forceLogin = false) => {
             }
             throw new Error(response.data?.error || 'Invalid response format');
         }
-        console.log('Login response:', response.data);
-
-        if (forceLogin) {
-            await new Promise(resolve => setTimeout(resolve, 1500));
-        }
 
         setSessionData(response.data.data);
         return response.data;
     } catch (error) {
+        console.error('Login error:', error);
         sessionStorage.clear();
         throw error;
     }
@@ -90,17 +85,11 @@ export const logoutUser = async (forceLogout = false) => {
         sessionStorage.setItem('isActive', 'false');
         console.log('Logging out user:', userId);
 
-        const response = await axios.post(`${API_URL}/logout`, 
+        const response = await authApi.post('/auth/logout', 
             { 
                 userId, 
                 forceLogout: Boolean(forceLogout),
                 isActive: false  
-            },
-            {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
             }
         );
 
@@ -115,42 +104,42 @@ export const logoutUser = async (forceLogout = false) => {
 };
 
 export const checkSession = async () => {
-  try {
-      const deviceFingerprint = sessionStorage.getItem('deviceFingerprint');
-      const sessionId = sessionStorage.getItem('sessionId');
-      
-      if (!deviceFingerprint || !sessionId) return false;
-      
-      const response = await axios.get(`${API_URL}/check-session`, {
-          headers: {
-              'X-Device-Fingerprint': deviceFingerprint,
-              'X-Session-ID': sessionId
-          }
-      });
-      
-      return response.data.success;
-  } catch {
-      return false;
-  }
+    try {
+        const deviceFingerprint = sessionStorage.getItem('deviceFingerprint');
+        const sessionId = sessionStorage.getItem('sessionId');
+        
+        if (!deviceFingerprint || !sessionId) return false;
+        
+        const response = await authApi.get('/auth/check-session', {
+            headers: {
+                'X-Device-Fingerprint': deviceFingerprint,
+                'X-Session-ID': sessionId
+            }
+        });
+        
+        return response.data.success;
+    } catch {
+        return false;
+    }
 };
 
 export const registerUser = async (name, email, password) => {
-  try {
-      const response = await axios.post(`${API_URL}/register`, {
-          name,
-          email,
-          password
-      });
-      
-      if (!response.data.success) {
-          throw new Error(response.data.error || 'Error en el registro');
-      }
-      
-      return response.data;
-  } catch (error) {
-      if (error.response?.status === 409) {
-          throw new Error('El email ya está registrado');
-      }
-      throw error;
-  }
+    try {
+        const response = await authApi.post('/auth/register', {
+            name,
+            email,
+            password
+        });
+        
+        if (!response.data.success) {
+            throw new Error(response.data.error || 'Error en el registro');
+        }
+        
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 409) {
+            throw new Error('El email ya está registrado');
+        }
+        throw error;
+    }
 };

@@ -1,48 +1,34 @@
-from pathlib import Path
-from app.documentation.generator import DocumentGenerator
-from app.documentation.templates import TemplateManager
-from app.documentation.storage import DocumentStorage
-from app.orchestrator.orchestrator import RAGOrchestrator
-from app.llm.gpt import LLMModule
-from app.llm.validator import ResponseValidator
-from app.vectorstore.vector_store import VectorStore
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from core.setup import AIComponents
+from api.routes import api_router
+from config.settings import get_settings
+from config.logging import setup_logging
+from core.auth import HeaderValidator
 
-def configure_orchestrator() -> RAGOrchestrator:
-    """
-    Configura e inicializa el orquestador con todos sus componentes
-    """
-    try:
-        # Inicializar VectorStore y cargar datos existentes
-        vector_store = VectorStore()
-        vector_store_path = Path("app/vectorstore/processed/vectors")
-        if vector_store_path.exists():
-            print(f"Cargando datos del vector store desde {vector_store_path}")
-            vector_store.load(vector_store_path)
-        else:
-            print("ADVERTENCIA: No se encontró directorio del vector store")
-            
-        # Resto de componentes
-        llm = LLMModule()
-        validator = ResponseValidator()
-        template_manager = TemplateManager()
-        doc_generator = DocumentGenerator(llm)
-        doc_storage = DocumentStorage(Path("./docs"))
-        
-        # Crear orquestador
-        orchestrator = RAGOrchestrator(
-            vector_store=vector_store,
-            llm=llm,
-            validator=validator,
-            doc_generator=doc_generator,
-            template_manager=template_manager,
-            doc_storage=doc_storage
-        )
-        
-        return orchestrator
-        
-    except Exception as e:
-        print(f"Error configurando el orquestador: {str(e)}")
-        raise
+# Inicializar componentes
+settings = get_settings()
+setup_logging()
 
-# Donde inicialices tu aplicación
-orchestrator = configure_orchestrator()
+app = FastAPI(title="IAKATA")
+
+# Configurar CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Obtener y limpiar el prefijo API
+api_prefix = settings.API_PREFIX.rstrip('/')
+
+# Incluir router principal
+app.include_router(api_router, prefix=api_prefix)
+
+@app.on_event("startup")
+async def startup_event():
+    print("\nAvailable routes:")
+    for route in app.routes:
+        print(f"Path: {route.path}, Methods: {route.methods}")

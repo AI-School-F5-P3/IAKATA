@@ -15,7 +15,10 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+  // Añadir configuración específica para variables de entorno
+  envDir: './',
+  envPrefix: 'VITE_',
+  define: {
+    'process.env': process.env
+  }
 })
-// vite.config.js
-
-

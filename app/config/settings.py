@@ -60,6 +60,7 @@ class Settings(BaseSettings):
     # Cache settings
     CACHE_EMBEDDINGS: bool = True
     CACHE_TTL: int = 3600  # 1 hora
+    TK_SECRET: str
     
     class Config:
         env_file = ".env"
