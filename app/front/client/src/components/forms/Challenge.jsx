@@ -10,8 +10,11 @@ import PropTypes from 'prop-types';
 import ImproveWithAIButton from '../buttonIa/ImproveWithAIButton';
 
 const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => {
-    const { getValues, handleSubmit, register, formState: { errors }, watch, setValue, reset } = useForm();
+    const { getValues, handleSubmit, register, formState: { errors }, watch, setValue, reset, trigger } = useForm({defaultValues: {
+        description: ''
+    }});
     const navigate = useNavigate();
+    const [isImproving, setIsImproving] = useState(false);
     const [challengeData, setChallengeData] = useState({});
     const { socket, isConnected, WS_EVENTS } = useWebSocket();
 
@@ -184,9 +187,26 @@ const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => 
 
     const handleClose = () => isEdit ? setEditable(false) : navigate('/home');
 
+    // const handleImproveResult = (improvedData) => {
+    //     console.log('Datos mejorados:', improvedData);
+    //     setValue('description', improvedData.description); // Actualiza el campo de descripción
+    // };
     const handleImproveResult = (improvedData) => {
-        console.log('Datos mejorados:', improvedData);
-        setValue('description', improvedData.description); // Actualiza el campo de descripción
+        console.log('Datos mejorados:', improvedData.data.description);
+        if (improvedData && improvedData.description) {
+            setValue('description', improvedData.description, {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true
+            });
+            Swal.fire({
+                icon: 'success',
+                title: '¡Texto mejorado!',
+                text: 'La descripción ha sido mejorada con IA',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
     };
 
     return (
@@ -206,6 +226,18 @@ const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => 
                     {errors.name && <p className="error-message">{errors.name.message}</p>}
                 </div>
 
+                {/* <div className='items'>
+                    <label className='label-item'>Descripción</label>
+                    <textarea 
+                        rows="10" 
+                        cols="50" 
+                        {...register('description', { 
+                            required: 'La descripción es requerida', 
+                            validate: validateText 
+                        })} 
+                    />
+                    {errors.description && <p className="error-message">{errors.description.message}</p>}
+                </div> */}
                 <div className='items'>
                     <label className='label-item'>Descripción</label>
                     <textarea 
@@ -215,6 +247,13 @@ const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => 
                             required: 'La descripción es requerida', 
                             validate: validateText 
                         })} 
+                        disabled={isImproving}
+                        placeholder={isImproving ? "Mejorando descripción con IA..." : "Escribe una descripción o usa el botón de IA para mejorarla"}
+                        defaultValue={watch('description')}
+                        style={{
+                            backgroundColor: isImproving ? '#f5f5f5' : 'white',
+                            cursor: isImproving ? 'wait' : 'text'
+                        }}
                     />
                     {errors.description && <p className="error-message">{errors.description.message}</p>}
                 </div>
@@ -259,13 +298,26 @@ const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => 
                     >
                         {isEdit ? "CANCELAR" : "VOLVER"}
                     </button>
-                    <ImproveWithAIButton
+                    {/* <ImproveWithAIButton
                         className="button-forms"
                         getValues={() => ({
                             idForm,
                             ...getValues(["name", "description"])
                         })}
                         onResult={handleImproveResult} 
+                    /> */}
+                    <ImproveWithAIButton
+                        className="button-forms"
+                        getValues={() => ({
+                            idForm,
+                            ...getValues(["name", "description"])
+                        })}
+                        onResult={(data) => {
+                            setIsImproving(true);
+                            handleImproveResult(data);
+                            setIsImproving(false);
+                        }}
+                        disabled={isImproving}
                     />
                 </div>
             </form>
