@@ -26,14 +26,8 @@ router.post('/:id/validate-password', authToken, authRol(['user','admin']), vali
 
 router.post('/ai', async (req, res) => {
     try {
-          // Extraer los campos específicos y filtrar `name` si no existe
-      const { id, userId, description, name } = req.body;
-      const filteredData = { id, userId, description };
-      
-      // Agregar `name` solo si existe
-      if (name) {
-        filteredData.name = name;
-      }
+      const {idForm, description} = req.body;
+      const filteredData = {idForm, description };
 
       const response = await axios.post('http://localhost:8001/board/ai', filteredData); // FastAPI
       res.json(response.data);
