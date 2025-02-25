@@ -193,8 +193,8 @@ const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => 
     // };
     const handleImproveResult = (improvedData) => {
         console.log('Datos mejorados:', improvedData.data.description);
-        if (improvedData && improvedData.description) {
-            setValue('description', improvedData.description, {
+        if (improvedData) {
+            setValue('description', improvedData.data.description, {
                 shouldValidate: true,
                 shouldDirty: true,
                 shouldTouch: true
@@ -249,7 +249,10 @@ const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => 
                         })} 
                         disabled={isImproving}
                         placeholder={isImproving ? "Mejorando descripción con IA..." : "Escribe una descripción o usa el botón de IA para mejorarla"}
-                        defaultValue={watch('description')}
+                        value={watch('description')}
+                        onChange={(e) => setValue('description', e.target.value, { 
+                            shouldValidate: true 
+                        })}
                         style={{
                             backgroundColor: isImproving ? '#f5f5f5' : 'white',
                             cursor: isImproving ? 'wait' : 'text'
