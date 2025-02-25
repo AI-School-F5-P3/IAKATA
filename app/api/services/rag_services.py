@@ -22,11 +22,22 @@ orchestrator = RAGOrchestrator(
     validator=validator,
 )
 
+CATEGORIAS = {
+    "RE": "challenge",
+    "TA": "target",
+    "EX": "experiment",
+    "HI": "hypothesis"
+}
+
 async def rag_response(data: FormData) -> str:
     data = data.model_dump()
     # section = BoardSection(content=data["description"], metadata={"category": section_type})
     # response = await retriever_system.process_content(section)
-    response = await orchestrator.process_query(data['description'], ResponseType.SUGGESTION)
+    # response = await orchestrator.process_query(data['description'], ResponseType.SUGGESTION)
+    section = CATEGORIAS.get(data['idForm'])
+    response = await orchestrator.process_board_request(section, content=data['description'], context={})
+    print("-------------------------------")
+    print(response)
     return {"description": f"sugerencia: {response}"}
 
 

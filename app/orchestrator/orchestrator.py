@@ -362,17 +362,17 @@ class RAGOrchestrator:
     
     def process_board_request(
         self,
-        board_id: str,
+        # board_id: str,
         section_type: str,
         content: dict,
         context: dict
     ) -> Awaitable[LLMResponse]:
         """Procesa la petición del tablero"""
-        query = f"{content.get('title', '')}\n{content.get('description', '')}"
+        query = content
 
         metadata = {
             "category": section_type.lower() if section_type else "default",
-            "board_id": board_id
+            # "board_id": board_id
         }
         metadata.update({k: str(v) for k, v in context.items()})
 
