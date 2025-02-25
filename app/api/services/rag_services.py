@@ -36,9 +36,10 @@ async def rag_response(data: FormData) -> str:
     # response = await orchestrator.process_query(data['description'], ResponseType.SUGGESTION)
     section = CATEGORIAS.get(data['idForm'])
     response = await orchestrator.process_board_request(section, content=data['description'], context={})
+    response = response.model_dump()
     print("-------------------------------")
-    print(response)
-    return {"description": f"sugerencia: {response}"}
+    print(response['content'])
+    return {"description": f"{response['content']}"}
 
 
 async def store_context_db(data: dict) -> str:
