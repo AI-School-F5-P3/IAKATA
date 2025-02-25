@@ -6,6 +6,8 @@ import json
 from tqdm import tqdm
 from .text_processor import TextProcessor
 from .common_types import ProcessedText, TextType
+from app.retriever.retriever import RetrieverSystem
+from app.retriever.search import SearchEngine
 
 # Configurar logging
 logging.basicConfig(
@@ -74,8 +76,8 @@ def test_search(vector_store: VectorStore) -> None:
     for query in test_queries:
         try:
             logger.info(f"\nRealizando búsqueda de prueba con query: '{query}'")
-            
-            results = vector_store.hybrid_search(query)
+            search_engine = SearchEngine(vector_store)
+            results = search_engine.hybrid_search(query)
             
             if not results:
                 logger.warning(f"No se encontraron resultados para: {query}")
@@ -116,9 +118,12 @@ def main():
             chunk_overlap=chunk_overlap
         )
         
+        # Inicializar Retriever System con la instancia de Vector Store
+        retriever_system = RetrieverSystem(vector_store)
+        
         # Procesar y vectorizar
         logger.info("Iniciando procesamiento de documentos...")
-        stats = vector_store.process_and_index(STRUCTURE_FILE)
+        stats = retriever_system.process_and_index(STRUCTURE_FILE)
         
         # Guardar resultados
         logger.info("Guardando vectores y metadatos...")
