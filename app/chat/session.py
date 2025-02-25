@@ -20,22 +20,24 @@ class SessionManager:
         metadata: Optional[Dict] = None
     ) -> ChatSession:
         """Crea una nueva sesión de chat"""
+        session_id = uuid4()
         session = ChatSession(
-            id=uuid4(),  # Cambiado aquí
+            id=session_id,
             user_id=user_id,
             board_id=board_id,
             created_at=datetime.utcnow(),
             last_updated=datetime.utcnow(),
             metadata=metadata or {}
         )
-        self.sessions[session.id] = session
+        self.sessions[session_id] = session
         return session
 
     def get_session(self, session_id: UUID) -> ChatSession:
         """Obtiene una sesión existente"""
-        session = self.sessions.get(session_id)
-        if not session:
+        if session_id not in self.sessions:
             raise SessionNotFoundError(f"Session {session_id} not found")
+        
+        session = self.sessions[session_id]
         
         if self._is_session_expired(session):
             self.close_session(session_id)
@@ -67,3 +69,12 @@ class SessionManager:
         """Verifica si una sesión ha expirado"""
         expiration_time = session.last_updated + timedelta(seconds=self.session_timeout)
         return datetime.utcnow() > expiration_time
+        
+    def get_session_by_id(self, session_id: str) -> Optional[ChatSession]:
+        """Busca una sesión por su ID (string)"""
+        try:
+            uuid_id = UUID(session_id)
+            return self.sessions.get(uuid_id)
+        except ValueError:
+            # Si el ID no es un UUID válido
+            return None
