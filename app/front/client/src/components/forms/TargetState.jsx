@@ -13,6 +13,7 @@ const TargetState = ({ challengeId, targetStateId, setLoading, setEditTargetStat
     const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
     const [targetStateData, setTargetStateData] = useState({});
     const { WS_EVENTS, sendMessage } = useWebSocket();
+    const [isImproving, setIsImproving] = useState(false);
 
     const idForm = "TA";
 
@@ -119,8 +120,21 @@ const TargetState = ({ challengeId, targetStateId, setLoading, setEditTargetStat
     const handleClose = () => isEdit ? setEditTargetState(false) : (setCreateTarget && setCreateTarget(false)) || setEditTargetState(false);
 
     const handleImproveResult = (improvedData) => {
-        console.log('Datos mejorados:', improvedData);
-        setValue('description', improvedData.description); // Actualiza el campo de descripción
+        console.log('Datos mejorados:', improvedData.data.description);
+        if (improvedData) {
+            setValue('description', improvedData.data.description, {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true
+            });
+            Swal.fire({
+                icon: 'success',
+                title: '¡Texto mejorado!',
+                text: 'La descripción ha sido mejorada con IA',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
     };
     
     return (
@@ -132,7 +146,18 @@ const TargetState = ({ challengeId, targetStateId, setLoading, setEditTargetStat
                     <textarea 
                         rows="10" 
                         cols="50" 
-                        {...register('description', { required: 'La descripción es requerida' })} 
+                        {...register('description', { 
+                            required: 'La descripción es requerida', 
+                        })} 
+                        disabled={isImproving}
+                        placeholder={isImproving ? "Mejorando descripción con IA..." : "Escribe una descripción o usa el botón de IA para mejorarla"}
+                        onChange={(e) => setValue('description', e.target.value, { 
+                            shouldValidate: true 
+                        })}
+                        style={{
+                            backgroundColor: isImproving ? '#f5f5f5' : 'white',
+                            cursor: isImproving ? 'wait' : 'text'
+                        }}
                     />
                     {errors.description && <p className="error-message">{errors.description.message}</p>}
                 </div>
@@ -174,7 +199,12 @@ const TargetState = ({ challengeId, targetStateId, setLoading, setEditTargetStat
                             idForm,
                             ...getValues(["description"])
                         })}
-                        onResult={handleImproveResult} 
+                        onResult={(data) => {
+                            setIsImproving(true);
+                            handleImproveResult(data);
+                            setIsImproving(false);
+                        }}
+                        disabled={isImproving}
                     />
                 </div>
             </form>
