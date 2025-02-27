@@ -42,21 +42,21 @@
       "overlap_next": null,
       "section_id": "101"
     },
-    "212_chunk_0_tribe": {
+    "212_chunk_0_process": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": null,
       "overlap_next": " incorpore una mejora y una adaptación constantes.",
       "section_id": "212"
     },
-    "212_chunk_1_tribe": {
+    "212_chunk_1_process": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": " incorpore una mejora y una adaptación constantes.",
       "overlap_next": " nuestra percepción que nos permitirá avanzar, por",
       "section_id": "212"
     },
-    "212_chunk_2_tribe": {
+    "212_chunk_2_process": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": " nuestra percepción que nos permitirá avanzar, por",
@@ -84,59 +84,24 @@
       "overlap_next": null,
       "section_id": "212"
     },
-    "169_chunk_0_experiment": {
+    "279_chunk_0_process": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": null,
       "overlap_next": " incorpore una mejora y una adaptación constantes.",
-      "section_id": "169"
+      "section_id": "279"
     },
-    "169_chunk_1_experiment": {
+    "279_chunk_1_process": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": " incorpore una mejora y una adaptación constantes.",
       "overlap_next": " nuestra percepción que nos permitirá avanzar, por",
-      "section_id": "169"
+      "section_id": "279"
     },
-    "169_chunk_2_experiment": {
+    "279_chunk_2_process": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": " nuestra percepción que nos permitirá avanzar, por",
-      "overlap_next": null,
-      "section_id": "169"
-    },
-    "169_chunk_0_general": {
-      "prev_chunk": null,
-      "next_chunk": null,
-      "overlap_prev": null,
-      "overlap_next": null,
-      "section_id": "169"
-    },
-    "169_chunk_1_general": {
-      "prev_chunk": null,
-      "next_chunk": null,
-      "overlap_prev": " ventaja competitiva que se mantiene en el tiempo.",
-      "overlap_next": "endiendo, que han evaluado mis pensamientos y que ",
-      "section_id": "169"
-    },
-    "169_chunk_2_general": {
-      "prev_chunk": null,
-      "next_chunk": null,
-      "overlap_prev": "endiendo, que han evaluado mis pensamientos y que ",
-      "overlap_next": null,
-      "section_id": "169"
-    },
-    "279_chunk_0_target_state": {
-      "prev_chunk": null,
-      "next_chunk": null,
-      "overlap_prev": null,
-      "overlap_next": "uestran el rendimiento superior que ofrece Toyota.",
-      "section_id": "279"
-    },
-    "279_chunk_1_target_state": {
-      "prev_chunk": null,
-      "next_chunk": null,
-      "overlap_prev": "uestran el rendimiento superior que ofrece Toyota.",
       "overlap_next": null,
       "section_id": "279"
     },
@@ -144,13 +109,20 @@
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": null,
-      "overlap_next": "s que aplicamos a nuestros problemas específicos? ",
+      "overlap_next": null,
       "section_id": "279"
     },
     "279_chunk_1_general": {
       "prev_chunk": null,
       "next_chunk": null,
-      "overlap_prev": "s que aplicamos a nuestros problemas específicos? ",
+      "overlap_prev": " ventaja competitiva que se mantiene en el tiempo.",
+      "overlap_next": "endiendo, que han evaluado mis pensamientos y que ",
+      "section_id": "279"
+    },
+    "279_chunk_2_general": {
+      "prev_chunk": null,
+      "next_chunk": null,
+      "overlap_prev": "endiendo, que han evaluado mis pensamientos y que ",
       "overlap_next": null,
       "section_id": "279"
     },
@@ -231,28 +203,28 @@
       "overlap_next": null,
       "section_id": "80"
     },
-    "82_chunk_0_process": {
+    "82_chunk_0_target_state": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": null,
       "overlap_next": "nseguir los logros que uno se proponga. Este halla",
       "section_id": "82"
     },
-    "82_chunk_1_process": {
+    "82_chunk_1_target_state": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": "nseguir los logros que uno se proponga. Este halla",
       "overlap_next": "ero ninguna de las definiciones cubría mi visión r",
       "section_id": "82"
     },
-    "82_chunk_2_process": {
+    "82_chunk_2_target_state": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": "ero ninguna de las definiciones cubría mi visión r",
       "overlap_next": "te se recupere de forma rápida tras la cirugía es ",
       "section_id": "82"
     },
-    "82_chunk_3_process": {
+    "82_chunk_3_target_state": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": "te se recupere de forma rápida tras la cirugía es ",
@@ -399,28 +371,28 @@
       "overlap_next": null,
       "section_id": "85"
     },
-    "87_chunk_0_learning": {
+    "87_chunk_0_process": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": null,
       "overlap_next": "ata de mejora para conseguir un determinado reto? ",
       "section_id": "87"
     },
-    "87_chunk_1_learning": {
+    "87_chunk_1_process": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": "ata de mejora para conseguir un determinado reto? ",
       "overlap_next": "ido cualquier tipo de práctica para el entrenamien",
       "section_id": "87"
     },
-    "87_chunk_2_learning": {
+    "87_chunk_2_process": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": "ido cualquier tipo de práctica para el entrenamien",
       "overlap_next": "para llevar adelante con éxito la metodología Lean",
       "section_id": "87"
     },
-    "87_chunk_3_learning": {
+    "87_chunk_3_process": {
       "prev_chunk": null,
       "next_chunk": null,
       "overlap_prev": "para llevar adelante con éxito la metodología Lean",
@@ -512,9 +484,9 @@
       "101_chunk_0_general"
     ],
     "212": [
-      "212_chunk_0_tribe",
-      "212_chunk_1_tribe",
-      "212_chunk_2_tribe",
+      "212_chunk_0_process",
+      "212_chunk_1_process",
+      "212_chunk_2_process",
       "212_chunk_0_general",
       "212_chunk_0_general",
       "212_chunk_0_general",
@@ -522,22 +494,15 @@
       "212_chunk_2_general",
       "212_chunk_0_general"
     ],
-    "169": [
-      "169_chunk_0_experiment",
-      "169_chunk_1_experiment",
-      "169_chunk_2_experiment",
-      "169_chunk_0_general",
-      "169_chunk_0_general",
-      "169_chunk_1_general",
-      "169_chunk_2_general",
-      "169_chunk_0_general"
-    ],
     "279": [
-      "279_chunk_0_target_state",
-      "279_chunk_1_target_state",
+      "279_chunk_0_process",
+      "279_chunk_1_process",
+      "279_chunk_2_process",
       "279_chunk_0_general",
       "279_chunk_0_general",
-      "279_chunk_1_general"
+      "279_chunk_1_general",
+      "279_chunk_2_general",
+      "279_chunk_0_general"
     ],
     "4": [
       "4_chunk_0_process",
@@ -568,10 +533,10 @@
       "80_chunk_1_general"
     ],
     "82": [
-      "82_chunk_0_process",
-      "82_chunk_1_process",
-      "82_chunk_2_process",
-      "82_chunk_3_process",
+      "82_chunk_0_target_state",
+      "82_chunk_1_target_state",
+      "82_chunk_2_target_state",
+      "82_chunk_3_target_state",
       "82_chunk_0_general",
       "82_chunk_1_general",
       "82_chunk_0_general",
@@ -634,10 +599,10 @@
       "85_chunk_1_general"
     ],
     "87": [
-      "87_chunk_0_learning",
-      "87_chunk_1_learning",
-      "87_chunk_2_learning",
-      "87_chunk_3_learning",
+      "87_chunk_0_process",
+      "87_chunk_1_process",
+      "87_chunk_2_process",
+      "87_chunk_3_process",
       "87_chunk_0_general",
       "87_chunk_1_general",
       "87_chunk_0_general",

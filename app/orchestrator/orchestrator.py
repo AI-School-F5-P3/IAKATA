@@ -53,7 +53,7 @@ class RAGOrchestrator:
         top_k: int = 5,
         temperature: Optional[float] = None,
         language: str = "es",
-        metadata: Optional[Dict[str, str]] = None
+        metadata: Optional[Dict[str, Any]] = None
     ) -> LLMResponse:
         """Procesa una consulta determinando si usar RAG para Lean Kata o respuesta general"""
         try:
@@ -225,7 +225,7 @@ class RAGOrchestrator:
     async def _search_relevant_docs(
         self,
         query: str,
-        metadata: Optional[Dict[str, str]],
+        metadata: Optional[Dict[str, Any]],
         top_k: int
     ) -> List[Dict[str, Any]]:
         """Busca documentos relevantes usando el retriever"""
@@ -236,10 +236,19 @@ class RAGOrchestrator:
             if 'category' not in metadata:
                 metadata['category'] = 'general'
             
+            # Limpiar metadata para crear BoardSection
+            board_metadata = {}
+            for key, value in metadata.items():
+                if isinstance(value, (str, int, float, bool, type(None))):
+                    board_metadata[key] = value
+                else:
+                    # Convertir valores complejos a string para evitar errores de validación
+                    board_metadata[key] = str(value)
+            
             # Crear BoardSection para el retriever
             board_section = BoardSection(
                 content=query,
-                metadata=metadata
+                metadata=board_metadata
             )
 
             # Procesar contenido
@@ -256,7 +265,7 @@ class RAGOrchestrator:
 
     async def _build_context(
         self,
-        search_results: List[SearchResult]
+        search_results: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """Construye el contexto para el LLM a partir de los resultados de búsqueda"""
         context = {
@@ -267,18 +276,18 @@ class RAGOrchestrator:
         total_tokens = 0
         
         for result in search_results:
-            if total_tokens + len(result.text.split()) <= self.context_window:
+            if total_tokens + len(result["text"].split()) <= self.context_window:
                 context["relevant_texts"].append({
-                    "text": result.text,
-                    "score": result.score,
-                    "id": result.id
+                    "text": result["text"],
+                    "score": result["score"],
+                    "id": result["id"]
                 })
-                total_tokens += len(result.text.split())
+                total_tokens += len(result["text"].split())
                 
-                if result.metadata:
-                    section_id = result.metadata.get('section_id')
+                if result.get("metadata"):
+                    section_id = result["metadata"].get('section_id')
                     if section_id:
-                        context["metadata"][section_id] = result.metadata
+                        context["metadata"][section_id] = result["metadata"]
         
         return context
 

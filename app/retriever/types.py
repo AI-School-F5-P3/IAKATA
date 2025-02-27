@@ -6,13 +6,13 @@ from app.llm.types import ResponseType
 class BoardSection(BaseModel):
     """Representa el contenido a procesar del tablero Lean Kata"""
     content: str
-    metadata: Dict[str, str]
+    metadata: Dict[str, Any]
     additional_context: Optional[Dict[str, Any]] = None
 
 class SearchQuery(BaseModel):
     """Consulta de búsqueda"""
     text: str
-    metadata: Dict[str, str]
+    metadata: Dict[str, Any]
     max_results: int = 5
     filters: Optional[Dict[str, Any]] = None
 

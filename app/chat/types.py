@@ -10,6 +10,7 @@ class Message(BaseModel):
     content: str
     timestamp: datetime
     metadata: Optional[Dict[str, Any]] = None
+    board_id: Optional[str] = None  # Campo añadido
 
 class ChatSession(BaseModel):
     id: UUID

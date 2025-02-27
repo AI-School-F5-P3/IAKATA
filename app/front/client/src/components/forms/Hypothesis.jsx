@@ -12,6 +12,7 @@ const Hypothesis = ({ editHypothesisId, editObstacleId, setLoading, setEditHypot
     const { register, formState: { errors }, handleSubmit, setValue, getValues} = useForm();
     const [hypothesisData, setHypothesisData] = useState(null);
     const { WS_EVENTS, sendMessage } = useWebSocket();
+    const [isImproving, setIsImproving] = useState(false);
 
     const idForm = "HI";
 
@@ -96,26 +97,46 @@ const Hypothesis = ({ editHypothesisId, editObstacleId, setLoading, setEditHypot
     };
 
     const handleImproveResult = (improvedData) => {
-        console.log('Datos mejorados:', improvedData);
-        setValue('description', improvedData.description); // Actualiza el campo de descripción
+        console.log('Datos mejorados:', improvedData.data.description);
+        if (improvedData) {
+            setValue('description', improvedData.data.description, {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true
+            });
+            Swal.fire({
+                icon: 'success',
+                title: '¡Texto mejorado!',
+                text: 'La descripción ha sido mejorada con IA',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
     };
 
     return (
         <div className="form-container">
             <form className="form-create" onSubmit={handleSubmit(onSubmit)}>
                 <h2>{isEdit ? 'EDITAR' : 'CREAR'} HIPÓTESIS</h2>
-                <div className="items">
-                    <label className="label-item">Descripción</label>
-                    <textarea
-                        rows="10"
-                        cols="50"
-                        {...register("description", { 
-                            required: "La descripción es requerida" 
+                <div className='items'>
+                    <label className='label-item'>Descripción: </label>
+                    <textarea 
+                        rows="10" 
+                        cols="50" 
+                        {...register('description', { 
+                            required: 'La descripción es requerida', 
+                        })} 
+                        disabled={isImproving}
+                        placeholder={isImproving ? "Mejorando descripción con IA..." : "Escribe una descripción o usa el botón de IA para mejorarla"}
+                        onChange={(e) => setValue('description', e.target.value, { 
+                            shouldValidate: true 
                         })}
+                        style={{
+                            backgroundColor: isImproving ? '#f5f5f5' : 'white',
+                            cursor: isImproving ? 'wait' : 'text'
+                        }}
                     />
-                    {errors.description && (
-                        <p className="error-message">{errors.description.message}</p>
-                    )}
+                    {errors.description && <p className="error-message">{errors.description.message}</p>}
                 </div>
                 <div className="items">
                     <label className="label-item">Fecha de planificación</label>
@@ -155,12 +176,17 @@ const Hypothesis = ({ editHypothesisId, editObstacleId, setLoading, setEditHypot
                     Cerrar
                 </button>
                 <ImproveWithAIButton
-                    className="button-forms"
-                    getValues={() => ({
-                        idForm,
-                        ...getValues(["description"])
-                    })}
-                    onResult={handleImproveResult} 
+                        className="button-forms"
+                        getValues={() => ({
+                            idForm,
+                            ...getValues(["description"])
+                        })}
+                        onResult={(data) => {
+                            setIsImproving(true);
+                            handleImproveResult(data);
+                            setIsImproving(false);
+                        }}
+                        disabled={isImproving}
                 />
             </form>
         </div>
