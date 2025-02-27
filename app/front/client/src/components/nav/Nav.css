@@ -172,5 +172,31 @@
     width: 50%;
     text-align: center;
   }
+  /* Estilos para los nuevos enlaces */
+.nav-report-link {
+  background: #f0f8ff;
+  color: #002661;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.nav-analysis-link {
+  background: #fff0f5;
+  color: #660022;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+/* Mejoras responsive */
+@media (max-width: 768px) {
+  .nav-links.open {
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .nav-button {
+    margin: 10px 0;
+    }
+  }
 }
 

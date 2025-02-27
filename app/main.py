@@ -1,6 +1,6 @@
 from pathlib import Path
 from app.documentation.generator import DocumentGenerator
-from app.documentation.templates import TemplateManager
+from app.documentation.template_manager import TemplateStyleManager
 from app.documentation.storage import DocumentStorage
 from app.orchestrator.orchestrator import RAGOrchestrator
 from app.llm.gpt import LLMModule
@@ -24,7 +24,7 @@ def configure_orchestrator() -> RAGOrchestrator:
         # Resto de componentes
         llm = LLMModule()
         validator = ResponseValidator()
-        template_manager = TemplateManager()
+        template_manager = TemplateStyleManager()
         doc_generator = DocumentGenerator(llm)
         doc_storage = DocumentStorage(Path("./docs"))
         

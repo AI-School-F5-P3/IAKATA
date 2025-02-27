@@ -11,7 +11,7 @@ const ImproveWithAIButton = ({ getValues, onResult }) => {
     console.log('Datos enviados:', data);
 
     try {
-      const response = await axios.post('http://localhost:5001/challenge/ai', data); // Tu API Node.js
+      const response = await axios.post('http://localhost:8001/board/ai', data); // Tu API Node.js
       console.log('Respuesta de la IA:', response.data);
 
       // Llamada a la función para manejar el resultado

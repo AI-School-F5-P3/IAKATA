@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { sendMessage } from '../../services/ChatbotServices';
 import ChatIcon from '../../assets/img/ChatBotIcon2.svg';
 import './Chatbot.css';
+import Message from './Message';  
 
 const Chatbot = () => {
   const [message, setMessage] = useState('');
@@ -19,7 +20,7 @@ const Chatbot = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Efecto para cargar mensajes previos del almacenamiento local si existen
+  // Cargar mensajes previos del almacenamiento local si existen
   useEffect(() => {
     if (isOpen) {
       const savedMessages = localStorage.getItem('chatMessages');
@@ -47,22 +48,18 @@ const Chatbot = () => {
     setMessages((prevMessages) => [...prevMessages, userMessage]);
 
     try {
-      // Mostrar indicador de carga
+      // Agregar mensaje de carga
       setMessages((prevMessages) => [
         ...prevMessages, 
         { sender: 'bot', text: '...', loading: true }
       ]);
       
-      // Llamar al servicio actualizado
+      // Obtener respuesta del chatbot
       const botResponse = await sendMessage(message);
       
       // Reemplazar mensaje de carga con la respuesta real
       setMessages((prevMessages) => {
-        const newMessages = [...prevMessages];
-        const loadingIndex = newMessages.findIndex(msg => msg.loading);
-        if (loadingIndex !== -1) {
-          newMessages.splice(loadingIndex, 1);
-        }
+        const newMessages = prevMessages.filter(msg => !msg.loading);
         return [...newMessages, { 
           sender: 'bot', 
           text: botResponse || 'No tengo respuesta para esa consulta.',
@@ -72,13 +69,8 @@ const Chatbot = () => {
     } catch (error) {
       console.error('Error enviando el mensaje:', error);
       
-      // Manejar error reemplazando el indicador de carga
       setMessages((prevMessages) => {
-        const newMessages = [...prevMessages];
-        const loadingIndex = newMessages.findIndex(msg => msg.loading);
-        if (loadingIndex !== -1) {
-          newMessages.splice(loadingIndex, 1);
-        }
+        const newMessages = prevMessages.filter(msg => !msg.loading);
         return [...newMessages, { 
           sender: 'bot', 
           text: 'Hubo un error al procesar la solicitud. Por favor, inténtalo de nuevo.',
@@ -113,12 +105,7 @@ const Chatbot = () => {
                 </div>
               ) : (
                 messages.map((msg, index) => (
-                  <div key={index} className={`chat-message ${msg.sender} ${msg.loading ? 'loading' : ''}`}>
-                    {msg.loading ? 
-                      <span className="loading-indicator">Escribiendo<span className="dots">...</span></span> : 
-                      msg.text
-                    }
-                  </div>
+                  <Message key={index} message={msg} />
                 ))
               )}
               <div ref={messagesEndRef} />

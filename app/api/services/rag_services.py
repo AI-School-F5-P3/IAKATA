@@ -2,7 +2,6 @@ import httpx
 from app.api.models import FormData
 from app.retriever.retriever import RetrieverSystem
 from app.retriever.types import BoardSection, RetrieverResponse
-from app.orchestrator.orchestrator import RAGOrchestrator
 from app.retriever.search import SearchEngine
 from app.llm.types import ResponseType
 from app.vectorstore.vector_store import VectorStore
@@ -16,11 +15,16 @@ retriever_system = RetrieverSystem(vector_store)
 llm = LLMModule()
 validator = ResponseValidator()
 
-orchestrator = RAGOrchestrator(
-    vector_store=vector_store,
-    llm=llm,
-    validator=validator,
-)
+def get_orchestrator():
+    from app.orchestrator.orchestrator import RAGOrchestrator
+    global orchestrator
+    if 'orchestrator' not in globals():
+        orchestrator = RAGOrchestrator(
+            vector_store=vector_store,
+            llm=llm,
+            validator=validator,
+        )
+    return orchestrator
 
 CATEGORIAS = {
     "RE": "challenge",
@@ -34,6 +38,7 @@ async def rag_response(data: FormData) -> str:
     # section = BoardSection(content=data["description"], metadata={"category": section_type})
     # response = await retriever_system.process_content(section)
     # response = await orchestrator.process_query(data['description'], ResponseType.SUGGESTION)
+    orchestrator = get_orchestrator()
     section = CATEGORIAS.get(data['idForm'])
     response = await orchestrator.process_board_request(section, content=data['description'], context={})
     response = response.model_dump()
