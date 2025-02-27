@@ -1,5 +1,11 @@
-# Dockerfile
-FROM python:3.11-slim
+# Usa una imagen base con Python (o la que necesites)
+FROM mcr.microsoft.com/devcontainers/python:3.11
+
+# Configura usuario root
+USER root
+
+# Instala Docker dentro del contenedor
+RUN curl -fsSL https://get.docker.com | sh
 
 # Configurar variables de entorno
 ENV PYTHONUNBUFFERED=1 \
@@ -21,7 +27,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Instalar dependencias de Python
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --default-timeout=300 -r requirements.txt
 
 # Copiar el resto del código
 COPY . .

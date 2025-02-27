@@ -369,6 +369,7 @@ class RAGOrchestrator:
     ) -> Awaitable[LLMResponse]:
         """Procesa la petición del tablero"""
         query = content
+        query = content
 
         metadata = {
             "category": section_type.lower() if section_type else "default",

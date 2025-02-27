@@ -44,3 +44,4 @@ async def rag_response(data: FormData) -> str:
 
 async def store_context_db(data: dict) -> str:
     return {f"response"}
+

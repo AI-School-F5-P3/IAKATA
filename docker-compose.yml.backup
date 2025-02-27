@@ -1,0 +1,107 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # Servicio IAKATA
+  iakata:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: iakata-dev
+    volumes:
+      - .:/app
+      - iakata_vectors:/app/vectorstore/processed/vectors
+      - iakata_cache:/app/vectorstore/cache
+      - iakata_logs:/app/logs
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+      - DEBUG=True
+    networks:
+      - backend
+    command: uvicorn app.api.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Servicio React Frontend
+  react:
+    build:
+      context: .
+      dockerfile: Dockerfile.react
+    ports:
+      - "80:80"
+    networks:
+      - backend
+    depends_on:
+      - node_api
+    volumes:
+      - ./app/front/client:/app
+      - /app/node_modules
+
+  # Servicio Node.js API
+  node_api:
+    build:
+      context: .
+      dockerfile: Dockerfile.node
+    ports:
+      - "8002:8002"
+    networks:
+      - backend
+      - mysql_network
+    environment:
+      - DB_DEV_NAME=${DB_DEV_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - TK_SECRET=${TK_SECRET}
+    depends_on:
+      - mysql
+    volumes:
+      - ./app/front/server:/app
+      - /app/node_modules
+    env_file:
+      - .env
+
+  # Servicio FastAPI RAG
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    ports:
+      - "8001:8001"
+    networks:
+      - backend
+    depends_on:
+      - node_api
+    volumes:
+      - ./app/api:/app
+
+  # Base de datos MySQL
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DEV_NAME}
+    networks:
+      - mysql_network
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+
+networks:
+  backend:
+    driver: bridge
+  mysql_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  iakata_vectors:
+    name: iakata_vectors
+  iakata_cache:
+    name: iakata_cache
+  iakata_logs:
+    name: iakata_logs
