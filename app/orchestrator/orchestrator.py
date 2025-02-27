@@ -6,7 +6,7 @@ import logging
 
 # Imports de documentación
 from app.documentation.generator import DocumentGenerator
-from app.documentation.templates import TemplateManager
+from app.documentation.template_manager import TemplateStyleManager
 from app.documentation.storage import DocumentStorage
 from app.documentation.types import Document, DocumentFormat
 
@@ -40,7 +40,7 @@ class RAGOrchestrator:
         
         # Componentes de documentación
         self.doc_generator = doc_generator
-        self.template_manager = template_manager
+        self.template_manager = TemplateStyleManager()
         self.doc_storage = doc_storage
         
         # Inicializar retriever
@@ -155,7 +155,7 @@ class RAGOrchestrator:
             if not self.template_manager:
                 raise ValueError("Template manager no configurado")
             
-            template = self.template_manager.get_template(template_id)
+            template = self.template_manager.create_document_template(template_id)
             if not template:
                 raise ValueError(f"Template no encontrado: {template_id}")
 
@@ -377,7 +377,7 @@ class RAGOrchestrator:
         context: dict
     ) -> Awaitable[LLMResponse]:
         """Procesa la petición del tablero"""
-        query = content
+
         query = content
 
         metadata = {

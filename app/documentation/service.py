@@ -238,3 +238,56 @@ class DocumentationService:
                 search_terms.append(str(project_data['challenge']))
                 
         return " ".join(filter(None, search_terms))
+    async def convert_document_format(
+        self,
+        document_id: str,
+        target_format: str,
+        style: str = "default"
+    ) -> Dict[str, Any]:
+        """
+        Convierte un documento existente a otro formato.
+        
+        Args:
+            document_id: ID del documento a convertir
+            target_format: Formato destino ("markdown", "html", "pdf", "json")
+            style: Estilo a aplicar en la conversión
+            
+        Returns:
+            Dict con información del documento convertido
+        """
+        try:
+            # 1. Recuperar documento original
+            document = await self.storage.get_document(document_id)
+            if not document:
+                raise ValueError(f"Documento no encontrado: {document_id}")
+                
+            # 2. Cambiar formato
+            original_format = document.format
+            document.format = DocumentFormat(target_format)
+            
+            # 3. Aplicar estilo si es necesario
+            style_config = None
+            if style != "default":
+                style_config = self.template_manager.get_style_config(ReportStyle(style))
+            
+            # 4. Formatear contenido
+            formatted_content = self.format_handler.format_document(
+                document=document,
+                output_format=document.format,
+                style_config=style_config
+            )
+            
+            # 5. Guardar documento en nuevo formato
+            new_doc_id = await self.storage.save_document(document)
+            
+            return {
+                "original_id": document_id,
+                "original_format": original_format.value,
+                "new_id": new_doc_id,
+                "new_format": target_format,
+                "converted_at": datetime.utcnow().isoformat()
+            }
+            
+        except Exception as e:
+            logger.error(f"Error convirtiendo formato: {str(e)}")
+            raise

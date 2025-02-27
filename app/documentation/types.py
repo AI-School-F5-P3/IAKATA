@@ -17,6 +17,7 @@ class DocumentFormat(Enum):
     HTML = "html"
     PDF = "pdf"
     JSON = "json"
+    EXCEL = "excel"
 
 class DocumentSection(BaseModel):
     """Sección de un documento"""

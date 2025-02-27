@@ -244,7 +244,7 @@ class TemplateStyleManager:
                     "style": style.value,
                     "style_config": self.get_style_config(style),
                     "description": template_config.description,
-                    **template_config.metadata or {}
+                    **(template_config.metadata if template_config.metadata is not None else {})
                 }
             )
 

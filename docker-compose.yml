@@ -5,6 +5,9 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+    cap_add:
+      - SYS_PTRACE  # Permite depuración y seguimiento de procesos
+      - DAC_READ_SEARCH  # Permite leer archivos que normalmente requerirían más permisos
     volumes:
       - .:/app
       - iakata_vectors:/app/vectorstore/processed/vectors

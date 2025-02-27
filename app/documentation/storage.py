@@ -6,32 +6,43 @@ import logging
 import mysql.connector
 from mysql.connector import Error
 from .types import Document, DocumentFormat
+import os
 
 logger = logging.getLogger(__name__)
 
 class DocumentStorage:
-    """
-    Manejador de almacenamiento de documentos usando MySQL directamente
-    """
-    
     def __init__(
         self,
-        host: str,
-        user: str,
-        password: str,
-        database: str,
-        base_dir: Optional[Path] = None
+        base_dir: Optional[Path] = None,
+        host: Optional[str] = None,
+        user: Optional[str] = None,
+        password: Optional[str] = None,
+        database: Optional[str] = None
     ):
         """
         Inicializa el manejador de almacenamiento
+        
+        Args:
+            base_dir: Directorio base para almacenamiento de archivos
+            host, user, password, database: Credenciales para MySQL (opcionales)
         """
-        # Configuración MySQL
-        self.db_config = {
-            'host': host,
-            'user': user,
-            'password': password,
-            'database': database
-        }
+        # Configuración MySQL (opcional)
+        self.use_db = all([
+            host or os.getenv("DB_HOST"),  # Usa el host proporcionado o la variable de entorno
+            user or os.getenv("DB_USER"),  # Usa el usuario proporcionado o la variable de entorno
+            password or os.getenv("DB_PASSWORD"),  # Usa la contraseña proporcionada o la variable de entorno
+            database or os.getenv("DB_DEV_NAME")  # Usa la base de datos proporcionada o la variable de entorno
+        ])
+        
+        if self.use_db:
+            self.db_config = {
+                'host': host or os.getenv("DB_HOST"),  # Usa el host proporcionado o la variable de entorno
+                'user': user or os.getenv("DB_USER"),  # Usa el usuario proporcionado o la variable de entorno
+                'password': password or os.getenv("DB_PASSWORD"),  # Usa la contraseña proporcionada o la variable de entorno
+                'database': database or os.getenv("DB_DEV_NAME")  # Usa la base de datos proporcionada o la variable de entorno
+            }
+            # Crear tabla si no existe
+            self._create_tables()
         
         # Configurar almacenamiento de archivos
         self.base_dir = base_dir or Path("documents")
@@ -42,13 +53,11 @@ class DocumentStorage:
             DocumentFormat.MARKDOWN: self.base_dir / "markdown",
             DocumentFormat.HTML: self.base_dir / "html",
             DocumentFormat.JSON: self.base_dir / "json",
-            DocumentFormat.PDF: self.base_dir / "pdf"
+            DocumentFormat.PDF: self.base_dir / "pdf",
+            DocumentFormat.EXCEL: self.base_dir / "excel"
         }
         for dir_path in self.dirs.values():
             dir_path.mkdir(exist_ok=True)
-            
-        # Crear tabla si no existe
-        self._create_tables()
 
     def _create_tables(self):
         """Crea las tablas necesarias si no existen"""
@@ -75,9 +84,8 @@ class DocumentStorage:
             
         except Error as e:
             logger.error(f"Error creando tablas: {e}")
-            raise
         finally:
-            if conn.is_connected():
+            if 'conn' in locals() and conn.is_connected():
                 cursor.close()
                 conn.close()
 
@@ -85,58 +93,59 @@ class DocumentStorage:
         """
         Guarda un documento en BD y sistema de archivos
         """
-        try:
-            conn = mysql.connector.connect(**self.db_config)
-            cursor = conn.cursor()
-            
-            # Generar contenido principal
-            main_content = self._generate_main_content(document)
-            
-            # Preparar datos para inserción
-            data = {
-                'id': document.id,
-                'type': document.type.value,
-                'title': document.title,
-                'content': main_content,
-                'format': document.format.value,
-                'created_at': document.created_at,
-                'updated_at': document.updated_at,
-                'doc_metadata': json.dumps(document.metadata),
-                'sections': json.dumps([{
-                    'title': s.title,
-                    'content': s.content,
-                    'order': s.order
-                } for s in document.sections])
-            }
-            
-            # Insertar en BD
-            query = """
-                INSERT INTO documentation 
-                (id, type, title, content, format, created_at, updated_at, doc_metadata, sections)
-                VALUES (%(id)s, %(type)s, %(title)s, %(content)s, %(format)s, 
-                        %(created_at)s, %(updated_at)s, %(doc_metadata)s, %(sections)s)
-            """
-            cursor.execute(query, data)
-            conn.commit()
-            
-            # Guardar archivo
-            file_path = self._save_file(document, main_content)
-            
-            # Actualizar metadata con ruta del archivo
+        # Generar contenido principal
+        main_content = self._generate_main_content(document)
+        
+        # Guardar en BD si está configurada
+        if self.use_db:
+            try:
+                conn = mysql.connector.connect(**self.db_config)
+                cursor = conn.cursor()
+                
+                # Preparar datos para inserción
+                data = {
+                    'id': document.id,
+                    'type': document.type.value,
+                    'title': document.title,
+                    'content': main_content,
+                    'format': document.format.value,
+                    'created_at': document.created_at,
+                    'updated_at': document.updated_at,
+                    'doc_metadata': json.dumps(document.metadata),
+                    'sections': json.dumps([{
+                        'title': s.title,
+                        'content': s.content,
+                        'order': s.order
+                    } for s in document.sections])
+                }
+                
+                # Insertar en BD
+                query = """
+                    INSERT INTO documentation 
+                    (id, type, title, content, format, created_at, updated_at, doc_metadata, sections)
+                    VALUES (%(id)s, %(type)s, %(title)s, %(content)s, %(format)s, 
+                            %(created_at)s, %(updated_at)s, %(doc_metadata)s, %(sections)s)
+                """
+                cursor.execute(query, data)
+                conn.commit()
+            except Error as e:
+                logger.error(f"Error guardando documento en BD: {e}")
+            finally:
+                if 'conn' in locals() and conn.is_connected():
+                    cursor.close()
+                    conn.close()
+        
+        # Guardar archivo (siempre)
+        file_path = self._save_file(document, main_content)
+        
+        # Actualizar metadata con ruta del archivo
+        if self.use_db:
             await self.update_metadata(
                 document.id,
                 {"file_path": str(file_path)}
             )
-            
-            return document.id
-            
-        except Error as e:
-            logger.error(f"Error guardando documento: {e}")
-            raise
-        finally:
-            if conn.is_connected():
-                cursor.close()
-                conn.close()
+        
+        return document.id if self.use_db else str(file_path)
 
     async def get_document(self, doc_id: str) -> Optional[Document]:
         """
