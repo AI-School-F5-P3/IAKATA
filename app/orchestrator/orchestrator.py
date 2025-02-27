@@ -369,9 +369,9 @@ class RAGOrchestrator:
         """Obtiene sugerencias de mejora para una categoría específica"""
         return await self.llm.get_section_suggestions(category, content, context)
     
+    # Modificación en process_board_request en orchestrator.py
     def process_board_request(
         self,
-        # board_id: str,
         section_type: str,
         content: dict,
         context: dict
@@ -380,15 +380,19 @@ class RAGOrchestrator:
 
         query = content
 
+        # Determinar el tipo de respuesta basado en el contexto
+        response_type = ResponseType.VALIDATION
+        if context.get("response_type") == "concise":
+            response_type = ResponseType.CHAT
+
         metadata = {
             "category": section_type.lower() if section_type else "default",
-            # "board_id": board_id
         }
         metadata.update({k: str(v) for k, v in context.items()})
 
         return self.process_query(
             query=query,
-            response_type=ResponseType.VALIDATION,  
+            response_type=response_type,  
             metadata=metadata,
             language="es"
         )
