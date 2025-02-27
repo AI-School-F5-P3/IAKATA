@@ -7,6 +7,7 @@ import mysql.connector
 from mysql.connector import Error
 from .types import Document, DocumentFormat
 import os
+from app.config.settings import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +46,8 @@ class DocumentStorage:
             self._create_tables()
         
         # Configurar almacenamiento de archivos
-        self.base_dir = base_dir or Path("documents")
+        settings = get_settings()
+        self.base_dir = base_dir or settings.DOCS_DIR
         self.base_dir.mkdir(parents=True, exist_ok=True)
         
         # Crear subdirectorios por tipo
@@ -93,59 +95,73 @@ class DocumentStorage:
         """
         Guarda un documento en BD y sistema de archivos
         """
-        # Generar contenido principal
-        main_content = self._generate_main_content(document)
-        
-        # Guardar en BD si está configurada
-        if self.use_db:
-            try:
-                conn = mysql.connector.connect(**self.db_config)
-                cursor = conn.cursor()
-                
-                # Preparar datos para inserción
-                data = {
-                    'id': document.id,
-                    'type': document.type.value,
-                    'title': document.title,
-                    'content': main_content,
-                    'format': document.format.value,
-                    'created_at': document.created_at,
-                    'updated_at': document.updated_at,
-                    'doc_metadata': json.dumps(document.metadata),
-                    'sections': json.dumps([{
-                        'title': s.title,
-                        'content': s.content,
-                        'order': s.order
-                    } for s in document.sections])
-                }
-                
-                # Insertar en BD
-                query = """
-                    INSERT INTO documentation 
-                    (id, type, title, content, format, created_at, updated_at, doc_metadata, sections)
-                    VALUES (%(id)s, %(type)s, %(title)s, %(content)s, %(format)s, 
-                            %(created_at)s, %(updated_at)s, %(doc_metadata)s, %(sections)s)
-                """
-                cursor.execute(query, data)
-                conn.commit()
-            except Error as e:
-                logger.error(f"Error guardando documento en BD: {e}")
-            finally:
-                if 'conn' in locals() and conn.is_connected():
-                    cursor.close()
-                    conn.close()
-        
-        # Guardar archivo (siempre)
-        file_path = self._save_file(document, main_content)
-        
-        # Actualizar metadata con ruta del archivo
-        if self.use_db:
-            await self.update_metadata(
-                document.id,
-                {"file_path": str(file_path)}
-            )
-        
-        return document.id if self.use_db else str(file_path)
+        try:
+            # Generar contenido principal
+            main_content = self._generate_main_content(document)
+            
+            # Guardar archivo (siempre)
+            print(f"DEBUG: Generando archivo para documento {document.id} en formato {document.format.value}")
+            file_path = self._save_file(document, main_content)
+            print(f"DEBUG: Archivo guardado en: {file_path}")
+            
+            # Actualizar metadata con ruta del archivo
+            if hasattr(document, 'metadata') and document.metadata is not None:
+                document.metadata["file_path"] = str(file_path)
+            
+            # Guardar en BD si está configurada
+            if self.use_db:
+                try:
+                    conn = mysql.connector.connect(**self.db_config)
+                    cursor = conn.cursor()
+                    
+                    # Preparar datos para inserción
+                    data = {
+                        'id': document.id,
+                        'type': document.type.value,
+                        'title': document.title,
+                        'content': main_content,
+                        'format': document.format.value,
+                        'created_at': document.created_at,
+                        'updated_at': document.updated_at,
+                        'doc_metadata': json.dumps(document.metadata),
+                        'sections': json.dumps([{
+                            'title': s.title,
+                            'content': s.content,
+                            'order': s.order
+                        } for s in document.sections])
+                    }
+                    
+                    # Insertar en BD
+                    query = """
+                        INSERT INTO documentation 
+                        (id, type, title, content, format, created_at, updated_at, doc_metadata, sections)
+                        VALUES (%(id)s, %(type)s, %(title)s, %(content)s, %(format)s, 
+                                %(created_at)s, %(updated_at)s, %(doc_metadata)s, %(sections)s)
+                        ON DUPLICATE KEY UPDATE
+                        content = VALUES(content),
+                        format = VALUES(format),
+                        updated_at = VALUES(updated_at),
+                        doc_metadata = VALUES(doc_metadata),
+                        sections = VALUES(sections)
+                    """
+                    cursor.execute(query, data)
+                    conn.commit()
+                    
+                    print(f"DEBUG: Documento {document.id} guardado en base de datos")
+                except Exception as e:
+                    logger.error(f"Error guardando documento en BD: {e}")
+                    print(f"ERROR guardando en BD: {e}")
+                finally:
+                    if 'conn' in locals() and conn.is_connected():
+                        cursor.close()
+                        conn.close()
+            
+            # Importante: devolver la ruta completa del archivo
+            return str(file_path) if not self.use_db else document.id
+        except Exception as e:
+            print(f"ERROR en save_document: {str(e)}")
+            logger.error(f"Error guardando documento: {e}")
+            raise
 
     async def get_document(self, doc_id: str) -> Optional[Document]:
         """
@@ -350,19 +366,33 @@ class DocumentStorage:
 
     def _save_file(self, document: Document, content: str) -> Path:
         """Guarda el contenido en un archivo"""
-        dir_path = self.dirs[document.format]
-        file_name = f"{document.id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-        
-        extensions = {
-            DocumentFormat.MARKDOWN: ".md",
-            DocumentFormat.HTML: ".html",
-            DocumentFormat.JSON: ".json",
-            DocumentFormat.PDF: ".pdf"
-        }
-        
-        file_path = dir_path / f"{file_name}{extensions[document.format]}"
-        
-        with open(file_path, 'w', encoding='utf-8') as f:
-            f.write(content)
+        try:
+            # Asegurar que el directorio de formato existe
+            dir_path = self.dirs[document.format]
+            dir_path.mkdir(parents=True, exist_ok=True)
             
-        return file_path
+            # Crear nombre de archivo único
+            file_name = f"{document.id.replace('/', '_')}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            
+            # Definir extensiones para cada formato
+            extensions = {
+                DocumentFormat.MARKDOWN: ".md",
+                DocumentFormat.HTML: ".html",
+                DocumentFormat.JSON: ".json",
+                DocumentFormat.PDF: ".pdf",
+                DocumentFormat.EXCEL: ".xlsx"
+            }
+            
+            # Construir ruta completa
+            file_path = dir_path / f"{file_name}{extensions[document.format]}"
+            
+            # Guardar archivo
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            
+            print(f"Archivo guardado en: {file_path}")
+            return file_path
+        except Exception as e:
+            print(f"ERROR guardando archivo: {str(e)}")
+            logger.error(f"Error guardando archivo: {e}")
+            raise

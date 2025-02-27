@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     VECTOR_STORE_DIR: Path = BASE_DIR / "vectorstore/processed/vectors"
     CACHE_DIR: Path = BASE_DIR / "vectorstore/cache"
     LOG_DIR: Path = BASE_DIR / "../logs"
+    DOCS_DIR: Path = BASE_DIR / "docs"
     
     # Configuración de OpenAI
     OPENAI_API_KEY: str

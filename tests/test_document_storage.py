@@ -2,11 +2,11 @@ import pytest
 from unittest.mock import MagicMock, patch
 from datetime import datetime
 from pathlib import Path
-from app.documentation.storage import DocumentStorage, Document, DocumentFormat  # Asegúrate de importar correctamente
+from app.documentation.storage import DocumentStorage, Document, DocumentFormat  
 
 @pytest.fixture
 def mock_storage_handler():
-    handler = DocumentStorage(db_url="sqlite:///:memory:")
+    handler = DocumentStorage(base_dir=Path("./test_docs"))
     handler.Session = MagicMock()
     return handler
 

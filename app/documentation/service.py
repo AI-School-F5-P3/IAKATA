@@ -11,6 +11,7 @@ from .template_manager import TemplateStyleManager, ReportStyle
 from .format_handler import FormatHandler
 from .generator import DocumentGenerator
 from .storage import DocumentStorage
+from app.config.settings import get_settings
 
 # Importaciones del sistema RAG
 from app.vectorstore.vector_store import VectorStore
@@ -41,7 +42,8 @@ class DocumentationService:
         """
         self.vector_store = vector_store
         self.orchestrator = rag_orchestrator
-        self.base_dir = base_dir or Path("app/documentation/storage")
+        settings = get_settings()
+        self.base_dir = base_dir or settings.DOCS_DIR
         
         # Inicializar componentes
         self.template_manager = TemplateStyleManager()

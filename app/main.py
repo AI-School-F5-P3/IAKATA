@@ -6,6 +6,7 @@ from app.orchestrator.orchestrator import RAGOrchestrator
 from app.llm.gpt import LLMModule
 from app.llm.validator import ResponseValidator
 from app.vectorstore.vector_store import VectorStore
+from app.config.settings import get_settings
 
 def configure_orchestrator() -> RAGOrchestrator:
     """
@@ -26,7 +27,8 @@ def configure_orchestrator() -> RAGOrchestrator:
         validator = ResponseValidator()
         template_manager = TemplateManager()
         doc_generator = DocumentGenerator(llm)
-        doc_storage = DocumentStorage(Path("./docs"))
+        settings = get_settings()
+        doc_storage = DocumentStorage(settings.DOCS_DIR)
         
         # Crear orquestador
         orchestrator = RAGOrchestrator(

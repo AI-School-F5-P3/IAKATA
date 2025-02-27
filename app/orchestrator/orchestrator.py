@@ -19,6 +19,7 @@ from app.llm.gpt import LLMModule
 from app.llm.validator import ResponseValidator
 from app.retriever.types import SearchQuery, SearchResult, BoardSection
 from app.retriever.retriever import RetrieverSystem
+from app.config.settings import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,8 @@ class RAGOrchestrator:
         # Componentes de documentación
         self.doc_generator = doc_generator
         self.template_manager = TemplateStyleManager()
-        self.doc_storage = doc_storage
+        settings = get_settings()
+        self.doc_storage = doc_storage or DocumentStorage(settings.DOCS_DIR)
         
         # Inicializar retriever
         self.retriever = RetrieverSystem(vector_store)

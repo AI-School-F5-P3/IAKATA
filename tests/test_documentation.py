@@ -97,6 +97,7 @@ def create_test_document():
         metadata={"test": True, "author": "Test Script"}
     )
 
+
 async def test_document_format_conversion(format_handler):
     """Prueba la conversión de un documento entre diferentes formatos"""
     # Crear documento de prueba
@@ -346,21 +347,107 @@ async def test_detailed_report_flow(doc_service):
         doc_service.format_handler.format_document = original_format
         doc_service.storage.save_document = original_save
 
-if __name__ == "__main__":
-    # Ejecutar tests manualmente
-    asyncio.run(test_document_format_conversion(FormatHandler()))
-    
-    # Crear service para pruebas
+async def test_create_physical_files():
+    """Test para verificar explícitamente la creación de archivos físicos"""
+    # 1. Configurar componentes
     vector_store = MockVectorStore()
     orchestrator = MockOrchestrator()
-    storage = DocumentStorage(base_dir=Path("./test_docs"))
-    service = DocumentationService(vector_store, orchestrator, Path("./test_docs"))
+    base_dir = Path("./test_explicit_files")
+    
+    # Limpiar y crear directorio de prueba
+    if base_dir.exists():
+        for file in base_dir.glob("**/*"):
+            if file.is_file():
+                file.unlink()
+    else:
+        base_dir.mkdir(parents=True, exist_ok=True)
+    
+    # 2. Crear servicio
+    storage = DocumentStorage(base_dir=base_dir)
+    format_handler = FormatHandler()
+    template_manager = TemplateStyleManager()
+    generator = DocumentGenerator(orchestrator.llm)
+    
+    service = DocumentationService(
+        vector_store=vector_store,
+        rag_orchestrator=orchestrator,
+        base_dir=base_dir
+    )
     service.storage = storage
+    service.generator = generator 
+    service.format_handler = format_handler
+    service.template_manager = template_manager
     
-    # Ejecutar pruebas de generación y conversión
-    asyncio.run(test_generate_report_with_format_choice(service))
-    asyncio.run(test_convert_existing_document(service))
+    # 3. Crear documento básico
+    document = Document(
+        id=f"explicit_test_{datetime.utcnow().timestamp()}",
+        type=DocumentType.REPORT,
+        title="Informe de Prueba Explícito",
+        sections=[
+            DocumentSection(
+                title="Sección de Prueba",
+                content="Este es un contenido de prueba para verificar la creación de archivos.",
+                order=0
+            )
+        ],
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow(),
+        format=DocumentFormat.MARKDOWN,
+        metadata={"test": True}
+    )
     
-    # Ejecutar prueba de verificación de flujo
-    test_service = doc_service()
-    asyncio.run(test_detailed_report_flow(test_service))
+    # 4. Generar contenido y guardar en archivos
+    formats_to_test = [
+        DocumentFormat.MARKDOWN, 
+        DocumentFormat.HTML, 
+        DocumentFormat.JSON
+    ]
+    
+    print("\n===== TEST DE CREACIÓN DE ARCHIVOS =====")
+    for format_type in formats_to_test:
+        # Cambiar formato del documento
+        document.format = format_type
+        
+        # Generar contenido según formato
+        content = format_handler.format_document(document, format_type)
+        print(f"\nGenerado contenido para {format_type.value}: {len(content)} bytes")
+        
+        # Guardar manualmente en archivo
+        file_path = storage._save_file(document, content)
+        print(f"Guardado en: {file_path}")
+        
+        # Verificar existencia y contenido del archivo
+        assert file_path.exists(), f"El archivo {file_path} no existe"
+        file_size = file_path.stat().st_size
+        assert file_size > 0, f"El archivo {file_path} está vacío (0 bytes)"
+        
+        print(f"Verificado: archivo existe con {file_size} bytes")
+        
+        # Leer contenido para verificar
+        with open(file_path, 'r', encoding='utf-8') as f:
+            file_content = f.read()
+            assert document.title in file_content, f"El título no se encontró en el contenido"
+        
+        print(f"Verificado: contenido correcto en el archivo")
+    
+    print("\n===== TEST COMPLETADO CON ÉXITO =====")
+
+    if __name__ == "__main__":
+
+        # Ejecutar tests manualmente
+        asyncio.run(test_document_format_conversion(FormatHandler()))
+                
+        # Crear service para pruebas
+        vector_store = MockVectorStore()
+        orchestrator = MockOrchestrator()
+        storage = DocumentStorage(base_dir=Path("./test_docs"))
+        service = DocumentationService(vector_store, orchestrator, Path("./test_docs"))
+        service.storage = storage
+
+        # Ejecutar pruebas de generación y conversión
+        asyncio.run(test_generate_report_with_format_choice(service))
+        asyncio.run(test_convert_existing_document(service))
+
+        # Ejecutar prueba de verificación de flujo
+        test_service = doc_service()
+        asyncio.run(test_detailed_report_flow(test_service))

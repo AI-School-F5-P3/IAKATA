@@ -9,7 +9,7 @@ services:
       - SYS_PTRACE  # Permite depuración y seguimiento de procesos
       - DAC_READ_SEARCH  # Permite leer archivos que normalmente requerirían más permisos
     volumes:
-      - .:/app
+      - ./IAKATA:/app
       - iakata_vectors:/app/vectorstore/processed/vectors
       - iakata_cache:/app/vectorstore/cache
       - iakata_logs:/app/logs
