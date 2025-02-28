@@ -134,23 +134,60 @@ export const checkSession = async () => {
   }
 };
 
+
+
+
+
 export const registerUser = async (name, email, password) => {
-  try {
-      const response = await axios.post(`${API_URL}/register`, {
-          name,
-          email,
-          password
+    try {
+      console.log('Enviando datos de registro:', { name, email });
+      
+      const response = await axios.post(getApiUrl('auth/register'), {
+        name,
+        email,
+        password,
+        // Añade cualquier otro campo obligatorio según userValidator
+        // Por ejemplo, podrías necesitar:
+        // rol: 'user',  // Si rol es obligatorio
       });
       
-      if (!response.data.success) {
-          throw new Error(response.data.error || 'Error en el registro');
+      console.log('Respuesta del servidor:', response.data);
+      
+      if (!response.data.success && response.data.error) {
+        throw new Error(response.data.error);
       }
       
       return response.data;
-  } catch (error) {
-      if (error.response?.status === 409) {
+    } catch (error) {
+      console.error('Error completo:', error);
+      
+      if (error.response) {
+        console.error('Código de estado:', error.response.status);
+        console.error('Datos de respuesta:', error.response.data);
+        
+        if (error.response.status === 409) {
           throw new Error('El email ya está registrado');
+        } else if (error.response.status === 400) {
+          // Mejor manejo para error 400
+          if (error.response.data && typeof error.response.data === 'object') {
+            if (error.response.data.error) {
+              throw new Error(error.response.data.error);
+            } else if (error.response.data.errors) {
+              const errorMessages = Array.isArray(error.response.data.errors)
+                ? error.response.data.errors.map(e => e.msg || e.message || JSON.stringify(e)).join(', ')
+                : error.response.data.errors;
+              throw new Error(errorMessages);
+            } else {
+              throw new Error(JSON.stringify(error.response.data));
+            }
+          } else {
+            throw new Error('Datos de registro inválidos');
+          }
+        } else if (error.response.status === 500) {
+          throw new Error('Error en el servidor. Por favor, intente más tarde.');
+        }
       }
+      
       throw error;
-  }
-};
+    }
+  };

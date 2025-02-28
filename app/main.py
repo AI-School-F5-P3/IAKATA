@@ -6,6 +6,7 @@ from app.orchestrator.orchestrator import RAGOrchestrator
 from app.llm.gpt import LLMModule
 from app.llm.validator import ResponseValidator
 from app.vectorstore.vector_store import VectorStore
+from fastapi import FastAPI
 
 def configure_orchestrator() -> RAGOrchestrator:
     """
@@ -46,3 +47,9 @@ def configure_orchestrator() -> RAGOrchestrator:
 
 # Donde inicialices tu aplicación
 orchestrator = configure_orchestrator()
+
+app = FastAPI()
+
+@app.get("/")
+def read_root():
+    return {"message": "FastAPI está funcionando correctamente"}

@@ -92,6 +92,21 @@ app.get('/ws-health', (req, res) => {
     console.log('WebSocket health check');
 });
 
+// bloque añadido
+app.get('/', (req, res) => {
+    res.json({
+        success: true,
+        message: "El backend está funcionando correctamente 🚀"
+    });
+});
+
+
+
+
+
+
+
+
 app.use((err, req, res, next) => {
     console.error('Error:', err.stack);
     res.status(500).json({

@@ -31,25 +31,73 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Primero validamos con Yup
       await validationSchema.validate({ name, email, password }, { abortEarly: false });
+      
+      // Si la validación pasa, intentamos registrar
       const data = await registerUser(name, email, password);
       console.log('Data:', data);
       localStorage.setItem('authToken', data.token);
       setUser(data.data);
       setUserAuth(true);
       navigate('/home');
+      
     } catch (error) {
       console.error('Error:', error);
-
-      error.inner.forEach((err) => {
-        if (err.path === 'name') {
-          setNameError(err.message);
-        } else if (err.path === 'email') {
-          setEmailError(err.message);
-        } else if (err.path === 'password') {
-          setPasswordError(err.message)
+      
+      // Si es un error de validación de Yup (tiene la propiedad inner)
+      if (error.inner) {
+        error.inner.forEach((err) => {
+          if (err.path === 'name') {
+            setNameError(err.message);
+          } else if (err.path === 'email') {
+            setEmailError(err.message);
+          } else if (err.path === 'password') {
+            setPasswordError(err.message);
+          }
+        });
+      } 
+      // Si es un error de la API (AxiosError)
+      else if (error.response && error.response.data) {
+        // Manejo de errores del servidor
+        const serverErrors = error.response.data;
+        
+        // Verificar si el servidor envía errores en formato específico
+        if (serverErrors.errors) {
+          // Si el servidor devuelve un array de errores
+          serverErrors.errors.forEach(err => {
+            if (err.field === 'name' || err.param === 'name') {
+              setNameError(err.message);
+            } else if (err.field === 'email' || err.param === 'email') {
+              setEmailError(err.message);
+            } else if (err.field === 'password' || err.param === 'password') {
+              setPasswordError(err.message);
+            }
+          });
+        } else if (serverErrors.message) {
+          // Si el servidor devuelve un mensaje general
+          // Puedes mostrar este mensaje en algún lugar del formulario
+          // Por ejemplo, podrías agregar un estado para errores generales
+          const errorMessage = serverErrors.message;
+          
+          // Detectar tipo de error por el mensaje
+          if (errorMessage.toLowerCase().includes('email')) {
+            setEmailError(errorMessage);
+          } else if (errorMessage.toLowerCase().includes('contraseña') || 
+                    errorMessage.toLowerCase().includes('password')) {
+            setPasswordError(errorMessage);
+          } else if (errorMessage.toLowerCase().includes('nombre') || 
+                    errorMessage.toLowerCase().includes('name')) {
+            setNameError(errorMessage);
+          } else {
+            // Si no podemos determinar el campo específico, podríamos mostrar en todos
+            setEmailError(errorMessage);
+          }
         }
-      });
+      } else {
+        // Error general no identificado
+        setEmailError('Error en el registro. Por favor, intente de nuevo más tarde.');
+      }
     }
   };
 
