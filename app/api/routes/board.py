@@ -20,11 +20,15 @@ async def improve_with_ai(data: FormData): # -> ResponseOutput:
             }
         )
     except Exception as e:
-        raise e
-    except HTTPException as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail=f"Error en la api: {str(e)}"
+            # Logging adecuado para la excepción
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error en improve_with_ai: {str(e)}")
+            
+            # Retornar error en formato correcto
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                detail=f"Error en la api: {str(e)}"
             )
 
 # obtener info del proyecto

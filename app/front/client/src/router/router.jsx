@@ -14,6 +14,8 @@ import AboutUs from "../pages/AbouUs/AboutUs"
 import RegisterForm from "../components/forms/RegisterForm.jsx";
 import Login from "../pages/login/Login.jsx";
 import UserManagement from "../pages/userManagement/UserManagement";
+import ReportsPage from "../pages/reports/ReportsPage"; 
+import AnalysisDashboard from "../components/analysis/AnalysisDashboard"; 
 
 const router = createBrowserRouter([
   {
@@ -74,6 +76,14 @@ const router = createBrowserRouter([
       {
         path: "user-management",
         element: <UserManagement/>,
+      },
+      {
+        path: "reports/:id",
+        element: <ReportsPage />,
+      },
+      {
+        path: "analysis/:id",
+        element: <AnalysisDashboard />, 
       },
       {
         path: "*",

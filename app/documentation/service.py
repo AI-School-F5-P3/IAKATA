@@ -1,5 +1,3 @@
-# app/documentation/service.py
-
 from typing import Dict, Optional, List, Any
 from pathlib import Path
 import logging
@@ -14,9 +12,9 @@ from .storage import DocumentStorage
 from app.config.settings import get_settings
 
 # Importaciones del sistema RAG
-from app.vectorstore.vector_store import VectorStore
-from app.llm.types import ResponseType, LLMResponse
-from app.orchestrator.orchestrator import RAGOrchestrator
+#from app.vectorstore.vector_store import VectorStore
+#from app.llm.types import ResponseType, LLMResponse
+#from app.orchestrator.orchestrator import RAGOrchestrator
 
 logger = logging.getLogger(__name__)
 
@@ -28,8 +26,8 @@ class DocumentationService:
     
     def __init__(
         self,
-        vector_store: VectorStore,
-        rag_orchestrator: RAGOrchestrator,
+        vector_store,
+        rag_orchestrator,
         base_dir: Optional[Path] = None
     ):
         """

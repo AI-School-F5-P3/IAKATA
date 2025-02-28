@@ -56,7 +56,7 @@ async def process_chat_message(content: str, user_id: str,
                              board_id: Optional[str] = None,
                              metadata: Optional[Dict[str, Any]] = None):
     """
-    Procesa un mensaje del chat con gestión mejorada de sesiones
+    Procesa un mensaje del chat con gestión mejorada de sesiones e integración de análisis
     """
     try:
         chat_manager = get_chat_manager()
@@ -87,18 +87,51 @@ async def process_chat_message(content: str, user_id: str,
             )
             session_uuid = UUID(session_id)
 
-        # Procesamiento con timeout integrado
+        # Procesamiento principal del mensaje
         response = await chat_manager.process_message(
             session_id=session_uuid,
             content=content,
             metadata=metadata or {}
         )
 
-        # Formatear respuesta con estructura extendida
-        return {
+        # Análisis adicional si aplica
+        analysis_metadata = {}
+        if board_id and any(keyword in content.lower() for keyword in ["analiza", "análisis", "métricas", "progreso"]):
+            try:
+                from app.analysis.db_connector import AnalysisDBConnector
+                from app.analysis.analyzer import KataAnalyzer
+                
+                components = get_components()
+                analyzer = KataAnalyzer(
+                    orchestrator=components["orchestrator"], 
+                    vector_store=components["vector_store"],
+                    db_connector=AnalysisDBConnector()
+                )
+                
+                analysis = await analyzer.analyze_project(board_id)
+                
+                insights_text = []
+                for insight in analysis.insights[:3]:
+                    insights_text.append(f"[{insight.type}] {insight.description}")
+                
+                analysis_metadata = {
+                    "analysis": {
+                        "project_name": analysis.project_name,
+                        "overall_score": f"{analysis.metrics.overall_score * 100:.1f}%",
+                        "status": analysis.status.status,
+                        "insights": insights_text,
+                        "board_id": board_id
+                    }
+                }
+                
+            except Exception as e:
+                logger.warning(f"Análisis fallido para {board_id}: {str(e)}")
+
+        # Construcción de respuesta final
+        formatted_response = {
             "message": response.message.content,
             "session_id": str(session_id),
-            "metadata": response.metadata,
+            "metadata": {**response.metadata, **analysis_metadata},
             "insights": extract_insights(response),
             "context_summary": {
                 "current_step": response.context_used.get("current_phase", "analysis"),
@@ -106,6 +139,8 @@ async def process_chat_message(content: str, user_id: str,
             },
             "status": "success"
         }
+
+        return formatted_response
         
     except Exception as e:
         logger.error(f"Error processing chat message: {str(e)}", exc_info=True)

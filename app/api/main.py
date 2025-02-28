@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.api.routes import rag, board, doc, chat
+from app.api.routes import rag, board, doc, chat, analysis_routes
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
@@ -34,6 +34,7 @@ app.include_router(board.router, prefix="/board", tags=["BOARD"])
 app.include_router(rag.router, prefix="/chatbot", tags=["RAG"])
 app.include_router(doc.router, prefix="/doc", tags=["DOC"])
 app.include_router(chat.router, prefix="/chat", tags=["CHAT"]) 
+app.include_router(analysis_routes.router, prefix="/analysis", tags=["ANALYSIS"])
 
 @app.get("/")
 def root():

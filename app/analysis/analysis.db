@@ -1,0 +1,422 @@
+from typing import Dict, List, Optional, Any
+from datetime import datetime, timedelta
+import logging
+import sqlite3
+import json
+import asyncio
+from contextlib import asynccontextmanager
+
+class AnalysisDBConnector:
+    """
+    Conector para la base de datos de análisis
+    
+    Compatible con el sistema existente, se integra sin modificar
+    las tablas o el esquema actual
+    """
+    
+    def __init__(self, db_path: str = "analysis.db"):
+        self.db_path = db_path
+        self.logger = logging.getLogger(__name__)
+        self._initialize_db()
+        
+    def _initialize_db(self):
+        """Inicializa la base de datos si no existe"""
+        try:
+            conn = sqlite3.connect(self.db_path)
+            cursor = conn.cursor()
+            
+            # Tabla para análisis
+            cursor.execute('''
+            CREATE TABLE IF NOT EXISTS project_analysis (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                project_id TEXT NOT NULL,
+                project_name TEXT NOT NULL,
+                metrics TEXT NOT NULL,
+                status TEXT NOT NULL,
+                insights TEXT NOT NULL,
+                recommendations TEXT NOT NULL,
+                overall_score REAL NOT NULL,
+                previous_score REAL,
+                analyzed_at TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            ''')
+            
+            # Índice para búsquedas por proyecto
+            cursor.execute('''
+            CREATE INDEX IF NOT EXISTS idx_project_analysis_project_id ON project_analysis(project_id)
+            ''')
+            
+            conn.commit()
+            conn.close()
+            self.logger.info("Base de datos de análisis inicializada correctamente")
+            
+        except Exception as e:
+            self.logger.error(f"Error inicializando base de datos: {str(e)}")
+            raise
+            
+    @asynccontextmanager
+    async def _get_connection(self):
+        """Contexto asíncrono para conexión a base de datos"""
+        conn = None
+        try:
+            # Usar ejecutor para operaciones de I/O bloqueantes
+            conn = await asyncio.to_thread(sqlite3.connect, self.db_path)
+            conn.row_factory = sqlite3.Row  # Para obtener resultados como diccionarios
+            yield conn
+        finally:
+            if conn:
+                await asyncio.to_thread(conn.close)
+                
+    async def insert_analysis(self, analysis_data: Dict) -> bool:
+        """
+        Inserta un nuevo análisis en la base de datos
+        
+        Args:
+            analysis_data: Datos del análisis en formato diccionario
+            
+        Returns:
+            bool indicando éxito de la operación
+        """
+        try:
+            # Convertir estructuras complejas a JSON
+            analysis_data_db = {
+                "project_id": analysis_data["project_id"],
+                "project_name": analysis_data["project_name"],
+                "metrics": json.dumps(analysis_data["metrics"]),
+                "status": json.dumps(analysis_data["status"]),
+                "insights": json.dumps(analysis_data["insights"]),
+                "recommendations": json.dumps(analysis_data["recommendations"]),
+                "overall_score": analysis_data["overall_score"],
+                "previous_score": analysis_data.get("previous_score"),
+                "analyzed_at": analysis_data["analyzed_at"].isoformat(),
+                "created_at": datetime.utcnow().isoformat()
+            }
+            
+            async with self._get_connection() as conn:
+                cursor = conn.cursor()
+                
+                # Insertar en la tabla
+                cursor.execute('''
+                INSERT INTO project_analysis (
+                    project_id, project_name, metrics, status, insights, 
+                    recommendations, overall_score, previous_score, analyzed_at, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', (
+                    analysis_data_db["project_id"],
+                    analysis_data_db["project_name"],
+                    analysis_data_db["metrics"],
+                    analysis_data_db["status"],
+                    analysis_data_db["insights"],
+                    analysis_data_db["recommendations"],
+                    analysis_data_db["overall_score"],
+                    analysis_data_db["previous_score"],
+                    analysis_data_db["analyzed_at"],
+                    analysis_data_db["created_at"]
+                ))
+                
+                conn.commit()
+                return True
+                
+        except Exception as e:
+            self.logger.error(f"Error insertando análisis: {str(e)}")
+            return False
+            
+    async def fetch_last_analysis(self, project_id: str) -> Optional[Dict]:
+        """
+        Obtiene el último análisis para un proyecto
+        
+        Args:
+            project_id: ID del proyecto
+            
+        Returns:
+            Diccionario con datos del análisis o None si no existe
+        """
+        try:
+            async with self._get_connection() as conn:
+                cursor = conn.cursor()
+                
+                cursor.execute('''
+                SELECT * FROM project_analysis 
+                WHERE project_id = ? 
+                ORDER BY analyzed_at DESC LIMIT 1
+                ''', (project_id,))
+                
+                row = cursor.fetchone()
+                
+                if not row:
+                    return None
+                    
+                # Convertir JSON a diccionarios
+                return {
+                    "id": row["id"],
+                    "project_id": row["project_id"],
+                    "project_name": row["project_name"],
+                    "metrics": json.loads(row["metrics"]),
+                    "status": json.loads(row["status"]),
+                    "insights": json.loads(row["insights"]),
+                    "recommendations": json.loads(row["recommendations"]),
+                    "overall_score": row["overall_score"],
+                    "previous_score": row["previous_score"],
+                    "analyzed_at": datetime.fromisoformat(row["analyzed_at"]),
+                    "created_at": datetime.fromisoformat(row["created_at"])
+                }
+                
+        except Exception as e:
+            self.logger.error(f"Error obteniendo último análisis: {str(e)}")
+            return None
+            
+    async def fetch_analyses(
+        self, 
+        project_id: str,
+        from_date: Optional[datetime] = None,
+        limit: int = 10
+    ) -> List[Dict]:
+        """
+        Obtiene análisis históricos para un proyecto
+        
+        Args:
+            project_id: ID del proyecto
+            from_date: Fecha desde la cual obtener análisis
+            limit: Límite de resultados
+            
+        Returns:
+            Lista de análisis ordenados por fecha
+        """
+        try:
+            async with self._get_connection() as conn:
+                cursor = conn.cursor()
+                
+                query = '''
+                SELECT * FROM project_analysis 
+                WHERE project_id = ?
+                '''
+                params = [project_id]
+                
+                if from_date:
+                    query += " AND analyzed_at >= ?"
+                    params.append(from_date.isoformat())
+                    
+                query += " ORDER BY analyzed_at DESC LIMIT ?"
+                params.append(limit)
+                
+                cursor.execute(query, params)
+                rows = cursor.fetchall()
+                
+                analyses = []
+                for row in rows:
+                    analyses.append({
+                        "id": row["id"],
+                        "project_id": row["project_id"],
+                        "project_name": row["project_name"],
+                        "metrics": json.loads(row["metrics"]),
+                        "status": json.loads(row["status"]),
+                        "insights": json.loads(row["insights"]),
+                        "recommendations": json.loads(row["recommendations"]),
+                        "overall_score": row["overall_score"],
+                        "previous_score": row["previous_score"],
+                        "analyzed_at": datetime.fromisoformat(row["analyzed_at"]),
+                        "created_at": datetime.fromisoformat(row["created_at"])
+                    })
+                    
+                return analyses
+                
+        except Exception as e:
+            self.logger.error(f"Error obteniendo análisis históricos: {str(e)}")
+            return []
+            
+    async def fetch_active_projects(self, days_active: int = 60) -> List[Dict]:
+        """
+        Obtiene los proyectos activos en un período reciente
+        Esta función utiliza la estructura actual de tu base de datos
+        
+        Args:
+            days_active: Días hacia atrás para considerar activo
+            
+        Returns:
+            Lista con información de proyectos activos
+        """
+        try:
+            # Primero obtenemos IDs de proyectos activos de tus modelos existentes
+            since_date = datetime.utcnow() - timedelta(days=days_active)
+            
+            # Esta parte necesitará ser adaptada según tu ORM/sistema actual
+            # Ejemplo para SQLite directo:
+            async with self._get_connection() as conn:
+                cursor = conn.cursor()
+                
+                # Obtener todos los proyectos con actividad reciente
+                # Adaptado para la estructura existente de tu app
+                cursor.execute("""
+                SELECT p.id, p.name, t.id as tribe_id
+                FROM processes p
+                JOIN tribes t ON t.process_id = p.id
+                JOIN challenges c ON c.tribe_id = t.id
+                WHERE p.updated_at >= ? OR t.updated_at >= ? OR c.updated_at >= ?
+                """, (since_date.isoformat(), since_date.isoformat(), since_date.isoformat()))
+                
+                rows = cursor.fetchall()
+                
+                active_projects = []
+                for row in rows:
+                    active_projects.append({
+                        "id": row["id"],
+                        "name": row["name"],
+                        "tribe_id": row["tribe_id"]
+                    })
+                    
+                return active_projects
+                
+        except Exception as e:
+            self.logger.error(f"Error obteniendo proyectos activos: {str(e)}")
+            # En caso de error, intentamos un método alternativo
+            return await self._fetch_projects_from_analysis()
+            
+    async def _fetch_projects_from_analysis(self) -> List[Dict]:
+        """Método alternativo para obtener proyectos desde análisis"""
+        try:
+            async with self._get_connection() as conn:
+                cursor = conn.cursor()
+                
+                cursor.execute('''
+                SELECT DISTINCT project_id, project_name
+                FROM project_analysis
+                ORDER BY analyzed_at DESC
+                ''')
+                
+                rows = cursor.fetchall()
+                
+                return [{
+                    "id": row["project_id"],
+                    "name": row["project_name"]
+                } for row in rows]
+                
+        except Exception as e:
+            self.logger.error(f"Error en método alternativo: {str(e)}")
+            return []
+            
+    async def fetch_most_improved_projects(self, limit: int = 3) -> List[Dict]:
+        """
+        Obtiene los proyectos que más han mejorado recientemente
+        
+        Args:
+            limit: Límite de resultados
+            
+        Returns:
+            Lista de proyectos con mayor mejora
+        """
+        try:
+            async with self._get_connection() as conn:
+                cursor = conn.cursor()
+                
+                # Subconsulta para obtener análisis actual y anterior por proyecto
+                cursor.execute('''
+                WITH RankedAnalyses AS (
+                    SELECT 
+                        project_id,
+                        project_name,
+                        overall_score,
+                        analyzed_at,
+                        LAG(overall_score) OVER (PARTITION BY project_id ORDER BY analyzed_at) AS prev_score,
+                        ROW_NUMBER() OVER (PARTITION BY project_id ORDER BY analyzed_at DESC) AS rank
+                    FROM project_analysis
+                )
+                SELECT 
+                    project_id,
+                    project_name,
+                    overall_score,
+                    prev_score,
+                    (overall_score - prev_score) AS improvement
+                FROM RankedAnalyses
+                WHERE rank = 1 AND prev_score IS NOT NULL
+                ORDER BY improvement DESC
+                LIMIT ?
+                ''', (limit,))
+                
+                rows = cursor.fetchall()
+                
+                improved_projects = []
+                for row in rows:
+                    improved_projects.append({
+                        "id": row["project_id"],
+                        "name": row["project_name"],
+                        "current_score": row["overall_score"],
+                        "previous_score": row["prev_score"],
+                        "improvement": row["improvement"]
+                    })
+                    
+                return improved_projects
+                
+        except Exception as e:
+            self.logger.error(f"Error obteniendo proyectos mejorados: {str(e)}")
+            return []
+    
+    async def fetch_one(self, table: str, condition: Dict) -> Optional[Dict]:
+        """
+        Obtiene un registro de una tabla específica
+        
+        Args:
+            table: Nombre de la tabla
+            condition: Diccionario con condiciones (campo=valor)
+            
+        Returns:
+            Diccionario con datos o None
+        """
+        try:
+            # Construir query
+            conditions = " AND ".join([f"{k} = ?" for k in condition.keys()])
+            query = f"SELECT * FROM {table} WHERE {conditions} LIMIT 1"
+            
+            async with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute(query, tuple(condition.values()))
+                row = cursor.fetchone()
+                
+                return dict(row) if row else None
+                
+        except Exception as e:
+            self.logger.error(f"Error en fetch_one: {str(e)}")
+            return None
+            
+    async def fetch_all(self, table: str, condition: Dict) -> List[Dict]:
+        """
+        Obtiene múltiples registros de una tabla específica
+        
+        Args:
+            table: Nombre de la tabla
+            condition: Diccionario con condiciones (campo=valor)
+            
+        Returns:
+            Lista de diccionarios con datos
+        """
+        try:
+            # Necesitamos manejar operadores especiales como $in
+            where_clauses = []
+            params = []
+            
+            for key, value in condition.items():
+                if isinstance(value, dict) and "$in" in value:
+                    # Manejar operador $in
+                    placeholders = ",".join(["?" for _ in value["$in"]])
+                    where_clauses.append(f"{key} IN ({placeholders})")
+                    params.extend(value["$in"])
+                else:
+                    where_clauses.append(f"{key} = ?")
+                    params.append(value)
+            
+            # Construir query
+            where_clause = " AND ".join(where_clauses)
+            query = f"SELECT * FROM {table}"
+            if where_clause:
+                query += f" WHERE {where_clause}"
+            
+            async with self._get_connection() as conn:
+                cursor = conn.cursor()
+                cursor.execute(query, params)
+                rows = cursor.fetchall()
+                
+                return [dict(row) for row in rows]
+                
+        except Exception as e:
+            self.logger.error(f"Error en fetch_all: {str(e)}")
+            return []
