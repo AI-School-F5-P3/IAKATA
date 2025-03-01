@@ -1,14 +1,18 @@
+
 version: '3.8'
 
 services:
+
   iakata:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     cap_add:
-      - SYS_PTRACE  # Permite depuración y seguimiento de procesos
-      - DAC_READ_SEARCH  # Permite leer archivos que normalmente requerirían más permisos
+      - SYS_PTRACE
+      - DAC_READ_SEARCH
+
     volumes:
+      - .:/app
       - ./IAKATA:/app
       - iakata_vectors:/app/vectorstore/processed/vectors
       - iakata_cache:/app/vectorstore/cache
@@ -18,10 +22,13 @@ services:
     environment:
       - PYTHONPATH=/app
       - DEBUG=True
+    env_file:
+      - .env
     networks:
       - iakata_network
-      
-  # Servicio FastAPI RAG
+    command: uvicorn app.api.main:app --host 0.0.0.0 --port 8000 --reload
+
+
   fastapi:
     build:
       context: .
@@ -31,13 +38,75 @@ services:
     networks:
       - iakata_network
     volumes:
-      - ./app/api:/app
+      - .:/app
+    depends_on:
+      - node_api
+    env_file:
+      - .env
+
+  react:
+    build:
+      context: .
+      dockerfile: Dockerfile.react
+    ports:
+      - "80:80"
+    networks:
+      - iakata_network
+    depends_on:
+      - node_api
+    volumes:
+      - ./app/front/client:/app
+      - /app/node_modules
+
+
+  node_api:
+    build:
+      context: ./app/front/server
+      dockerfile: ../../../Dockerfile.node
+    ports:
+      - "3000:3000"
+      - "5001:5001"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=mysql
+      - DB_DEV_NAME=${DB_DEV_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    networks:
+      - iakata_network
+      - mysql_network
+    volumes:
+      - ./app/front/server:/app
+      - /app/node_modules
+    depends_on:
+      - mysql
+
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_DEV_NAME}
+    networks:
+      - mysql_network
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
 
 networks:
   iakata_network:
-    driver: bridge
+   driver: bridge
+  mysql_network:
+   driver: bridge
 
 volumes:
+  mysql_data:
   iakata_vectors:
+    name: iakata_vectors
   iakata_cache:
+    name: iakata_cache
   iakata_logs:
+    name: iakata_logs

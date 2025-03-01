@@ -73,6 +73,7 @@ puremagic==1.28
 pyasn1==0.6.1
 pydantic==2.5.3
 pydantic_core==2.14.6
+pydantic-settings
 pydot==3.0.4
 Pygments==2.19.1
 PyMuPDF==1.25.3
@@ -125,3 +126,4 @@ urllib3==2.3.0
 uvicorn==0.27.0
 win32_setctime==1.2.0
 yarl==1.18.3
+mysql-connector-python
