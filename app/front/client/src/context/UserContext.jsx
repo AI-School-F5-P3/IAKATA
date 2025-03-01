@@ -147,7 +147,7 @@ const UserProvider = ({ children }) => {
         
         if (!userId) return;
     
-        const socket = new WebSocket(`ws://${window.location.hostname}:5001/ws?userId=${userId}&sessionId=${sessionId}`);
+        const socket = new WebSocket(`ws://${window.location.hostname}:3308/ws?userId=${userId}&sessionId=${sessionId}`);
     
         const handleSocketMessage = async (event) => {
             try {

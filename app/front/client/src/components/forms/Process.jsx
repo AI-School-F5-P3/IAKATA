@@ -8,7 +8,7 @@ import './css/Forms.css';
 import ImproveWithAIButton from '../buttonIa/ImproveWithAIButton';
 
 const Process = ({ processId, setLoading, setEditable, isEdit = false }) => {
-  const { register, formState: { errors }, handleSubmit, setValue, getValues} = useForm();
+  const { register, formState: { errors }, handleSubmit, setValue, getValues, trigger } = useForm();
   const navigate = useNavigate();
   const [processData, setProcessData] = useState({});
 
@@ -49,7 +49,30 @@ const Process = ({ processId, setLoading, setEditable, isEdit = false }) => {
 
   const handleImproveResult = (improvedData) => {
     console.log('Datos mejorados:', improvedData);
-    setValue('description', improvedData.description); // Actualiza el campo de descripción
+    
+    // Verificar el formato de los datos recibidos
+    if (typeof improvedData === 'string') {
+      // Si es directamente un string
+      setValue('description', improvedData);
+    } else if (improvedData && improvedData.data && improvedData.data.description) {
+      // Si es un objeto con la estructura { data: { description: "..." } }
+      setValue('description', improvedData.data.description);
+    } else if (improvedData && improvedData.description) {
+      // Si es un objeto con la estructura { description: "..." }
+      setValue('description', improvedData.description);
+    } else {
+      console.error('Formato de datos no reconocido:', improvedData);
+      return;
+    }
+    
+    // Importante: actualizar la validación después de cambiar el valor
+    trigger('description');
+    
+    // Verificar si debemos mantener la ventana abierta (no cerrarla)
+    // Solo cerramos la ventana si improvedData.keepWindowOpen no es true
+    if (!improvedData.keepWindowOpen && isEdit) {
+      // No hacemos nada, dejamos la ventana abierta para que el usuario pueda editar
+    }
   };
 
   return (
@@ -82,10 +105,10 @@ const Process = ({ processId, setLoading, setEditable, isEdit = false }) => {
             className="button-forms"
             getValues={() => ({
                 idForm,
-                ...getValues()
+                0: getValues("description") // Asegurar que se pasa en la posición 0
             })}
             onResult={handleImproveResult} 
-        />
+          />
           </>
         ) : (
           <>
@@ -96,10 +119,10 @@ const Process = ({ processId, setLoading, setEditable, isEdit = false }) => {
             className="button-forms"
             getValues={() => ({
                 idForm,
-                ...getValues(["description"])
+                0: getValues("description") // Asegurar que se pasa en la posición 0
             })}
             onResult={handleImproveResult} 
-        />
+          />
           </>
         )}
       </form>

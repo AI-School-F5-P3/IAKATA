@@ -192,13 +192,29 @@ const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => 
     //     setValue('description', improvedData.description); // Actualiza el campo de descripción
     // };
     const handleImproveResult = (improvedData) => {
-        console.log('Datos mejorados:', improvedData.data.description);
-        if (improvedData) {
-            setValue('description', improvedData.data.description, {
+        console.log('Datos mejorados:', improvedData);
+        let descriptionText = '';
+        
+        // Extraer la descripción en base al formato recibido
+        if (typeof improvedData === 'string') {
+            descriptionText = improvedData;
+        } else if (improvedData && improvedData.data && improvedData.data.description) {
+            descriptionText = improvedData.data.description;
+        } else if (improvedData && improvedData.description) {
+            descriptionText = improvedData.description;
+        } else {
+            console.error('Formato de datos no reconocido:', improvedData);
+            return;
+        }
+        
+        if (descriptionText) {
+            setValue('description', descriptionText, {
                 shouldValidate: true,
                 shouldDirty: true,
                 shouldTouch: true
             });
+            
+            // Notificar al usuario que el texto se ha mejorado
             Swal.fire({
                 icon: 'success',
                 title: '¡Texto mejorado!',
@@ -207,6 +223,9 @@ const Challenge = ({ challengeId, setLoading, setEditable, isEdit = false }) => 
                 showConfirmButton: false
             });
         }
+        
+        // Verificar si debemos mantener la ventana abierta
+        // No hacemos ninguna acción para cerrar la ventana después de aplicar la mejora
     };
 
     return (

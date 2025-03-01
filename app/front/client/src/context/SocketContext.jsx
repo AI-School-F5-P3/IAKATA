@@ -198,7 +198,7 @@ export const SocketProvider = ({ children }) => {
             }
 
             const userId = sessionStorage.getItem('userId');
-            const wsUrl = new URL(`ws://${window.location.hostname}:5001/ws`);
+            const wsUrl = new URL(`ws://${window.location.hostname}:3308/ws`);
             wsUrl.searchParams.append('sessionId', sessionId.current);
             if (userId) {
                 wsUrl.searchParams.append('userId', userId);

@@ -31,7 +31,10 @@ const ImproveWithAIButton = ({ getValues, onResult }) => {
     };
   
     try {
-      const response = await axios.post('http://localhost:8001/board/ai', data);
+      console.log("Enviando datos a la API:", data);
+      const response = await axios.post('http://localhost:8000/api/routes/board/ai', data);
+      console.log("Respuesta recibida:", response.data);
+      
       setAiResponse(response.data.data.description); // Respuesta de IA
       setShowResponse(true);
     } catch (error) {
@@ -42,15 +45,72 @@ const ImproveWithAIButton = ({ getValues, onResult }) => {
       setLoading(false);
     }
   };
-  // Lógica original de aplicación
-  const handleApply = () => {
-    if (aiResponse && onResult) {
-      onResult({ data: { description: aiResponse } });
-      setShowResponse(false);
-    }
-  };
 
-  // Nuevo: Lógica de arrastre
+  // Lógica de aplicación modificada
+// Modificar la función handleApply en ImproveWithAIButton.jsx
+// Modificación al handleApply en ImproveWithAIButton.jsx
+const handleApply = () => {
+  if (aiResponse && onResult) {
+    console.log("Aplicando respuesta IA:", aiResponse);
+    
+    try {
+      // Estandarizar el formato para compatibilidad con todos los componentes
+      let formattedResponse;
+      
+      // Preparar un objeto con la estructura esperada por Challenge.jsx
+      if (typeof aiResponse === 'string') {
+        formattedResponse = {
+          data: {
+            description: aiResponse
+          }
+        };
+      } else if (aiResponse && typeof aiResponse === 'object') {
+        // Si ya es un objeto, mantener la estructura esperada
+        if (aiResponse.data && aiResponse.data.description) {
+          formattedResponse = aiResponse;
+        } else if (aiResponse.description) {
+          formattedResponse = {
+            data: {
+              description: aiResponse.description
+            }
+          };
+        } else {
+          formattedResponse = {
+            data: {
+              description: JSON.stringify(aiResponse)
+            }
+          };
+        }
+      } else {
+        // Caso por defecto
+        formattedResponse = {
+          data: {
+            description: String(aiResponse)
+          }
+        };
+      }
+      
+      // Añadir una propiedad 'keepWindowOpen' para indicar que no se debe cerrar la ventana
+      formattedResponse.keepWindowOpen = true;
+      
+      console.log("Formato estandarizado para onResult:", formattedResponse);
+      
+      // Pasar el objeto formateado a onResult
+      onResult(formattedResponse);
+      
+      console.log("Respuesta aplicada correctamente");
+      
+      // Simplemente cerramos la ventana de sugerencia, pero no la ventana de edición
+      setShowResponse(false);
+    } catch (applyError) {
+      console.error("Error al aplicar la respuesta:", applyError);
+    }
+  } else {
+    console.error("No se puede aplicar: aiResponse=", aiResponse, "onResult=", onResult);
+  }
+};
+
+  // Lógica de arrastre
   const handleDragStart = (e) => {
     setIsDragging(true);
     dragRef.current = {
