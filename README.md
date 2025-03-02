@@ -40,7 +40,6 @@ IAKATA sigue una arquitectura modular basada en los siguientes componentes:
 ## Requisitos
 
 - Python 3.11.9
-- Docker y Docker Compose (opcional)
 - Acceso a la API de OpenAI
 - Base de datos LK-WEB (para integración)
 
@@ -60,24 +59,8 @@ source venv/bin/activate  # En Windows: venv\Scripts\activate
 # Instalar dependencias
 pip install -r requirements.txt
 
-# Configurar variables de entorno
-cp .env.example .env
-# Editar .env con las credenciales necesarias
-```
-
-### Usando Docker
-
-```bash
-# Clonar el repositorio
-git clone https://github.com/tu-organizacion/iakata.git
-cd iakata
-
-# Configurar variables de entorno
-cp .env.example .env
-# Editar .env con las credenciales necesarias
-
-# Construir y levantar contenedores
-docker-compose up -d
+# Create the file .env located in the folder "IAKATA"
+# Copy the information placed on ´.env_example´ and fill it with your personal data
 ```
 
 ## Uso
